@@ -53,8 +53,8 @@ namespace Project_Tpage.Class
             if (Members == null || Members.Count == 0) return;
 
             List<DataRow> dr;
-            using (DataTable dt = SQLS.GetSqlData(Model.DB_Conn,
-                "SELECT UID, NickName, RealName FROM " + Model.DB_UserData_TableName + ""))
+            using (DataTable dt = Model.DB.GetSqlData(Model.DB.DB_Conn,
+                "SELECT UID, NickName, RealName FROM " + Model.DB.DB_UserData_TableName + ""))
             {
                 dr = Enumerable.Where(Enumerable.Cast<DataRow>(dt.Rows)
                     , x => Members.Contains(x["UID"])).ToList();
@@ -78,17 +78,14 @@ namespace Project_Tpage.Class
         /// 成員。
         /// </summary>
         public List<string> Members { get; set; }
-
         /// <summary>
         /// 團體識別碼。
         /// </summary>
         public string GID { get; set; }
-
         /// <summary>
         /// 團體名稱。
         /// </summary>
         public string Groupname { get; set; }
-
         /// <summary>
         /// 所有文章的集合。
         /// </summary>
@@ -97,7 +94,6 @@ namespace Project_Tpage.Class
         /// 此團體的管理者。
         /// </summary>
         public List<string> Admin { get; protected set; }
-
         /// <summary>
         /// 看板內的主題
         /// </summary>
@@ -111,31 +107,38 @@ namespace Project_Tpage.Class
         /// <summary>
         /// 管理此團體的管理者。
         /// </summary>
-        public virtual void Admin_Manage()
+        public virtual void Admin_Init(List<string> Ivalue)
         {
-
+            Admin = new List<string>(Ivalue);
         }
-
         /// <summary>
         /// 管理主題看板。
         /// </summary>
-        public virtual void Topic_Manage()
+        public virtual void Topic_Init(List<string> Ivalue)
         {
-
+            Topic = new List<string>(Ivalue);
         }
-
         /// <summary>
         /// 管理看板板主。
         /// </summary>
-        public virtual void BoardAdmin_Manage()
+        public virtual void BoardAdmin_Init(List<string> Ivalue)
         {
-
+            BoardAdmin = new List<string>(Ivalue);
+        }
+        /// <summary>
+        /// 初始化文章。
+        /// </summary>
+        public virtual void Articles_Init(List<string> Ivalue)
+        {
+            Articles = new List<string>(Ivalue);
         }
 
-        public abstract void Manage_Members();
 
+        public abstract void Manage_Members();
         public RelationshipGroup()
         {
+            GID = null;
+
             Admin = new List<string>();
             Topic = new List<string>();
             BoardAdmin = new List<string>();
@@ -156,102 +159,35 @@ namespace Project_Tpage.Class
 
         public ClassGroup() : base()
         {
-
+            
         }
 
-        /// <summary>
-        /// 從資料庫中提取班級團體的資料。
-        /// </summary>
-        /// <param name="p_GID">團體識別碼。</param>
-        /// <returns></returns>
-        public static ClassGroup Get_FromDB(string p_GID)
+        public ClassGroup(DataRow dr) : base()
         {
-            //從資料庫查詢此使用者。未找到則擲回例外(包含錯誤訊息(無此帳號、密碼錯誤))。
-            DataTable dt = SQLS.GetSqlData(Model.DB_Conn, "SELECT * FROM " + Model.DB_ClassGroupData_TableName 
-                + " WHERE GID = " + p_GID);
-
-            if (dt.Rows.Count == 0)
+            try
             {
-                throw new Exception("無此班級。GID : " + p_GID);
+                GID = (string)Model.DB.AnlType<string>(dr["GID"]);
+                Groupname = (string)Model.DB.AnlType<string>(dr["GroupName"]);
+                ClassName = (string)Model.DB.AnlType<string>(dr["ClassName"]);
+                Members = (List<string>)Model.DB.AnlType<List<string>>(dr["Members"]);
+
+                Admin = (List<string>)Model.DB.AnlType<List<string>>(dr["Admin"]);
+                BoardAdmin = (List<string>)Model.DB.AnlType<List<string>>(dr["BoardAdmin"]);
+                Topic = (List<string>)Model.DB.AnlType<List<string>>(dr["Topic"]);
+                Articles = (List<string>)Model.DB.AnlType<List<string>>(dr["Articles"]);
             }
-            else
+            catch (Exception e)
             {
-                DataRow dr = dt.Rows[0];
-                ClassGroup rtn = new ClassGroup();
-                rtn.GID = (string)dr["GID"];
-                rtn.Groupname = (string)dr["GroupName"];
-                rtn.ClassName = (string)dr["ClassName"];
-                rtn.Members = ((string)dr["Members"]).Split(',').ToList();
-                rtn.Admin = ((string)dr["Admin"]).Split(',').ToList();
-                rtn.BoardAdmin = ((string)dr["BoardAdmin"]).Split(',').ToList();
-                rtn.Topic = ((string)dr["Topic"]).Split(',').ToList();
-                rtn.Articles = ((string)dr["Articles"]).Split(',').ToList();
-
-                return rtn;
+                throw new Model.ModelException("ClassGroup類別－建構式ClassGroup(DataRow)發生錯誤：" +
+                    "ClassGroup設定物件欄位錯誤。\r\n" + e.Message);
             }
-        }
-
-        /// <summary>
-        /// 將班級團體資料存入資料庫。傳回新的GID。
-        /// </summary>
-        /// <param name="p_cg">班級團體。</param>
-        public static string Set_ToDB(ClassGroup p_cg)
-        {
-            using (SqlConnection icn = SQLS.OpenSqlConn(Model.DB_Conn))
-            {
-                //若帳號已存在，為修改帳號資料的更新。
-                if (SQLS.IsExist(Model.DB_Conn, Model.DB_ClassGroupData_TableName, "GID", p_cg.GID))
-                {
-                    SQLS.ExeSqlCommand(icn, string.Format(@"UPDATE " + Model.DB_ClassGroupData_TableName + @"
-                    SET GID = {0}, 
-                    GroupName = {1}, 
-                    ClassName = {2}, 
-                    Members = {3}, 
-                    Admin = {4}, 
-                    BoardAdmin = {5}, 
-                    Topic = {6}, 
-                    Articles = {7}, 
-                    WHERE GID = {0}"
-                        , SQLS.Type(p_cg.GID)
-                        , SQLS.Type(p_cg.Groupname, true)
-                        , SQLS.Type(p_cg.ClassName, true)
-                        , SQLS.Type(p_cg.Members)
-                        , SQLS.Type(p_cg.Admin)
-                        , SQLS.Type(p_cg.BoardAdmin)
-                        , SQLS.Type(p_cg.Topic, true)
-                        , SQLS.Type(p_cg.Articles)));
-                }
-                else//否則為新增帳號資料的更新。
-                {
-                    SqlCommand ism = new SqlCommand(@"SELECT MAX(GID) FROM " + Model.DB_ClassGroupData_TableName, icn);
-                    string nextgid = (string)ism.ExecuteScalar();
-
-                    SQLS.ExeSqlCommand(icn, @"UPDATE " + Model.DB_ClassGroupData_TableName + " SET GID = '" +
-                        (int.Parse(nextgid) + 1).ToString().PadLeft(10, '0') + "' WHERE GID = '"
-                        + nextgid + "'");
-
-                    SQLS.ExeSqlCommand(icn, string.Format(@"INSERT INTO " + Model.DB_ClassGroupData_TableName + @" 
-                    (GID, GroupName, ClassName, Members, Admin, BoardAdmin, Topic, Articles)
-                    VALUES 
-                    ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7})"
-                        , SQLS.Type(p_cg.GID = nextgid)
-                        , SQLS.Type(p_cg.Groupname, true)
-                        , SQLS.Type(p_cg.ClassName, true)
-                        , SQLS.Type(p_cg.Members)
-                        , SQLS.Type(p_cg.Admin)
-                        , SQLS.Type(p_cg.BoardAdmin)
-                        , SQLS.Type(p_cg.Topic, true)
-                        , SQLS.Type(p_cg.Articles)));
-                }
-                SQLS.CloseSqlConn(icn);
-            }
-            return p_cg.GID;
         }
 
         public override void Manage_Members()
         {
 
         }
+
     }
 
 
@@ -265,89 +201,24 @@ namespace Project_Tpage.Class
 
         }
 
-        /// <summary>
-        /// 從資料庫中提取家族團體的資料。
-        /// </summary>
-        /// <param name="p_GID">家族識別碼。</param>
-        /// <returns></returns>
-        public static FamilyGroup Get_FromDB(string p_GID)
+        public FamilyGroup(DataRow dr) : base()
         {
-            //從資料庫查詢此使用者。未找到則擲回例外(包含錯誤訊息(無此帳號、密碼錯誤))。
-            DataTable dt = SQLS.GetSqlData(Model.DB_Conn, "SELECT * FROM " + Model.DB_FamilyGroupData_TableName
-                + " WHERE GID = " + p_GID);
-
-            if (dt.Rows.Count == 0)
+            try
             {
-                throw new Exception("無此家族。GID : " + p_GID);
+                GID = (string)Model.DB.AnlType<string>(dr["GID"]);
+                Groupname = (string)Model.DB.AnlType<string>(dr["GroupName"]);
+                Members = (List<string>)Model.DB.AnlType<List<string>>(dr["Members"]);
+
+                Admin = (List<string>)Model.DB.AnlType<List<string>>(dr["Admin"]);
+                BoardAdmin = (List<string>)Model.DB.AnlType<List<string>>(dr["BoardAdmin"]);
+                Topic = (List<string>)Model.DB.AnlType<List<string>>(dr["Topic"]);
+                Articles = (List<string>)Model.DB.AnlType<List<string>>(dr["Articles"]);
             }
-            else
+            catch (Exception e)
             {
-                DataRow dr = dt.Rows[0];
-                FamilyGroup rtn = new FamilyGroup();
-                rtn.GID = (string)dr["GID"];
-                rtn.Groupname = (string)dr["GroupName"];
-                rtn.Members = ((string)dr["Members"]).Split(',').ToList();
-                rtn.Admin = ((string)dr["Admin"]).Split(',').ToList();
-                rtn.BoardAdmin = ((string)dr["BoardAdmin"]).Split(',').ToList();
-                rtn.Topic = ((string)dr["Topic"]).Split(',').ToList();
-                rtn.Articles = ((string)dr["Articles"]).Split(',').ToList();
-
-                return rtn;
+                throw new Model.ModelException("FamilyGroup類別－建構式FamilyGroup(DataRow)發生錯誤：" +
+                    "FamilyGroup設定物件欄位錯誤。\r\n" + e.Message);
             }
-        }
-
-        /// <summary>
-        /// 將家族團體資料存入資料庫。傳回新的GID。
-        /// </summary>
-        /// <param name="p_cg">家族團體。</param>
-        public static string Set_ToDB(ClassGroup p_cg)
-        {
-            using (SqlConnection icn = SQLS.OpenSqlConn(Model.DB_Conn))
-            {
-                //若帳號已存在，為修改帳號資料的更新。
-                if (SQLS.IsExist(Model.DB_Conn, Model.DB_FamilyGroupData_TableName, "GID", p_cg.GID))
-                {
-                    SQLS.ExeSqlCommand(icn, string.Format(@"UPDATE " + Model.DB_FamilyGroupData_TableName + @"
-                    SET GID = {0}, 
-                    GroupName = {1}, 
-                    Members = {2}, 
-                    Admin = {3}, 
-                    BoardAdmin = {4}, 
-                    Topic = {5}, 
-                    Articles = {6}, 
-                    WHERE GID = {0}"
-                        , SQLS.Type(p_cg.GID)
-                        , SQLS.Type(p_cg.Groupname, true)
-                        , SQLS.Type(p_cg.Members)
-                        , SQLS.Type(p_cg.Admin)
-                        , SQLS.Type(p_cg.BoardAdmin)
-                        , SQLS.Type(p_cg.Topic, true)
-                        , SQLS.Type(p_cg.Articles)));
-                }
-                else//否則為新增帳號資料的更新。
-                {
-                    SqlCommand ism = new SqlCommand(@"SELECT MAX(GID) FROM " + Model.DB_FamilyGroupData_TableName, icn);
-                    string nextgid = (string)ism.ExecuteScalar();
-
-                    SQLS.ExeSqlCommand(icn, @"UPDATE " + Model.DB_FamilyGroupData_TableName + " SET GID = '" +
-                        (int.Parse(nextgid) + 1).ToString().PadLeft(10, '0') + "' WHERE GID = '"
-                        + nextgid + "'");
-
-                    SQLS.ExeSqlCommand(icn, string.Format(@"INSERT INTO " + Model.DB_FamilyGroupData_TableName + @" 
-                    (GID, GroupName, Members, Admin, BoardAdmin, Topic, Articles)
-                    VALUES 
-                    ({0}, {1}, {2}, {3}, {4}, {5}, {6})"
-                        , SQLS.Type(p_cg.GID = nextgid)
-                        , SQLS.Type(p_cg.Groupname, true)
-                        , SQLS.Type(p_cg.Members)
-                        , SQLS.Type(p_cg.Admin)
-                        , SQLS.Type(p_cg.BoardAdmin)
-                        , SQLS.Type(p_cg.Topic, true)
-                        , SQLS.Type(p_cg.Articles)));
-                }
-                SQLS.CloseSqlConn(icn);
-            }
-            return p_cg.GID;
         }
 
         public override void Manage_Members()

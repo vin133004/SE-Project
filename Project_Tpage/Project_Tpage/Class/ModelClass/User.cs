@@ -169,12 +169,12 @@ namespace Project_Tpage.Class
         /// <summary>
         /// 使用者所在的團體。
         /// </summary>
-        public List<RelationshipGroup> Groups { get; private set; }
+        public List<RelationshipGroup> Groups { get; set; }
         /// <summary>
         /// 台科幣的存量。
         /// </summary>
         public int TbitCoin { get; set; }
-
+        
         /// <summary>
         /// 抽卡交友。
         /// </summary>
@@ -183,161 +183,10 @@ namespace Project_Tpage.Class
 
         }
 
-        /// <summary>
-        /// 以帳號或帳號識別碼作為索引鍵從資料庫中取得使用者資料。
-        /// </summary>
-        /// <param name="p_UID">帳號或帳號識別碼。</param>
-        /// <param name="isUID">是否將傳入參數作為帳號識別碼解讀，否則作為帳號解讀。</param>
-        /// <returns></returns>
-        public static User Get_FromDB(string p_UID, bool isUID = true)
-        {
-            //從資料庫查詢此使用者。未找到則擲回例外(包含錯誤訊息(無此帳號、密碼錯誤))。
-            DataTable dt = SQLS.GetSqlData(Model.DB_Conn, "SELECT * FROM " + Model.DB_UserData_TableName + " WHERE "
-                       + (isUID ? "UID" : "ID") + " = " + p_UID);
-            
-            if (dt.Rows.Count == 0)
-            {
-                throw new Exception("無此帳號。" + (isUID ? "UID" : "ID") + " : "
-                    + p_UID);
-            }
-            else
-            {
-                User rtn = new User();
-                try
-                {
-
-
-                    DataRow dr = dt.Rows[0];
-
-                    rtn.Userinfo.UID = (string)SQLS.AtType<string>(dr["UID"]);
-                    rtn.Userinfo.ID = (string)SQLS.AtType<string>(dr["ID"]);
-                    rtn.Userinfo.Password = (string)SQLS.AtType<string>(dr["Password"]);
-                    rtn.Userinfo.Email = (string)SQLS.AtType<string>(dr["Email"]);
-                    rtn.Userinfo.StudentNum = (string)SQLS.AtType<string>(dr["StudentNum"]);
-                    rtn.Userinfo.ClassName = (string)SQLS.AtType<string>(dr["ClassName"]);
-                    rtn.Userinfo.Realname = (string)SQLS.AtType<string>(dr["Realname"]);
-                    rtn.Usersetting.Userprivacy = (UserPrivacy)SQLS.AtType<UserPrivacy>(dr["UserPrivacy"]);
-                    rtn.TbitCoin = (int)SQLS.AtType<int>(dr["TbitCoin"]);
-
-                    rtn.Userinfo.Nickname = (string)SQLS.AtType<string>(dr["Nickname"]);
-                    rtn.Userinfo.Gender = (Gender)SQLS.AtType<Gender>(dr["Gender"]);
-                    rtn.Userinfo.Picture = dr["Picture"] is DBNull ? null :
-                        (Image)(new ImageConverter()).ConvertFrom((byte[])dr["Picture"]);
-                    rtn.Userinfo.Birthday = (DateTime)SQLS.AtType<DateTime>(dr["Birthday"]);
-
-                    rtn.Friends.Members = Model.StringToList((string)SQLS.AtType<List<string>>(dr["Friend"]));
-                    rtn.Friends.UpdateMembersName();
-
-
-                    List<string> ClassGroupLs = Model.StringToList((string)SQLS.AtType<List<string>>(dr["ClassGroup"]));
-                    List<string> FamilyGroupLs = Model.StringToList((string)SQLS.AtType<List<string>>(dr["FamilyGroup"]));
-
-                    if ((ClassGroupLs == null || ClassGroupLs.Count == 0) &&
-                        (FamilyGroupLs == null || FamilyGroupLs.Count == 0))
-                        rtn.Groups = null;
-                    else if (ClassGroupLs == null || ClassGroupLs.Count == 0)
-                        rtn.Groups = FamilyGroupLs.Select(x => (RelationshipGroup)FamilyGroup.Get_FromDB(x)).ToList();
-                    else if (FamilyGroupLs == null || FamilyGroupLs.Count == 0)
-                        rtn.Groups = ClassGroupLs.Select(x => (RelationshipGroup)ClassGroup.Get_FromDB(x)).ToList();
-                    else
-                        rtn.Groups = Enumerable.Concat(
-                        ClassGroupLs.Select(x => (RelationshipGroup)ClassGroup.Get_FromDB(x)),
-                        FamilyGroupLs.Select(x => (RelationshipGroup)FamilyGroup.Get_FromDB(x))).ToList();
-                }
-                catch(Exception)
-                {
-                    throw new Model.ModelException("User類別－Get_FromDB設定User欄位發生錯誤！");
-                }
-                return rtn;
-            }
-
-        }
-
-        /// <summary>
-        /// 將使用者資料儲存進資料庫。
-        /// </summary>
-        /// <param name="usr">使用者資料。</param>
-        public static string Set_ToDB(User usr)
-        {
-            using (SqlConnection icn = SQLS.OpenSqlConn(Model.DB_Conn))
-            {
-                //若帳號已存在，為修改帳號資料的更新。
-                if (SQLS.IsExist(Model.DB_Conn, Model.DB_UserData_TableName, "ID", usr.Userinfo.ID))
-                {
-                    SQLS.ExeSqlCommand(icn, string.Format(@"UPDATE " + Model.DB_UserData_TableName + @"
-                    SET ID = {0}, 
-                    UID = {1}, 
-                    Password = {2}, 
-                    Email = {3}, 
-                    StudentNum = {4}, 
-                    ClassName = {5}, 
-                    RealName = {6}, 
-                    NickName = {7}, 
-                    Picture = {8}, 
-                    Gender = {9}, 
-                    Birthday = {10},
-                    UserPrivacy = {11}, 
-                    Friend = {12}, 
-                    ClassGroup = {13}, 
-                    FamilyGroup = {14}, 
-                    TbitCoin = {15} 
-                    WHERE UID = {1}"
-                        , SQLS.Type(usr.Userinfo.ID)
-                        , SQLS.Type(usr.Userinfo.UID)
-                        , SQLS.Type(usr.Userinfo.Password)
-                        , SQLS.Type(usr.Userinfo.Email)
-                        , SQLS.Type(usr.Userinfo.StudentNum)
-                        , SQLS.Type(usr.Userinfo.ClassName, true)
-                        , SQLS.Type(usr.Userinfo.Realname, true)
-                        , SQLS.Type(usr.Userinfo.Nickname, true)
-                        , SQLS.Type(usr.Userinfo.Picture)
-                        , SQLS.Type(usr.Userinfo.Gender)
-                        , SQLS.Type(usr.Userinfo.Birthday, true)
-                        , SQLS.Type(usr.Usersetting.Userprivacy)
-                        , SQLS.Type(usr.Friends.Members)
-                        , SQLS.Type(usr.Groups.Where(x => x is ClassGroup).Select(x => x.GID).ToList())
-                        , SQLS.Type(usr.Groups.Where(x => x is FamilyGroup).Select(x => x.GID).ToList())
-                        , SQLS.Type(usr.TbitCoin)));
-                }
-                else//否則為新增帳號資料的更新。
-                {
-                    SqlCommand ism = new SqlCommand(@"SELECT MAX(UID) FROM " + Model.DB_UserData_TableName, icn);
-                    string nextuid = (string)ism.ExecuteScalar();
-
-                    SQLS.ExeSqlCommand(icn, @"UPDATE " + Model.DB_UserData_TableName + " SET UID = '" +
-                        (int.Parse(nextuid) + 1).ToString().PadLeft(10, '0') + "' WHERE UID = '"
-                        + nextuid + "'");
-
-                    SQLS.ExeSqlCommand(icn, string.Format(@"INSERT INTO " + Model.DB_UserData_TableName + @" 
-                    (ID, UID, Password, Email, StudentNum, ClassName, RealName, NickName, Picture, Gender, Birthday) 
-                    VALUES 
-                    ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15})"
-                        , SQLS.Type(usr.Userinfo.ID)
-                        , SQLS.Type(usr.Userinfo.UID = nextuid)
-                        , SQLS.Type(usr.Userinfo.Password)
-                        , SQLS.Type(usr.Userinfo.Email)
-                        , SQLS.Type(usr.Userinfo.StudentNum)
-                        , SQLS.Type(usr.Userinfo.ClassName, true)
-                        , SQLS.Type(usr.Userinfo.Realname, true)
-                        , SQLS.Type(usr.Userinfo.Nickname, true)
-                        , SQLS.Type(usr.Userinfo.Picture)
-                        , SQLS.Type(usr.Userinfo.Gender)
-                        , SQLS.Type(usr.Userinfo.Birthday, true)
-                        , SQLS.Type(usr.Usersetting.Userprivacy)
-                        , SQLS.Type(usr.Friends.Members)
-                        , SQLS.Type(usr.Groups.Where(x => x is ClassGroup).Select(x => x.GID).ToList())
-                        , SQLS.Type(usr.Groups.Where(x => x is FamilyGroup).Select(x => x.GID).ToList())
-                        , SQLS.Type(usr.TbitCoin)));
-                }
-                SQLS.CloseSqlConn(icn);
-            }
-            return usr.Userinfo.UID;
-        }
-
         public static void ValidUserInfo(UserInfo p_uif)
         {
             string error = "";
-            if (SQLS.IsExist(Model.DB_Conn, Model.DB_UserData_TableName, "ID", p_uif.ID))
+            if (Model.DB.IsExist(Model.DB.DB_UserData_TableName, "ID", p_uif.ID))
                 error += "帳號已存在－" + p_uif.ID + "。\r\n";
             if (!Regex.IsMatch(p_uif.ID, @"^\w+$"))
                 error += "帳號格式錯誤，非英文、數字、底線所組成。\r\n";
@@ -354,12 +203,61 @@ namespace Project_Tpage.Class
 
         public User()
         {
-            Friends = new FriendGroup();
-            Groups = new List<RelationshipGroup>();
-
             Usersetting = new UserSetting();
             Userinfo = new UserInfo();
+
             Usersetting.Userprivacy = UserPrivacy.Public;
+            Userinfo.UID = null;
+
+            Friends = new FriendGroup();
+            Groups = new List<RelationshipGroup>();
+        }
+
+        public User(DataRow dr)
+        {
+            try
+            {
+                Usersetting = new UserSetting();
+                Userinfo = new UserInfo();
+                Friends = new FriendGroup();
+
+                Userinfo.UID = (string)Model.DB.AnlType<string>(dr["UID"]);
+                Userinfo.ID = (string)Model.DB.AnlType<string>(dr["ID"]);
+                Userinfo.Password = (string)Model.DB.AnlType<string>(dr["Password"]);
+                Userinfo.Email = (string)Model.DB.AnlType<string>(dr["Email"]);
+                Userinfo.StudentNum = (string)Model.DB.AnlType<string>(dr["StudentNum"]);
+                Userinfo.ClassName = (string)Model.DB.AnlType<string>(dr["ClassName"]);
+                Userinfo.Realname = (string)Model.DB.AnlType<string>(dr["Realname"]);
+                Usersetting.Userprivacy = (UserPrivacy)Model.DB.AnlType<UserPrivacy>(dr["UserPrivacy"]);
+                TbitCoin = (int)Model.DB.AnlType<int>(dr["TbitCoin"]);
+
+                Userinfo.Nickname = (string)Model.DB.AnlType<string>(dr["Nickname"]);
+                Userinfo.Gender = (Gender)Model.DB.AnlType<Gender>(dr["Gender"]);
+                Userinfo.Picture = (Image)Model.DB.AnlType<Image>(dr["Picture"]);
+                Userinfo.Birthday = (DateTime)Model.DB.AnlType<DateTime>(dr["Birthday"]);
+
+                Friends.Members = (List<string>)Model.DB.AnlType<List<string>>(dr["Friend"]);
+                Friends.UpdateMembersName();
+
+
+                List<string> ClassGroupLs = (List<string>)Model.DB.AnlType<List<string>>(dr["ClassGroup"]);
+                List<string> FamilyGroupLs = (List<string>)Model.DB.AnlType<List<string>>(dr["FamilyGroup"]);
+
+                if (ClassGroupLs == null && FamilyGroupLs == null)
+                    Groups = null;
+                else if (ClassGroupLs == null)
+                    Groups = FamilyGroupLs.Select(x => (RelationshipGroup)Model.DB.Get<FamilyGroup>(x)).ToList();
+                else if (FamilyGroupLs == null)
+                    Groups = ClassGroupLs.Select(x => (RelationshipGroup)Model.DB.Get<ClassGroup>(x)).ToList();
+                else
+                    Groups = Enumerable.Concat(
+                    ClassGroupLs.Select(x => (RelationshipGroup)Model.DB.Get<FamilyGroup>(x)),
+                    FamilyGroupLs.Select(x => (RelationshipGroup)Model.DB.Get<ClassGroup>(x))).ToList();
+            }
+            catch (Exception e)
+            {
+                throw new Model.ModelException("User類別－建構式User(Datarow)發生錯誤：User設定物件欄位錯誤。\r\n" + e.Message);
+            }
         }
     }
 }

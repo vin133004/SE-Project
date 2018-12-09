@@ -52,7 +52,7 @@ namespace Project_Tpage.Class
         /// <param name="p_ReleaseUser">發文使用者帳號識別碼。</param>
         public Article(string p_ReleaseUser, string p_OfGroup, string p_OfBoard)
         {
-            //設定識別碼，在資料庫中找到可使用的識別碼後設定。
+            AID = null;
             OfGroup = p_OfGroup;
             OfBoard = p_OfBoard;
 
@@ -64,97 +64,30 @@ namespace Project_Tpage.Class
             Content = "";
         }
 
-        private Article()
+        public Article()
         {
-
+            AID = null;
         }
 
-        /// <summary>
-        /// 從資料庫中提取文章的資料。
-        /// </summary>
-        /// <param name="p_AID">文章識別碼。</param>
-        /// <returns></returns>
-        public static Article Get_FromDB(string p_AID)
+        public Article(DataRow dr)
         {
-            DataTable dt = SQLS.GetSqlData(Model.DB_Conn, string.Format("SELECT * FROM {0} WHERE AID = {1}",
-                Model.DB_ArticleData_TableName, p_AID));
-
-            if (dt.Rows.Count == 0)
-                throw new Model.ModelException("無此文章。AID = " + p_AID);
-            else
+            try
             {
-                Article rtn = new Article();
+                AID = (string)Model.DB.AnlType<string>(dr["AID"]);
+                Title = (string)Model.DB.AnlType<string>(dr["Title"]);
+                Content = (string)Model.DB.AnlType<string>(dr["Content"]);
+                ReleaseUser = (string)Model.DB.AnlType<string>(dr["ReleaseUser"]);
+                Date = (DateTime)Model.DB.AnlType<DateTime>(dr["ReleaseDate"]);
+                OfGroup = (string)Model.DB.AnlType<string>(dr["OfGroup"]);
+                OfBoard = (string)Model.DB.AnlType<string>(dr["OfBoard"]);
+                LikeCount = (int)Model.DB.AnlType<int>(dr["LikeCount"]);
 
-                DataRow dr = dt.Rows[0];
-
-                rtn.AID = (string)SQLS.AtType<string>(dr["AID"]);
-                rtn.Title = (string)SQLS.AtType<string>(dr["Title"]);
-                rtn.Content = (string)SQLS.AtType<string>(dr["Content"]);
-                rtn.ReleaseUser = (string)SQLS.AtType<string>(dr["ReleaseUser"]);
-                rtn.Date = (DateTime)SQLS.AtType<DateTime>(dr["ReleaseDate"]);
-                rtn.OfGroup = (string)SQLS.AtType<string>(dr["OfGroup"]);
-                rtn.OfBoard = (string)SQLS.AtType<string>(dr["OfBoard"]);
-                rtn.LikeCount = (int)SQLS.AtType<int>(dr["LikeCount"]);
-
-                return rtn;
             }
-        }
-        /// <summary>
-        /// 將文章資料存入資料庫。傳回新的AID。
-        /// </summary>
-        /// <param name="p_art">文章資料。</param>
-        /// <returns></returns>
-        public static string Set_ToDB(Article p_art)
-        {
-            using (SqlConnection icn = SQLS.OpenSqlConn(Model.DB_Conn))
+            catch (Exception e)
             {
-                //若帳號已存在，為修改帳號資料的更新。
-                if (SQLS.IsExist(Model.DB_Conn, Model.DB_ArticleData_TableName, "AID", p_art.AID))
-                {
-                    SQLS.ExeSqlCommand(icn, string.Format(@"UPDATE " + Model.DB_ArticleData_TableName + @"
-                    SET AID = {0}, 
-                    Title = {1}, 
-                    Content = {2}, 
-                    ReleaseUser = {3}, 
-                    ReleaseDate = {4}, 
-                    LikeCount = {5}, 
-                    OfGroup = {6}, 
-                    OfBoard = {7}, 
-                    WHERE AID = {0}"
-                        , SQLS.Type(p_art.AID)
-                        , SQLS.Type(p_art.Title, true)
-                        , SQLS.Type(p_art.Content, true)
-                        , SQLS.Type(p_art.ReleaseUser)
-                        , SQLS.Type(p_art.Date)
-                        , SQLS.Type(p_art.LikeCount)
-                        , SQLS.Type(p_art.OfGroup)
-                        , SQLS.Type(p_art.OfBoard, true)));
-                }
-                else//否則為新增帳號資料的更新。
-                {
-                    SqlCommand ism = new SqlCommand(@"SELECT MAX(AID) FROM " + Model.DB_ArticleData_TableName, icn);
-                    string nextaid = (string)ism.ExecuteScalar();
-
-                    SQLS.ExeSqlCommand(icn, @"UPDATE " + Model.DB_ArticleData_TableName + " SET AID = '" +
-                        (int.Parse(nextaid) + 1).ToString().PadLeft(10, '0') + "' WHERE AID = '"
-                        + nextaid + "'");
-
-                    SQLS.ExeSqlCommand(icn, string.Format(@"INSERT INTO " + Model.DB_ArticleData_TableName + @" 
-                    (AID, Title, Content, ReleaseUser, ReleaseDate, LikeCount, OfGroup, OfBoard)
-                    VALUES 
-                    ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7})"
-                        , SQLS.Type(p_art.AID = nextaid)
-                        , SQLS.Type(p_art.Title, true)
-                        , SQLS.Type(p_art.Content, true)
-                        , SQLS.Type(p_art.ReleaseUser)
-                        , SQLS.Type(p_art.Date)
-                        , SQLS.Type(p_art.LikeCount)
-                        , SQLS.Type(p_art.OfGroup)
-                        , SQLS.Type(p_art.OfBoard, true)));
-                }
-                SQLS.CloseSqlConn(icn);
+                throw new Model.ModelException("Article類別－建構式Article(DataRow)發生錯誤：Article設定物件欄位錯誤。\r\n"
+                    + e.Message);
             }
-            return p_art.AID;
         }
     }
 
@@ -196,7 +129,7 @@ namespace Project_Tpage.Class
         /// <param name="p_OfArticle">屬於哪篇文章。</param>
         public AMessage(string p_ReleaseUser, string p_OfArticle)
         {
-            //設定識別碼，在資料庫中找到可使用的識別碼後設定。
+            MID = null;
 
             ReleaseUser = p_ReleaseUser;
             OfArticle = p_OfArticle;
@@ -206,88 +139,28 @@ namespace Project_Tpage.Class
             Content = "";
         }
 
-        private AMessage()
+        public AMessage()
         {
-
+            MID = null;
         }
 
-        /// <summary>
-        /// 從資料庫中提取留言的資料。
-        /// </summary>
-        /// <param name="p_MID">留言識別碼。</param>
-        /// <returns></returns>
-        public static AMessage Get_FromDB(string p_MID)
+        public AMessage(DataRow dr)
         {
-            DataTable dt = SQLS.GetSqlData(Model.DB_Conn, string.Format("SELECT * FROM {0} WHERE AID = {1}",
-                Model.DB_AMessageData_TableName, p_MID));
-
-            if (dt.Rows.Count == 0)
-                throw new Model.ModelException("無此留言。MID = " + p_MID);
-            else
+            try
             {
-                AMessage rtn = new AMessage();
+                MID = (string)Model.DB.AnlType<string>(dr["MID"]);
+                ReleaseUser = (string)Model.DB.AnlType<string>(dr["ReleaseUser"]);
+                Date = (DateTime)Model.DB.AnlType<DateTime>(dr["ReleaseDate"]);
+                Content = (string)Model.DB.AnlType<string>(dr["Content"]);
+                LikeCount = (int)Model.DB.AnlType<int>(dr["LikeCount"]);
+                OfArticle = (string)Model.DB.AnlType<string>(dr["OfArticle"]);
 
-                DataRow dr = dt.Rows[0];
-
-                rtn.MID = (string)SQLS.AtType<string>(dr["MID"]);
-                rtn.ReleaseUser = (string)SQLS.AtType<string>(dr["ReleaseUser"]);
-                rtn.Date = (DateTime)SQLS.AtType<DateTime>(dr["ReleaseDate"]);
-                rtn.Content = (string)SQLS.AtType<string>(dr["Content"]);
-                rtn.LikeCount = (int)SQLS.AtType<int>(dr["LikeCount"]);
-                rtn.OfArticle = (string)SQLS.AtType<string>(dr["OfArticle"]);
-
-                return rtn;
             }
-        }
-        /// <summary>
-        /// 將留言資料存入資料庫。傳回新的MID。
-        /// </summary>
-        /// <param name="p_ame">留言資料。</param>
-        public static string Set_ToDB(AMessage p_ame)
-        {
-            using (SqlConnection icn = SQLS.OpenSqlConn(Model.DB_Conn))
+            catch (Exception e)
             {
-                //若帳號已存在，為修改帳號資料的更新。
-                if (SQLS.IsExist(Model.DB_Conn, Model.DB_AMessageData_TableName, "AID", p_ame.MID))
-                {
-                    SQLS.ExeSqlCommand(icn, string.Format(@"UPDATE " + Model.DB_AMessageData_TableName + @"
-                    SET MID = {0}, 
-                    ReleaseUser = {1}, 
-                    ReleaseDate = {2}, 
-                    Content = {3}, 
-                    LikeCount = {4}, 
-                    OfArticle = {5}, 
-                    WHERE MID = {0}"
-                        , SQLS.Type(p_ame.MID)
-                        , SQLS.Type(p_ame.ReleaseUser)
-                        , SQLS.Type(p_ame.Date)
-                        , SQLS.Type(p_ame.Content, true)
-                        , SQLS.Type(p_ame.LikeCount)
-                        , SQLS.Type(p_ame.OfArticle)));
-                }
-                else//否則為新增帳號資料的更新。
-                {
-                    SqlCommand ism = new SqlCommand(@"SELECT MAX(MID) FROM " + Model.DB_AMessageData_TableName, icn);
-                    string nextmid = (string)ism.ExecuteScalar();
-
-                    SQLS.ExeSqlCommand(icn, @"UPDATE " + Model.DB_AMessageData_TableName + " SET MID = '" +
-                        (int.Parse(nextmid) + 1).ToString().PadLeft(10, '0') + "' WHERE MID = '"
-                        + nextmid + "'");
-
-                    SQLS.ExeSqlCommand(icn, string.Format(@"INSERT INTO " + Model.DB_AMessageData_TableName + @" 
-                    (MID, ReleaseUser, ReleaseDate, Content, LikeCount, OfArticle)
-                    VALUES 
-                    ({0}, {1}, {2}, {3}, {4}, {5})"
-                        , SQLS.Type(p_ame.MID)
-                        , SQLS.Type(p_ame.ReleaseUser)
-                        , SQLS.Type(p_ame.Date)
-                        , SQLS.Type(p_ame.Content, true)
-                        , SQLS.Type(p_ame.LikeCount)
-                        , SQLS.Type(p_ame.OfArticle)));
-                }
-                SQLS.CloseSqlConn(icn);
+                throw new Model.ModelException("AMessage類別－建構式Amessage(DataRow)發生錯誤：AMessage設定物件欄位錯誤。\r\n"
+                    + e.Message);
             }
-            return p_ame.MID;
         }
     }
 }
