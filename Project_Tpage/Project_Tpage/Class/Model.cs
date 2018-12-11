@@ -184,7 +184,6 @@ namespace Project_Tpage.Class
             ame.Content = p_Message;
             DB.Set<AMessage>(ame);
         }
-
         /// <summary>
         /// 取得特定的團體的文章。
         /// </summary>
@@ -192,10 +191,14 @@ namespace Project_Tpage.Class
         /// <returns></returns>
         public List<Article> GetArticlesFromGroup(string p_Group)
         {
-            //從資料庫提取此Group的文章並回傳。
-            throw new NotImplementedException();
+            List<Article> rtn;
+            using (DataTable dt = DB.GetSqlData("SELECT * FROM " + DB.DB_ArticleData_TableName))
+            {
+                rtn = Enumerable.Cast<DataRow>(dt.Rows).Where(x => (string)x["OfGroup"] == p_Group)
+                    .Select(y => new Article(y)).ToList();
+            }
+            return rtn;
         }
-
         /// <summary>
         /// 取得特定看板的文章。
         /// </summary>
@@ -204,20 +207,36 @@ namespace Project_Tpage.Class
         /// <returns></returns>
         public List<Article> GetArticlesFromBoard(string p_Group, string p_Board)
         {
-            //從資料庫提取此Board的文章並回傳。
-            throw new NotImplementedException();
+            List<Article> rtn;
+            using (DataTable dt = DB.GetSqlData("SELECT * FROM " + DB.DB_ArticleData_TableName))
+            {
+                rtn = Enumerable.Cast<DataRow>(dt.Rows).Where(x => (string)x["OfGroup"] == p_Group && 
+                (string)x["OfBoard"] == p_Board).Select(y => new Article(y)).ToList();
+            }
+            return rtn;
         }
-
         /// <summary>
         /// 取得目前使用者的動態頁面的內容，內容為該使用者的好友之發文與留言物件。
         /// </summary>
         /// <returns></returns>
         public List<object> GetDynamicPageContent()
         {
-            //Enumerable.Cast<DataRow>(DB.GetSqlData("").Rows).Select(x => new Article(x))
-            throw new NotImplementedException();
-        }
+            List<Article> dr1;
+            using (DataTable dt = DB.GetSqlData("SELECT * FROM " + DB.DB_ArticleData_TableName))
+            {
+                dr1 = Enumerable.Cast<DataRow>(dt.Rows).Where(
+                    x => user.Friends.Members.Contains(x["ReleaseUser"])).Select(y => new Article(y)).ToList();
+            }
+            List<AMessage> dr2;
+            using (DataTable dt = DB.GetSqlData("SELECT * FROM " + DB.DB_AMessageData_TableName))
+            {
+                dr2 = Enumerable.Cast<DataRow>(dt.Rows).Where(
+                    x => user.Friends.Members.Contains(x["ReleaseUser"])).Select(y => new AMessage(y)).ToList();
+            }
 
+
+            return dr1.Concat<object>(dr2).ToList();
+        }
         /// <summary>
         /// 設定使用者資訊與使用者設定。
         /// </summary>
@@ -239,7 +258,7 @@ namespace Project_Tpage.Class
 
             State = StateEnum.Login;
             user = null;
-            DB = new SqlServ_MSSql();
+            DB = new SqlServ_MSSql("");
         }
     }
 
@@ -424,9 +443,9 @@ namespace Project_Tpage.Class
         /// <param name="obj">物件。</param>
         public abstract void Set<T>(object obj);
 
-        public SqlServ()
+        public SqlServ(string p_DBconn)
         {
-            DB_Conn = "";
+            DB_Conn = p_DBconn;
 
             DB_UserData_TableName = "UserData";
             DB_ArticleData_TableName = "ArticleData";
@@ -459,7 +478,6 @@ namespace Project_Tpage.Class
             icn.Open();
             return icn;
         }
-
         /// <summary>
         /// 關閉SQL連線。
         /// </summary>
@@ -492,7 +510,6 @@ namespace Project_Tpage.Class
             }
             return opt;
         }
-
         /// <summary>
         /// 執行SQL存放命令。
         /// </summary>
@@ -518,7 +535,6 @@ namespace Project_Tpage.Class
                 CloseSqlConn(icn);
             }
         }
-
         /// <summary>
         /// 執行SQL取用命令，並回傳取得資料表。採可拋式行為。
         /// </summary>
@@ -714,7 +730,7 @@ namespace Project_Tpage.Class
             }
         }
         /// <summary>
-        /// 將特定行別的物件存入資料庫。
+        /// 將特定型別的物件存入資料庫。
         /// </summary>
         /// <typeparam name="T">指定型別。</typeparam>
         /// <param name="obj">物件。</param>
@@ -1027,6 +1043,11 @@ namespace Project_Tpage.Class
             {
                 throw new Model.ModelException("SqlServ類別－Set<T>發生錯誤：要求儲存非特定型別的物件。class : " + typeof(T));
             }
+        }
+
+        public SqlServ_MSSql(string p_DBconn) : base(p_DBconn)
+        {
+
         }
     }
     

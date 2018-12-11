@@ -53,7 +53,7 @@ namespace Project_Tpage.Class
             if (Members == null || Members.Count == 0) return;
 
             List<DataRow> dr;
-            using (DataTable dt = Model.DB.GetSqlData(Model.DB.DB_Conn,
+            using (DataTable dt = Model.DB.GetSqlData(
                 "SELECT UID, NickName, RealName FROM " + Model.DB.DB_UserData_TableName + ""))
             {
                 dr = Enumerable.Where(Enumerable.Cast<DataRow>(dt.Rows)

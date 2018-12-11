@@ -178,9 +178,21 @@ namespace Project_Tpage.Class
         /// <summary>
         /// 抽卡交友。
         /// </summary>
-        public void Pickcard()
+        public User Pickcard()
         {
+            int maxuid = int.Parse((string)Model.DB.GetSqlData(@"SELECT MAX(UID) FROM " 
+                + Model.DB.DB_UserData_TableName).Rows[0][0]);
 
+            int myuid = int.Parse(Userinfo.UID);
+            int nowuid = myuid;
+            for(int noneloop = 0; noneloop<10000; noneloop++)
+            {
+                nowuid = new Random().Next(1, maxuid);
+                if (nowuid == myuid) continue;
+                break;
+            }
+
+            return (User)Model.DB.Get<User>(nowuid.ToString().PadLeft(10, '0'));
         }
 
         public static void ValidUserInfo(UserInfo p_uif)
