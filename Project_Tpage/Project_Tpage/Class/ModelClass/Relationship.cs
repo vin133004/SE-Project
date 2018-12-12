@@ -70,6 +70,101 @@ namespace Project_Tpage.Class
     }
 
     /// <summary>
+    /// 代表一個班級團體。
+    /// </summary>
+    public class ClassGroup : RelationshipGroup
+    {
+        /// <summary>
+        /// 班級系級。
+        /// </summary>
+        public string ClassName { get; set; }
+
+        public ClassGroup() : base()
+        {
+            
+        }
+
+        public ClassGroup(DataRow dr) : base()
+        {
+            try
+            {
+                GID = (string)Model.DB.AnlType<string>(dr["GID"]);
+                Groupname = (string)Model.DB.AnlType<string>(dr["GroupName"]);
+                ClassName = (string)Model.DB.AnlType<string>(dr["ClassName"]);
+                Members = (List<string>)Model.DB.AnlType<List<string>>(dr["Members"]);
+
+                Admin = (List<string>)Model.DB.AnlType<List<string>>(dr["Admin"]);
+                BoardAdmin = (List<string>)Model.DB.AnlType<List<string>>(dr["BoardAdmin"]);
+                Topic = (List<string>)Model.DB.AnlType<List<string>>(dr["Topic"]);
+                Articles = (List<string>)Model.DB.AnlType<List<string>>(dr["Articles"]);
+            }
+            catch (Exception e)
+            {
+                throw new Model.ModelException("ClassGroup類別－建構式ClassGroup(DataRow)發生錯誤：" +
+                    "ClassGroup設定物件欄位錯誤。\r\n" + e.Message, "");
+            }
+        }
+
+        public override void Add_Members(User usr)
+        {
+            if (usr.Userinfo.ClassName != ClassName)
+                throw new Model.ModelException("ClassGroup類別－Add_Members()發生例外：非此班級之使用者不得加入。"
+                    , "非此班級之使用者不得加入");
+            else if (Members.Contains(usr.Userinfo.UID))
+                throw new Model.ModelException("ClassGroup類別－Add_Members()發生例外：此使用者已為班級成員。"
+                    , "你已為班級成員");
+            else
+            {
+                Members.Add(usr.Userinfo.UID);
+                Model.DB.Set<ClassGroup>(this);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 代表一個家族團體。
+    /// </summary>
+    public class FamilyGroup : RelationshipGroup
+    {
+        public FamilyGroup() : base()
+        {
+
+        }
+
+        public FamilyGroup(DataRow dr) : base()
+        {
+            try
+            {
+                GID = (string)Model.DB.AnlType<string>(dr["GID"]);
+                Groupname = (string)Model.DB.AnlType<string>(dr["GroupName"]);
+                Members = (List<string>)Model.DB.AnlType<List<string>>(dr["Members"]);
+
+                Admin = (List<string>)Model.DB.AnlType<List<string>>(dr["Admin"]);
+                BoardAdmin = (List<string>)Model.DB.AnlType<List<string>>(dr["BoardAdmin"]);
+                Topic = (List<string>)Model.DB.AnlType<List<string>>(dr["Topic"]);
+                Articles = (List<string>)Model.DB.AnlType<List<string>>(dr["Articles"]);
+            }
+            catch (Exception e)
+            {
+                throw new Model.ModelException("FamilyGroup類別－建構式FamilyGroup(DataRow)發生錯誤：" +
+                    "FamilyGroup設定物件欄位錯誤。\r\n" + e.Message, "");
+            }
+        }
+
+        public override void Add_Members(User usr)
+        {
+            if (Members.Contains(usr.Userinfo.UID))
+                throw new Model.ModelException("FamilyGroup類別－Add_Members()發生例外：此使用者已為家族成員。"
+                    , "你已為家族成員");
+            else
+            {
+                Members.Add(usr.Userinfo.UID);
+                Model.DB.Set<FamilyGroup>(this);
+            }
+        }
+    }
+
+    /// <summary>
     /// 代表一個社交關係的團體。
     /// </summary>
     public abstract class RelationshipGroup : IRelationship
@@ -134,7 +229,7 @@ namespace Project_Tpage.Class
         }
 
 
-        public abstract void Manage_Members();
+        public abstract void Add_Members(User usr);
         public RelationshipGroup()
         {
             GID = null;
@@ -144,86 +239,6 @@ namespace Project_Tpage.Class
             BoardAdmin = new List<string>();
             Articles = new List<string>();
             Members = new List<string>();
-        }
-    }
-
-    /// <summary>
-    /// 代表一個班級團體。
-    /// </summary>
-    public class ClassGroup : RelationshipGroup
-    {
-        /// <summary>
-        /// 班級系級。
-        /// </summary>
-        public string ClassName { get; set; }
-
-        public ClassGroup() : base()
-        {
-            
-        }
-
-        public ClassGroup(DataRow dr) : base()
-        {
-            try
-            {
-                GID = (string)Model.DB.AnlType<string>(dr["GID"]);
-                Groupname = (string)Model.DB.AnlType<string>(dr["GroupName"]);
-                ClassName = (string)Model.DB.AnlType<string>(dr["ClassName"]);
-                Members = (List<string>)Model.DB.AnlType<List<string>>(dr["Members"]);
-
-                Admin = (List<string>)Model.DB.AnlType<List<string>>(dr["Admin"]);
-                BoardAdmin = (List<string>)Model.DB.AnlType<List<string>>(dr["BoardAdmin"]);
-                Topic = (List<string>)Model.DB.AnlType<List<string>>(dr["Topic"]);
-                Articles = (List<string>)Model.DB.AnlType<List<string>>(dr["Articles"]);
-            }
-            catch (Exception e)
-            {
-                throw new Model.ModelException("ClassGroup類別－建構式ClassGroup(DataRow)發生錯誤：" +
-                    "ClassGroup設定物件欄位錯誤。\r\n" + e.Message);
-            }
-        }
-
-        public override void Manage_Members()
-        {
-
-        }
-
-    }
-
-
-    /// <summary>
-    /// 代表一個家族團體。
-    /// </summary>
-    public class FamilyGroup : RelationshipGroup
-    {
-        public FamilyGroup() : base()
-        {
-
-        }
-
-        public FamilyGroup(DataRow dr) : base()
-        {
-            try
-            {
-                GID = (string)Model.DB.AnlType<string>(dr["GID"]);
-                Groupname = (string)Model.DB.AnlType<string>(dr["GroupName"]);
-                Members = (List<string>)Model.DB.AnlType<List<string>>(dr["Members"]);
-
-                Admin = (List<string>)Model.DB.AnlType<List<string>>(dr["Admin"]);
-                BoardAdmin = (List<string>)Model.DB.AnlType<List<string>>(dr["BoardAdmin"]);
-                Topic = (List<string>)Model.DB.AnlType<List<string>>(dr["Topic"]);
-                Articles = (List<string>)Model.DB.AnlType<List<string>>(dr["Articles"]);
-            }
-            catch (Exception e)
-            {
-                throw new Model.ModelException("FamilyGroup類別－建構式FamilyGroup(DataRow)發生錯誤：" +
-                    "FamilyGroup設定物件欄位錯誤。\r\n" + e.Message);
-            }
-        }
-
-        public override void Manage_Members()
-        {
-
         }
     }
 }

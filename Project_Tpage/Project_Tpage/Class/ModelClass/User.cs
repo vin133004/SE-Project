@@ -210,7 +210,7 @@ namespace Project_Tpage.Class
                 error += "密碼長度不足，至少8位英文或數字組成。\r\n";
 
 
-            if (error != "") throw new Model.ModelException("無效的帳號資料：\r\n" + error);
+            if (error != "") throw new Model.ModelException("無效的帳號資料：\r\n" + error, "帳號資料不符合格式：" + error);
         }
 
         public User()
@@ -227,12 +227,11 @@ namespace Project_Tpage.Class
 
         public User(DataRow dr)
         {
+            Usersetting = new UserSetting();
+            Userinfo = new UserInfo();
+            Friends = new FriendGroup();
             try
             {
-                Usersetting = new UserSetting();
-                Userinfo = new UserInfo();
-                Friends = new FriendGroup();
-
                 Userinfo.UID = (string)Model.DB.AnlType<string>(dr["UID"]);
                 Userinfo.ID = (string)Model.DB.AnlType<string>(dr["ID"]);
                 Userinfo.Password = (string)Model.DB.AnlType<string>(dr["Password"]);
@@ -268,7 +267,8 @@ namespace Project_Tpage.Class
             }
             catch (Exception e)
             {
-                throw new Model.ModelException("User類別－建構式User(Datarow)發生錯誤：User設定物件欄位錯誤。\r\n" + e.Message);
+                throw new Model.ModelException("User類別－建構式User(Datarow)發生錯誤：User設定物件欄位錯誤。\r\n" 
+                    + e.Message, "");
             }
         }
     }

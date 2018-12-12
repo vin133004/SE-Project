@@ -24,7 +24,6 @@ namespace Project_Tpage.Class
         /// 屬於哪個看板。
         /// </summary>
         public string OfBoard { get; set; }
-
         /// <summary>
         /// 文章的發布日期。
         /// </summary>
@@ -45,6 +44,7 @@ namespace Project_Tpage.Class
         /// 按讚數量。
         /// </summary>
         public int LikeCount { get; set; }
+
 
         /// <summary>
         /// 建構式。
@@ -86,7 +86,7 @@ namespace Project_Tpage.Class
             catch (Exception e)
             {
                 throw new Model.ModelException("Article類別－建構式Article(DataRow)發生錯誤：Article設定物件欄位錯誤。\r\n"
-                    + e.Message);
+                    + e.Message, "");
             }
         }
     }
@@ -104,7 +104,6 @@ namespace Project_Tpage.Class
         /// 屬於哪篇文章。
         /// </summary>
         public string OfArticle { get; set; }
-
         /// <summary>
         /// 文章的發布日期。
         /// </summary>
@@ -121,6 +120,7 @@ namespace Project_Tpage.Class
         /// 按讚數量。
         /// </summary>
         public int LikeCount { get; set; }
+
 
         /// <summary>
         /// 建構式。
@@ -159,7 +159,7 @@ namespace Project_Tpage.Class
             catch (Exception e)
             {
                 throw new Model.ModelException("AMessage類別－建構式Amessage(DataRow)發生錯誤：AMessage設定物件欄位錯誤。\r\n"
-                    + e.Message);
+                    + e.Message, "");
             }
         }
     }
