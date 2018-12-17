@@ -7,85 +7,210 @@ using System.Data.SqlClient;
 using System.Data.Odbc;
 using System.Drawing;
 using MySql.Data.MySqlClient;
+using System.Collections;
 
 
 namespace Project_Tpage.Class
 {
-    public class Model
+    /// <summary>
+    /// 代表此資料模型所擲回的例外狀況。若要回報錯誤給使用者瀏覽，請提取userMessage屬性。
+    /// </summary>
+    public class ModelException : Exception
     {
         /// <summary>
-        /// 代表此資料模型所擲回的例外狀況。若要回報錯誤給使用者瀏覽，請提取userMessage屬性。
+        /// 顯示給使用者看得錯誤訊息。
         /// </summary>
-        public class ModelException : Exception
+        public string userMessage { get; }
+
+        /// <summary>
+        /// 代表一個資料模型例外狀況的錯誤代號列舉值。
+        /// </summary>
+        public enum Error
         {
             /// <summary>
-            /// 顯示給使用者看得錯誤訊息。
+            /// 未知錯誤。
             /// </summary>
-            public string userMessage { get; }
+            Unknow = 0,
 
-            public ModelException() : base("資料模型發生未知錯誤。")
-            {
-                userMessage = "發生未知錯誤。";
-            }
 
-            public ModelException(string message, string umessage) : base(message)
-            {
-                userMessage = umessage;
-            }
+            //(錯誤代號:1000)資料庫綜合錯誤
+            /// <summary>
+            /// 資料庫讀取錯誤。
+            /// </summary>
+            DbGetFailure =                  1020,
+            /// <summary>
+            /// 資料庫寫入錯誤。
+            /// </summary>
+            DbSetFailure =                  1030,
+            /// <summary>
+            /// 資料庫寫入SQL行為錯誤。
+            /// </summary>
+            DbSetSqlOperationFail =         1031,
+
+            //(錯誤代號:1100)資料庫物件未找到
+            /// <summary>
+            /// 帳號未找到。
+            /// </summary>
+            UIDnotFound =                   1101,
+            /// <summary>
+            /// 文章未找到。
+            /// </summary>
+            AIDnotFound =                   1102,
+            /// <summary>
+            /// 留言未找到。
+            /// </summary>
+            MIDnotFound =                   1103,
+            /// <summary>
+            /// 廣告未找到。
+            /// </summary>
+            DIDnotFound =                   1104,
+            /// <summary>
+            /// 團體未找到。
+            /// </summary>
+            GIDnotFound =                   1105,
+
+            //(錯誤代號:1200)資料庫資料解析錯誤(資料格式錯誤)
+            /// <summary>
+            /// 日期資料解析錯誤。
+            /// </summary>
+            AnlTypeErrDatetime =            1201,
+            /// <summary>
+            /// 字串陣列資料解析錯誤。
+            /// </summary>
+            AnlTypeErrListOfString =        1202,
+            /// <summary>
+            /// 看板版主對陣列資料解析錯誤。
+            /// </summary>
+            AnlTypeErrListOfBoardAdmin =    1203,
+            /// <summary>
+            /// 圖片資料解析錯誤。
+            /// </summary>
+            AnlTypeErrImage =               1204,
+            /// <summary>
+            /// 尺寸資料解析錯誤。
+            /// </summary>
+            AnlTypeErrSize =                1205,
+
+            //(錯誤代號:1300)將資料列寫入物件執行個體錯誤
+            /// <summary>
+            /// 使用者執行個體建立失敗。
+            /// </summary>
+            SetFiledFailUser =              1301,
+            /// <summary>
+            /// 文章執行個體建立失敗。
+            /// </summary>
+            SetFiledFailArticle =           1302,
+            /// <summary>
+            /// 留言執行個體建立失敗。
+            /// </summary>
+            SetFiledFailAMessage =          1303,
+            /// <summary>
+            /// 廣告執行個體建立失敗。
+            /// </summary>
+            SetFiledFailAdvertise =         1304,
+            /// <summary>
+            /// 班級團體執行個體建立失敗。
+            /// </summary>
+            SetFiledFailClassGroup =        1305,
+            /// <summary>
+            /// 家族團體執行個體建立失敗。
+            /// </summary>
+            SetFiledFailFamilyGroup =       1306,
+
+
+            //(錯誤代號:2000)資料模型綜合錯誤
+            /// <summary>
+            /// 創立團體失敗。
+            /// </summary>
+            CreateGroupFail =               2001,
+            /// <summary>
+            /// 無效帳號資料。
+            /// </summary>
+            InvalidUserInformation =        2002,
+            /// <summary>
+            /// 嘗試加入團體失敗。
+            /// </summary>
+            JoinGroupFail =                 2003,
+            /// <summary>
+            /// 頁面資料格式錯誤。
+            /// </summary>
+            PageDataFromatError =           2004,
+
+
+            //(錯誤代號:3000)資料結構錯誤
+            /// <summary>
+            /// 朋友圈成員操作錯誤。
+            /// </summary>
+            FriendMemberOperationError =    3001
+
         }
         /// <summary>
-        /// 代表狀態機的各個狀態。
+        /// 此例外狀況的錯誤代號。
         /// </summary>
-        public enum StateEnum
+        public Error ErrorNumber { get; private set; }
+
+        public ModelException() : base("資料模型發生未知錯誤。")
         {
-            /// <summary>
-            /// 代表註冊頁面。
-            /// </summary>
-            Register,
-            /// <summary>
-            /// 代表登入頁面。
-            /// </summary>
-            Login,
-            /// <summary>
-            /// 代表首頁。
-            /// </summary>
-            Home,
-            /// <summary>
-            /// 代表朋友的動態頁。
-            /// </summary>
-            FriendPage,
-            /// <summary>
-            /// 代表班級首頁或家族首頁。
-            /// </summary>
-            Group,
-            /// <summary>
-            /// 代表設定頁面。
-            /// </summary>
-            Setting,
-            /// <summary>
-            /// 代表瀏覽文章頁面。
-            /// </summary>
-            Article,
-            /// <summary>
-            /// 代表瀏覽看板頁面。
-            /// </summary>
-            Board,
-            /// <summary>
-            /// 代表編輯文章頁面。
-            /// </summary>
-            EditArticle
+            userMessage = "發生未知錯誤。";
+            ErrorNumber = Error.Unknow;
         }
 
+        public ModelException(Error enm, string message, string umessage) : base(message)
+        {
+            ErrorNumber = enm;
+            userMessage = umessage;
+        }
+    }
 
+    /// <summary>
+    /// 代表狀態機的各個狀態。
+    /// </summary>
+    public enum StateEnum
+    {
+        /// <summary>
+        /// 代表註冊頁面。
+        /// </summary>
+        Register,
+        /// <summary>
+        /// 代表登入頁面。
+        /// </summary>
+        Login,
+        /// <summary>
+        /// 代表首頁(動態頁)。
+        /// </summary>
+        Home,
+        /// <summary>
+        /// 代表使用者頁面。
+        /// </summary>
+        UserPage,
+        /// <summary>
+        /// 代表班級首頁或家族首頁。
+        /// </summary>
+        Group,
+        /// <summary>
+        /// 代表設定頁面。
+        /// </summary>
+        Setting,
+        /// <summary>
+        /// 代表瀏覽文章頁面。
+        /// </summary>
+        Article,
+        /// <summary>
+        /// 代表瀏覽看板頁面。
+        /// </summary>
+        Board,
+        /// <summary>
+        /// 代表編輯文章頁面。
+        /// </summary>
+        EditArticle
+    }
 
+    public class Model
+    {
         /// <summary>
         /// 取得目前的狀態。
         /// </summary>
         public StateEnum State { get; set; }
-        /// <summary>
-        /// 目前狀態的附加資訊。如在看板狀態時看板的主題名稱。
-        /// </summary>
-        public string StateInfo { get; set; }
         /// <summary>
         /// 取得顯示。
         /// </summary>
@@ -148,13 +273,71 @@ namespace Project_Tpage.Class
             }
         }
         /// <summary>
-        /// 根據給定的文章識別碼，查詢文章物件，未找到則擲回例外。
+        /// 設定使用者資訊與使用者設定。
         /// </summary>
-        /// <param name="p_AID">文章識別碼。</param>
-        /// <returns></returns>
-        public Article GetArticle(string p_AID)
+        /// <param name="_uif">使用者資訊。</param>
+        /// <param name="_ust">使用者設定。</param>
+        public void SetUserSetting(UserInfo p_uif, UserSetting p_ust)
         {
-            return (Article)DB.Get<Article>(p_AID);
+            User.ValidUserInfo(p_uif);
+
+            user.Userinfo = p_uif;
+            user.Usersetting = p_ust;
+            DB.Set<User>(user);
+        }
+        /// <summary>
+        /// 創立班級團體。
+        /// </summary>
+        /// <param name="p_ClassName">班級。</param>
+        /// <param name="p_GroupName">團體名稱。</param>
+        public void CreateClass(string p_ClassName, string p_GroupName)
+        {
+            if (DB.IsExist(DB.DB_ClassGroupData_TableName, "ClassName", p_ClassName))
+                throw new ModelException(
+                    ModelException.Error.CreateGroupFail,
+                    "Model類別－CreateClass()發生例外：此班級已存在。",
+                    "班級已存在");
+            else if (DB.IsExist(DB.DB_ClassGroupData_TableName, "GroupName", p_GroupName))
+                throw new ModelException(
+                    ModelException.Error.CreateGroupFail,
+                    "Model類別－CreateClass()發生例外：班級團體名稱已被使用。",
+                    "班級團體名稱已被使用");
+            else if (user.Userinfo.ClassName != p_ClassName)
+                throw new ModelException(
+                    ModelException.Error.CreateGroupFail,
+                    "Model類別－CreateClass()發生例外：不得創立非自己班級的班級團體。",
+                    "不得創立非自己班級的班級團體。");
+            else
+            {
+                ClassGroup cg = new ClassGroup();
+                cg.ClassName = p_ClassName;
+                cg.Groupname = p_GroupName;
+
+                cg.Members_Add(user);
+                cg.Admin.Add(user.Userinfo.UID);
+                DB.Set<ClassGroup>(cg);
+            }
+        }
+        /// <summary>
+        /// 創立家族團體。
+        /// </summary>
+        /// <param name="p_GroupName">團體名稱。</param>
+        public void CreateFamily(string p_GroupName)
+        {
+            if (DB.IsExist(DB.DB_FamilyGroupData_TableName, "GroupName", p_GroupName))
+                throw new ModelException(
+                    ModelException.Error.CreateGroupFail,
+                    "Model類別－CreateFamily()發生例外：家族團體名稱已被使用。",
+                    "家族團體名稱已被使用");
+            else
+            {
+                FamilyGroup fg = new FamilyGroup();
+                fg.Groupname = p_GroupName;
+
+                fg.Members_Add(user);
+                fg.Admin.Add(user.Userinfo.UID);
+                DB.Set<FamilyGroup>(fg);
+            }
         }
         /// <summary>
         /// 使用者發布文章。
@@ -172,15 +355,6 @@ namespace Project_Tpage.Class
             DB.Set<Article>(atc);
         }
         /// <summary>
-        /// 根據給定的留言識別碼，查詢留言物件，未找到則擲回例外。
-        /// </summary>
-        /// <param name="p_MID">留言識別碼。</param>
-        /// <returns></returns>
-        public AMessage GetAMessage(string p_MID)
-        {
-            return (AMessage)DB.Get<AMessage>(p_MID);
-        }
-        /// <summary>
         /// 使用者留言。
         /// </summary>
         /// <param name="p_Message">留言內容。</param>
@@ -191,6 +365,7 @@ namespace Project_Tpage.Class
             ame.Content = p_Message;
             DB.Set<AMessage>(ame);
         }
+
         /// <summary>
         /// 取得特定的團體的文章。
         /// </summary>
@@ -204,6 +379,11 @@ namespace Project_Tpage.Class
                 rtn = Enumerable.Cast<DataRow>(dt.Rows).Where(x => (string)x["OfGroup"] == p_Group)
                     .Select(y => new Article(y)).ToList();
             }
+            rtn.Sort(
+                delegate (Article a1, Article a2)
+                {
+                    return -DateTime.Compare(a1.Date, a2.Date);
+                });
             return rtn;
         }
         /// <summary>
@@ -220,6 +400,11 @@ namespace Project_Tpage.Class
                 rtn = Enumerable.Cast<DataRow>(dt.Rows).Where(x => (string)x["OfGroup"] == p_Group && 
                 (string)x["OfBoard"] == p_Board).Select(y => new Article(y)).ToList();
             }
+            rtn.Sort(
+                delegate (Article a1, Article a2)
+                {
+                    return -DateTime.Compare(a1.Date, a2.Date);
+                });
             return rtn;
         }
         /// <summary>
@@ -242,66 +427,113 @@ namespace Project_Tpage.Class
             }
 
 
-            return dr1.Concat<object>(dr2).ToList();
-        }
-        /// <summary>
-        /// 設定使用者資訊與使用者設定。
-        /// </summary>
-        /// <param name="_uif">使用者資訊。</param>
-        /// <param name="_ust">使用者設定。</param>
-        public void SetUserSetting(UserInfo p_uif, UserSetting p_ust)
-        {
-            User.ValidUserInfo(p_uif);
+            List<object> rtn = dr1.Concat<object>(dr2).ToList();
+            rtn.Sort(
+                delegate (object dt1, object dt2)
+                {
+                    return -DateTime.Compare(
+                          dt1 is Article ? (dt1 as Article).Date : (dt1 as AMessage).Date
+                        , dt2 is Article ? (dt2 as Article).Date : (dt2 as AMessage).Date);
+                });
 
-            user.Userinfo = p_uif;
-            user.Usersetting = p_ust;
-            DB.Set<User>(user);
+            return rtn;
         }
         /// <summary>
-        /// 創立班級團體。
+        /// 取得指定使用者的使用者頁面主要內容。
         /// </summary>
-        /// <param name="p_ClassName">班級。</param>
-        /// <param name="p_GroupName">團體名稱。</param>
-        public void CreateClass(string p_ClassName, string p_GroupName)
+        /// <param name="uid">指定使用者識別碼。</param>
+        /// <returns></returns>
+        public List<object> GetUserPageContent(string uid)
         {
-            if (DB.IsExist(DB.DB_ClassGroupData_TableName, "ClassName", p_ClassName))
-                throw new ModelException("Model類別－CreateClass()發生例外：此班級已存在。"
-                    , "班級已存在");
-            else if (DB.IsExist(DB.DB_ClassGroupData_TableName, "GroupName", p_GroupName))
-                throw new ModelException("Model類別－CreateClass()發生例外：班級團體名稱已被使用。"
-                    , "班級團體名稱已被使用");
-            else if (user.Userinfo.ClassName != p_ClassName)
-                throw new ModelException("Model類別－CreateClass()發生例外：不得創立非自己班級的班級團體。"
-                    , "不得創立非自己班級的班級團體。");
-            else
+            List<Article> dr1;
+            using (DataTable dt = DB.GetSqlData(string.Format("SELECT * FROM " + DB.DB_ArticleData_TableName + 
+                " WHERE ReleaseUser = '{0}'", uid)))
             {
-                ClassGroup cg = new ClassGroup();
-                cg.ClassName = p_ClassName;
-                cg.Groupname = p_GroupName;
-
-                cg.Admin.Add(user.Userinfo.UID);
-                DB.Set<ClassGroup>(cg);
+                dr1 = Enumerable.Cast<DataRow>(dt.Rows).Select(y => new Article(y)).ToList();
             }
-        }
-        /// <summary>
-        /// 創立家族團體。
-        /// </summary>
-        /// <param name="p_GroupName">團體名稱。</param>
-        public void CreateFamily(string p_GroupName)
-        {
-            if (DB.IsExist(DB.DB_FamilyGroupData_TableName, "GroupName", p_GroupName))
-                throw new ModelException("Model類別－CreateFamily()發生例外：家族團體名稱已被使用。"
-                    , "家族團體名稱已被使用");
-            else
+            List<AMessage> dr2;
+            using (DataTable dt = DB.GetSqlData(string.Format("SELECT * FROM " + DB.DB_AMessageData_TableName +
+                " WHERE ReleaseUser = '{0}'", uid)))
             {
-                FamilyGroup fg = new FamilyGroup();
-                fg.Groupname = p_GroupName;
-
-                fg.Admin.Add(user.Userinfo.UID);
-                DB.Set<FamilyGroup>(fg);
+                dr2 = Enumerable.Cast<DataRow>(dt.Rows).Select(y => new AMessage(y)).ToList();
             }
+
+
+            List<object> rtn = dr1.Concat<object>(dr2).ToList();
+            rtn.Sort(
+                delegate (object dt1, object dt2)
+                {
+                    return -DateTime.Compare(
+                          dt1 is Article ? (dt1 as Article).Date : (dt1 as AMessage).Date
+                        , dt2 is Article ? (dt2 as Article).Date : (dt2 as AMessage).Date);
+                });
+
+            return rtn;
         }
 
+        /// <summary>
+        /// 在切換頁面時，向Model要求新的頁面資料。
+        /// </summary>
+        /// <param name="ToState">要前往的狀態。</param>
+        /// <returns></returns>
+        public PageData RequestPageData(StateEnum ToState)
+        {
+            if (ToState == StateEnum.Home)
+            {
+                PageData.Out.SetData(
+                    delegate ()
+                    {
+                        PageData.Out.Add("Content", GetDynamicPageContent());
+                        PageData.Out.Add("User", user);
+                    });
+            }
+            else if (ToState == StateEnum.UserPage)
+            {
+                PageData.Out.SetData(
+                    delegate ()
+                    {
+                        PageData.Out.Add("Content", GetUserPageContent((string)PageData.In["UserUID"]));
+                    });
+            }
+            else if (ToState == StateEnum.Group)
+            {
+                PageData.Out.SetData(
+                    delegate ()
+                    {
+                        PageData.Out.Add("Content", GetArticlesFromGroup((string)PageData.In["GID"]));
+                    });
+            }
+            else if (ToState == StateEnum.Board)
+            {
+
+            }
+            else if (ToState == StateEnum.Article)
+            {
+                PageData.Out.SetData(
+                    delegate ()
+                    {
+                        PageData.Out.Add("Content", DB.Get<Article>((string)PageData.In["AID"]));
+                    });
+            }
+            else if (ToState == StateEnum.EditArticle)
+            {
+
+            }
+            else if (ToState == StateEnum.Setting)
+            {
+
+            }
+            else if (ToState == StateEnum.Login)
+            {
+                PageData.Out.SetData(delegate () { });
+            }
+            else if (ToState == StateEnum.Register)
+            {
+                PageData.Out.SetData(delegate () { });
+            }
+
+            return PageData.Out;
+        }
 
         public Model(View view)
         {
@@ -309,8 +541,101 @@ namespace Project_Tpage.Class
 
             State = StateEnum.Login;
             user = null;
-            DB = new SqlServ_MySql("");
+            DB = new SqlServ_MSSql("");
+            PageData.InitPageData();
         }
+    }
+
+    /// <summary>
+    /// 提供一個靜態欄位，存放切換狀態時，該狀態要求的頁面資料。
+    /// </summary>
+    public class PageData : Dictionary<string, object>
+    {
+        /// <summary>
+        /// 切換狀態時Control提供給Model的參數資料。
+        /// </summary>
+        public static PageData In;
+        /// <summary>
+        /// 切換狀態時View所要求的頁面資料。
+        /// </summary>
+        public static PageData Out;
+
+        //public StateEnum State { get; set; }
+
+        public static void InitPageData()
+        {
+            In = new PageData(32);
+
+            Out = new PageData(32);          
+        }
+
+        /// <summary>
+        /// 清空PageData內的資料並設定新的資料。
+        /// </summary>
+        /// <param name="SettingFunc">設定新資料的委派函數。</param>
+        public void SetData(Action SettingFunc)
+        {
+            Clear();
+            try
+            {
+                SettingFunc();
+            }
+            catch (Exception e)
+            {
+                throw new ModelException(
+                    ModelException.Error.PageDataFromatError,
+                    "PageData類別－SetData(Action)發生例外：設定資料錯誤或未找到需要的參數。\r\n" + e.Message, 
+                    "");
+            }
+        }
+
+        ~PageData()
+        {
+            
+        }
+
+        private PageData() : base() { }
+
+        private PageData(int capacity) : base(capacity) { }
+
+        /* PageDate.In(Control to Model): 切換狀態時Control提供給Model的參數資料。
+         * PageData.In的內容根據不同的狀態要求而存放不同資料。
+         * 
+         *      To "UserPage" State
+         *          
+         *          PageData.In["UserUID"] = a UID          (type: string)
+         *          存放要前往的使用者頁面之使用者的識別碼。
+         *          
+         *          PageData.In["AdvertiseBlocks"] = a list (type: List<int>)
+         *          存放頁面上的廣告區塊代碼。
+         *          
+         *      To "Group" State
+         *      
+         *          PageData.In["GroupGID"] = a GID         (type: string)
+         * 
+         */
+
+        /* PageData.Out(Model to View): View所要求的資料。
+         * PageData.Out的內容根據不同的狀態要求而存放不同資料。
+         * 
+         *      To "Home" State
+         *      
+         *          Instant["Content"] =  a list  (type: List<object>)
+         *          存放要顯示的文章與留言。其內的物件不是Article就是AMessage。
+         *          
+         *          Instant["User"] =   a object  (type: User)
+         *          存放現在使用者的資訊(包含好友與團體資訊User.Friends, User.Groups)
+         *          
+         *      To "UserPage" State
+         *      
+         *          PUserPage[""] =     
+         *          
+         *          
+         *      To "Login" || "Register" State
+         *      
+         *          無。
+         * 
+         */
     }
 
     /// <summary>
@@ -342,6 +667,10 @@ namespace Project_Tpage.Class
         /// 資料庫－留言資料表名稱。
         /// </summary>
         public string DB_AMessageData_TableName { get; set; }
+        /// <summary>
+        /// 資料庫－廣告資料表名稱。
+        /// </summary>
+        public string DB_AdvertiseData_TableName { get; set; }
 
 
         /// <summary>
@@ -364,24 +693,11 @@ namespace Project_Tpage.Class
         /// <returns></returns>
         public abstract DataTable GetSqlData(string SqlCommandString);
 
-        /// <summary>
-        /// 依識別碼取得指定型別的物件資料。（User、Article、AMessage、ClassGroup、FamilyGroup）
-        /// </summary>
-        /// <typeparam name="T">指定的型別（User、Article、AMessage、ClassGroup、FamilyGroup）。若非特定型別則擲回例外。</typeparam>
-        /// <param name="Iden">識別碼。</param>
-        /// <returns></returns>
-        public abstract object Get<T>(string Iden);
-        /// <summary>
-        /// 將特定型別的物件存入資料庫。
-        /// </summary>
-        /// <typeparam name="T">指定型別。</typeparam>
-        /// <param name="obj">物件。</param>
-        public abstract void Set<T>(object obj);
 
 
 
         /// <summary>
-        /// 將特定型別的資料轉換為SQL字串的表示方式。
+        /// 將指定型別資料解析為SQL字串的表示方式。
         /// </summary>
         /// <param name="str">字串格式。</param>
         /// <param name="isCH">是否含中文字元。</param>
@@ -396,7 +712,7 @@ namespace Project_Tpage.Class
                 return "'" + str + "'";
         }
         /// <summary>
-        /// 將特定型別的資料轉換為SQL字串的表示方式。
+        /// 將指定型別資料解析為SQL字串的表示方式。
         /// </summary>
         /// <param name="gd">性別格式。</param>
         /// <returns></returns>
@@ -405,7 +721,7 @@ namespace Project_Tpage.Class
             return "" + ((byte)gd);
         }
         /// <summary>
-        /// 將特定型別的資料轉換為SQL字串的表示方式。
+        /// 將指定型別資料解析為SQL字串的表示方式。
         /// </summary>
         /// <param name="upr">使用者隱私格式。</param>
         /// <returns></returns>
@@ -414,7 +730,7 @@ namespace Project_Tpage.Class
             return "" + ((byte)upr);
         }
         /// <summary>
-        /// 將特定型別的資料轉換為SQL字串的表示方式。
+        /// 將指定型別資料解析為SQL字串的表示方式。
         /// </summary>
         /// <param name="p_int">整數格式。</param>
         /// <returns></returns>
@@ -423,7 +739,7 @@ namespace Project_Tpage.Class
             return "" + p_int;
         }
         /// <summary>
-        /// 將特定型別的資料轉換為SQL字串的表示方式。
+        /// 將指定型別資料解析為SQL字串的表示方式。
         /// </summary>
         /// <param name="img">圖片格式。</param>
         /// <returns></returns>
@@ -436,7 +752,7 @@ namespace Project_Tpage.Class
                 (x => Convert.ToString(x, 16).PadLeft(2, '0'))));
         }
         /// <summary>
-        /// 將特定型別的資料轉換為SQL字串的表示方式。
+        /// 將指定型別資料解析為SQL字串的表示方式。
         /// </summary>
         /// <param name="ls">字串陣列格式。</param>
         /// <param name="isCH">是否含中文字元。</param>
@@ -448,16 +764,51 @@ namespace Project_Tpage.Class
             return (isCH ? "N" : "") + "'" + string.Concat(ls.Select((x, indx) => indx == 0 ? x : "," + x)) + "'";
         }
         /// <summary>
-        /// 將特定型別的資料轉換為SQL字串的表示方式。
+        /// 將指定型別資料解析為SQL字串的表示方式。
         /// </summary>
         /// <param name="dt">日期格式。</param>
         /// <returns></returns>
         public string Type(DateTime dt, bool onlyDate = false)
         {
+            if (dt == DateTime.MinValue)
+                return "''";
+
             if (onlyDate)
                 return string.Format("'{0}'", dt.ToString("yyyy-MM-dd 00:00:00"));
             else
                 return string.Format("'{0}'", dt.ToString("yyyy-MM-dd HH:mm:ss"));
+        }
+        /// <summary>
+        /// 將指定型別資料解析為SQL字串的表示方式。
+        /// </summary>
+        /// <param name="ls">看板版主資料對陣列格式。</param>
+        /// <returns></returns>
+        public string Type(List<BoardAdminPair> ls)
+        {
+            if (ls == null || ls.Count <= 0) return "''";
+
+            return string.Format("N'{0}'", string.Concat(ls.Select((x, indx) => 
+                    (indx == 0 ? "" : ",") + x.Admin + "@" + x.Board)));
+        }
+        /// <summary>
+        /// 將指定型別資料解析為SQL字串的表示方式。
+        /// </summary>
+        /// <param name="se">狀態機狀態格式。</param>
+        /// <returns></returns>
+        public string Type(StateEnum se)
+        {
+            return "" + (byte)se;
+        }
+        /// <summary>
+        /// 將指定型別資料解析為SQL字串的表示方式。
+        /// </summary>
+        /// <param name="sz">尺寸格式。</param>
+        /// <returns></returns>
+        public string Type(Size sz)
+        {
+            if (sz == Size.Empty) return "''";
+
+            return "'" + sz.Width + "@" + sz.Height + "'";
         }
         /// <summary>
         /// 將User的帳號與帳號識別碼進行轉換。
@@ -470,14 +821,16 @@ namespace Project_Tpage.Class
             DataTable dt = GetSqlData(string.Format("SELECT UID, ID FROM " + DB_UserData_TableName +
                 " WHERE {0} = '{1}'", foword ? "ID" : "UID", ipt));
 
-            if (dt.Rows.Count <= 0) throw new Model.ModelException("SqlServ類別－UserID_UIDconvert" +
-                "發生錯誤：指定的帳號不存在。", "帳號不存在");
+            if (dt.Rows.Count <= 0) throw new ModelException(
+                ModelException.Error.UIDnotFound,
+                "SqlServ類別－UserID_UIDconvert" + "發生錯誤：指定的帳號不存在。",
+                "帳號不存在");
 
             return (string)AnlType<string>(dt.Rows[0][foword ? "UID" : "ID"]);
         }
         
         /// <summary>
-        /// 解析從資料庫讀取的資料，或將空值轉換為對應的型別之空值。
+        /// 反解析資料庫讀取的資料，或將空值轉換為對應型別之空值。
         /// </summary>
         /// <typeparam name="T">指定輸出型別。</typeparam>
         /// <param name="obj">從資料庫讀取的資料。</param>
@@ -497,15 +850,50 @@ namespace Project_Tpage.Class
                 }
                 catch (Exception e)
                 {
-                    throw new Model.ModelException("SqlServ類別－AnlType()發生錯誤：資料庫內日期資料不符合格式" +
-                        "[yyyy-MM-dd hh:mm:ss]\r\n" + e.Message, "");
+                    throw new ModelException(
+                        ModelException.Error.AnlTypeErrDatetime,
+                        "SqlServ類別－AnlType<Datetime>發生錯誤：資料庫內日期資料不符合格式" +
+                        "[yyyy-MM-dd hh:mm:ss]\r\n" + e.Message
+                        , "");
                 }
             }
             else if (typeof(T).Equals(typeof(List<string>)))
             {
                 if (obj is DBNull || obj == null || (string)obj == "") return new List<string>();
 
-                return ((string)obj).Split(',').ToList();
+                try
+                {
+                    return ((string)obj).Split(',').ToList();
+                }
+                catch(Exception e)
+                {
+                    throw new ModelException(
+                        ModelException.Error.AnlTypeErrListOfString,
+                        "SqlServ類別－AnlType<List<string>>發生例外：資料庫內字串陣列" +
+                        "資料格式錯誤無法解析！\r\n" + e.Message, "");
+                }
+            }
+            else if(typeof(T).Equals(typeof(List<BoardAdminPair>)))
+            {
+                if (obj is DBNull || obj == null || (string)obj == "") return new List<BoardAdminPair>();
+
+                try
+                {
+                    Func<string, BoardAdminPair> f = delegate (string s)
+                    {
+                        string[] temp = s.Split('@');
+                        return new BoardAdminPair(temp[0], temp[1]);
+                    };
+
+                    return ((string)obj).Split(',').Select(x => f(x)).ToList();
+                }
+                catch (Exception e)
+                {
+                    throw new ModelException(
+                        ModelException.Error.AnlTypeErrListOfBoardAdmin,
+                        "SqlServ類別－AnlType<BoardAdminPair>發生例外：" +
+                        "看板版主資料對資料格式錯誤無法解析。\r\n" + e.Message, "");
+                }
             }
             else if (typeof(T).Equals(typeof(Image)))
             {
@@ -526,7 +914,10 @@ namespace Project_Tpage.Class
                 }
                 catch(Exception e)
                 {
-                    throw new Model.ModelException("SqlServ類別－AnlType<T>發生例外：圖片格式轉換錯誤:" + e.Message, "");
+                    throw new ModelException(
+                        ModelException.Error.AnlTypeErrImage,
+                        "SqlServ類別－AnlType<Image>發生例外：圖片格式轉換錯誤:" + e.Message, 
+                        "");
                 }
             }
             else if (typeof(T).Equals(typeof(int)))
@@ -537,13 +928,13 @@ namespace Project_Tpage.Class
             }
             else if (typeof(T).Equals(typeof(Gender)))
             {
-                if (obj is DBNull || obj == null) return 0;
+                if (obj is DBNull || obj == null) return Gender.Null;
 
                 return (Gender)(byte)obj;
             }
             else if (typeof(T).Equals(typeof(UserPrivacy)))
             {
-                if (obj is DBNull || obj == null) return 14;
+                if (obj is DBNull || obj == null) return UserPrivacy.Public;
 
                 return (UserPrivacy)(byte)obj;
             }
@@ -553,6 +944,29 @@ namespace Project_Tpage.Class
 
                 return (string)obj;
             }
+            else if (typeof(T).Equals(typeof(StateEnum)))
+            {
+                if (obj is DBNull || obj == null) return StateEnum.Home;
+
+                return (StateEnum)(byte)obj;
+            }
+            else if (typeof(T).Equals(typeof(Size)))
+            {
+                if (obj is DBNull || obj == null || (string)obj == "") return Size.Empty;
+
+                try
+                {
+                    int[] temp = ((string)obj).Split('@').Select(x => int.Parse(x)).ToArray();
+                    return new Size(temp[0], temp[1]);
+                }
+                catch (Exception e)
+                {
+                    throw new ModelException(
+                        ModelException.Error.AnlTypeErrSize,
+                        "SqlServ類別－AnlType<Size>發生錯誤：資料庫內尺寸資料格式錯誤無法解析！\r\n" + e.Message, 
+                        "");
+                }
+            }
             else
             {
                 if (obj is DBNull) return null;
@@ -561,14 +975,505 @@ namespace Project_Tpage.Class
         }
 
 
+        /// <summary>
+        /// 依識別碼取得指定型別的物件資料。未找到則擲回例外。
+        /// </summary>
+        /// <typeparam name="T">指定的型別（User、Article、AMessage、ClassGroup、FamilyGroup）。若非特定型別則擲回例外。</typeparam>
+        /// <param name="Iden">識別碼。</param>
+        /// <returns></returns>
+        public object Get<T>(string Iden)
+        {
+            if (typeof(T).Equals(typeof(User)))
+            {
+                //從資料庫查詢此使用者。未找到則擲回例外(包含錯誤訊息(無此帳號、密碼錯誤))。
+                DataTable dt = GetSqlData(string.Format("SELECT * FROM {0} WHERE UID = {1}"
+                    , DB_UserData_TableName, Iden));
 
-        public SqlServ(string p_DBconn)
+                if (dt.Rows.Count <= 0)
+                {
+                    throw new ModelException(
+                        ModelException.Error.UIDnotFound,
+                        "無此帳號。UID = " + Iden, 
+                        "無此帳號");
+                }
+                else
+                {
+                    User rtn = new User(dt.Rows[0]);
+                    return rtn;
+                }
+            }
+            else if (typeof(T).Equals(typeof(Article)))
+            {
+                DataTable dt = GetSqlData(string.Format("SELECT * FROM {0} WHERE AID = {1}",
+                    DB_ArticleData_TableName, Iden));
+
+                if (dt.Rows.Count == 0)
+                    throw new ModelException(
+                        ModelException.Error.AIDnotFound,
+                        "無此文章。AID = " + Iden, 
+                        "無此文章");
+                else
+                    return new Article(dt.Rows[0]);
+            }
+            else if (typeof(T).Equals(typeof(AMessage)))
+            {
+                DataTable dt = GetSqlData(string.Format("SELECT * FROM {0} WHERE MID = {1}",
+                    DB_AMessageData_TableName, Iden));
+
+                if (dt.Rows.Count == 0)
+                    throw new ModelException(
+                        ModelException.Error.MIDnotFound,
+                        "無此留言。MID = " + Iden, 
+                        "無此留言");
+                else
+                    return new AMessage(dt.Rows[0]);
+            }
+            else if (typeof(T).Equals(typeof(ClassGroup)))
+            {
+                //從資料庫查詢此使用者。未找到則擲回例外(包含錯誤訊息(無此帳號、密碼錯誤))。
+                DataTable dt = GetSqlData(string.Format("SELECT * FROM {0} WHERE GID = {1}"
+                    , DB_ClassGroupData_TableName, Iden));
+
+                if (dt.Rows.Count == 0)
+                    throw new ModelException(
+                        ModelException.Error.GIDnotFound,
+                        "無此班級。GID : " + Iden, 
+                        "無此班級");
+                else
+                    return new ClassGroup(dt.Rows[0]);
+            }
+            else if (typeof(T).Equals(typeof(FamilyGroup)))
+            {
+                //從資料庫查詢此使用者。未找到則擲回例外(包含錯誤訊息(無此帳號、密碼錯誤))。
+                DataTable dt = GetSqlData(string.Format("SELECT * FROM {0} WHERE GID = {1}"
+                    , DB_FamilyGroupData_TableName, Iden));
+
+                if (dt.Rows.Count == 0)
+                    throw new ModelException(
+                        ModelException.Error.GIDnotFound,
+                        "無此家族。GID : " + Iden, 
+                        "無此家族");
+                else
+                    return new FamilyGroup(dt.Rows[0]);
+            }
+            else if (typeof(T).Equals(typeof(Advertise)))
+            {
+                //從資料庫查詢此使用者。未找到則擲回例外(包含錯誤訊息(無此帳號、密碼錯誤))。
+                DataTable dt = GetSqlData(string.Format("SELECT * FROM {0} WHERE DID = {1}"
+                    , DB_AdvertiseData_TableName, Iden));
+
+                if (dt.Rows.Count <= 0)
+                {
+                    throw new ModelException(
+                        ModelException.Error.DIDnotFound,
+                        "無此廣告。DID = " + Iden, 
+                        "無此廣告");
+                }
+                else
+                {
+                    Advertise rtn = Advertise.Instance(dt.Rows[0]);
+                    return rtn;
+                }
+            }
+            else
+            {
+                throw new ModelException(
+                    ModelException.Error.DbGetFailure,
+                    "SqlServ類別－Get<T>發生錯誤：要求非特定型別的物件。\r\nclass : " + typeof(T)
+                    , "");
+            }
+        }
+        /// <summary>
+        /// 將特定型別的物件存入資料庫。
+        /// </summary>
+        /// <typeparam name="T">指定型別。</typeparam>
+        /// <param name="obj">物件。</param>
+        public void Set<T>(object obj)
+        {
+            if (!(obj is T))
+                throw new ModelException(
+                    ModelException.Error.DbSetFailure,
+                    "SqlServ類別－Set<T>發生錯誤：物件參數與指定型別不符合。\r\n" +
+                    "class: " + typeof(T) + "\r\n" +
+                    "Object class: " + obj.GetType(), 
+                    "");
+
+            if (typeof(T).Equals(typeof(User)))
+            {
+                try
+                {
+                    User usr = (User)obj;
+
+                    //若帳號已存在，為修改帳號資料的更新。
+                    if (usr.Userinfo.UID != null)
+                    {
+                        ExeSqlCommand(string.Format(@"UPDATE " + DB_UserData_TableName + @"
+                    SET ID = {0}, 
+                    UID = {1}, 
+                    Password = {2}, 
+                    Email = {3}, 
+                    StudentNum = {4}, 
+                    ClassName = {5}, 
+                    RealName = {6}, 
+                    NickName = {7}, 
+                    Picture = {8}, 
+                    Gender = {9}, 
+                    Birthday = {10},
+                    UserPrivacy = {11}, 
+                    Friend = {12}, 
+                    ClassGroup = {13}, 
+                    FamilyGroup = {14}, 
+                    TbitCoin = {15} 
+                    WHERE UID = {1}"
+                            , Type(usr.Userinfo.ID)
+                            , Type(usr.Userinfo.UID)
+                            , Type(usr.Userinfo.Password)
+                            , Type(usr.Userinfo.Email)
+                            , Type(usr.Userinfo.StudentID)
+                            , Type(usr.Userinfo.ClassName, true)
+                            , Type(usr.Userinfo.Realname, true)
+                            , Type(usr.Userinfo.Nickname, true)
+                            , Type(usr.Userinfo.Picture)
+                            , Type(usr.Userinfo.Gender)
+                            , Type(usr.Userinfo.Birthday, true)
+                            , Type(usr.Usersetting.Userprivacy)
+                            , Type(usr.Friends.Members)
+                            , Type(usr.Groups.Where(x => x is ClassGroup).Select(x => x.GID).ToList())
+                            , Type(usr.Groups.Where(x => x is FamilyGroup).Select(x => x.GID).ToList())
+                            , Type(usr.TbitCoin)));
+                    }
+                    else//否則為新增帳號資料的更新。
+                    {
+                        string nextuid = (string)GetSqlData(@"SELECT MAX(UID) FROM " + DB_UserData_TableName).Rows[0][0];
+
+                        usr.Userinfo.UID = nextuid;
+
+                        ExeSqlCommand(string.Format("UPDATE {0} SET UID = '{1}' WHERE UID = '{2}'"
+                            , DB_UserData_TableName, (int.Parse(nextuid) + 1).ToString().PadLeft(10, '0'), nextuid));
+
+                        ExeSqlCommand(string.Format(@"INSERT INTO " + DB_UserData_TableName + @" 
+                    (ID, UID, Password, Email, StudentNum, ClassName, RealName, NickName, Picture, Gender, Birthday) 
+                    VALUES 
+                    ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15})"
+                            , Type(usr.Userinfo.ID)
+                            , Type(usr.Userinfo.UID)
+                            , Type(usr.Userinfo.Password)
+                            , Type(usr.Userinfo.Email)
+                            , Type(usr.Userinfo.StudentID)
+                            , Type(usr.Userinfo.ClassName, true)
+                            , Type(usr.Userinfo.Realname, true)
+                            , Type(usr.Userinfo.Nickname, true)
+                            , Type(usr.Userinfo.Picture)
+                            , Type(usr.Userinfo.Gender)
+                            , Type(usr.Userinfo.Birthday, true)
+                            , Type(usr.Usersetting.Userprivacy)
+                            , Type(usr.Friends.Members)
+                            , Type(usr.Groups.Where(x => x is ClassGroup).Select(x => x.GID).ToList())
+                            , Type(usr.Groups.Where(x => x is FamilyGroup).Select(x => x.GID).ToList())
+                            , Type(usr.TbitCoin)));
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw new ModelException(
+                        ModelException.Error.DbSetSqlOperationFail, 
+                        "SqlServ類別－Set<T>發生錯誤：User設定物件欄位錯誤。\r\n" + e.Message, 
+                        "發生未知錯誤－儲存失敗");
+                }
+            }
+            else if (typeof(T).Equals(typeof(Article)))
+            {
+                try
+                {
+                    Article p_art = (Article)obj;
+
+                    //若帳號已存在，為修改帳號資料的更新。
+                    if (p_art.AID != null)
+                    {
+                        ExeSqlCommand(string.Format(@"UPDATE " + DB_ArticleData_TableName + @"
+                    SET AID = {0}, 
+                    Title = {1}, 
+                    Content = {2}, 
+                    ReleaseUser = {3}, 
+                    ReleaseDate = {4}, 
+                    LikeCount = {5}, 
+                    OfGroup = {6}, 
+                    OfBoard = {7} 
+                    WHERE AID = {0}"
+                            , Type(p_art.AID)
+                            , Type(p_art.Title, true)
+                            , Type(p_art.Content, true)
+                            , Type(p_art.ReleaseUser)
+                            , Type(p_art.Date)
+                            , Type(p_art.LikeCount)
+                            , Type(p_art.OfGroup)
+                            , Type(p_art.OfBoard, true)));
+                    }
+                    else//否則為新增帳號資料的更新。
+                    {
+                        string nextaid = (string)GetSqlData("SELECT MAX(AID) FROM " + DB_ArticleData_TableName).Rows[0][0];
+
+                        p_art.AID = nextaid;
+
+                        ExeSqlCommand(string.Format("UPDATE {0} SET AID = '{1}' WHERE AID = '{2}'"
+                            , DB_ArticleData_TableName, (int.Parse(nextaid) + 1).ToString().PadLeft(10, '0'), nextaid));
+
+                        ExeSqlCommand(string.Format(@"INSERT INTO " + DB_ArticleData_TableName + @" 
+                    (AID, Title, Content, ReleaseUser, ReleaseDate, LikeCount, OfGroup, OfBoard)
+                    VALUES 
+                    ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7})"
+                            , Type(p_art.AID)
+                            , Type(p_art.Title, true)
+                            , Type(p_art.Content, true)
+                            , Type(p_art.ReleaseUser)
+                            , Type(p_art.Date)
+                            , Type(p_art.LikeCount)
+                            , Type(p_art.OfGroup)
+                            , Type(p_art.OfBoard, true)));
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw new ModelException(
+                        ModelException.Error.DbSetSqlOperationFail,
+                        "SqlServ類別－Set<T>發生錯誤：Article設定物件欄位錯誤。\r\n" + e.Message, 
+                        "發生未知錯誤－儲存失敗");
+                }
+            }
+            else if (typeof(T).Equals(typeof(AMessage)))
+            {
+                try
+                {
+                    AMessage p_ame = (AMessage)obj;
+
+                    //若帳號已存在，為修改帳號資料的更新。
+                    if (p_ame.MID != null)
+                    {
+                        ExeSqlCommand(string.Format(@"UPDATE " + DB_AMessageData_TableName + @"
+                    SET MID = {0}, 
+                    ReleaseUser = {1}, 
+                    ReleaseDate = {2}, 
+                    Content = {3}, 
+                    LikeCount = {4}, 
+                    OfArticle = {5} 
+                    WHERE MID = {0}"
+                            , Type(p_ame.MID)
+                            , Type(p_ame.ReleaseUser)
+                            , Type(p_ame.Date)
+                            , Type(p_ame.Content, true)
+                            , Type(p_ame.LikeCount)
+                            , Type(p_ame.OfArticle)));
+                    }
+                    else//否則為新增帳號資料的更新。
+                    {
+                        string nextmid = (string)GetSqlData("SELECT MAX(MID) FROM " + DB_AMessageData_TableName).Rows[0][0];
+
+                        p_ame.MID = nextmid;
+
+                        ExeSqlCommand(string.Format("UPDATE {0} SET MID = '{1}' WHERE MID = '{2}'"
+                            , DB_AMessageData_TableName, (int.Parse(nextmid) + 1).ToString().PadLeft(10, '0'), nextmid));
+
+
+                        ExeSqlCommand(string.Format(@"INSERT INTO " + DB_AMessageData_TableName + @" 
+                    (MID, ReleaseUser, ReleaseDate, Content, LikeCount, OfArticle)
+                    VALUES 
+                    ({0}, {1}, {2}, {3}, {4}, {5})"
+                            , Type(p_ame.MID)
+                            , Type(p_ame.ReleaseUser)
+                            , Type(p_ame.Date)
+                            , Type(p_ame.Content, true)
+                            , Type(p_ame.LikeCount)
+                            , Type(p_ame.OfArticle)));
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw new ModelException(
+                        ModelException.Error.DbSetSqlOperationFail,
+                        "SqlServ類別－Set<T>發生錯誤：AMessage設定物件欄位錯誤。\r\n" + e.Message, 
+                        "發生未知錯誤－儲存失敗");
+                }
+            }
+            else if (typeof(T).Equals(typeof(ClassGroup)))
+            {
+                try
+                {
+                    ClassGroup p_cg = (ClassGroup)obj;
+
+                    //若帳號已存在，為修改帳號資料的更新。
+                    if (p_cg.GID != null)
+                    {
+                        ExeSqlCommand(string.Format(@"UPDATE " + DB_ClassGroupData_TableName + @"
+                    SET GID = {0}, 
+                    GroupName = {1}, 
+                    ClassName = {2}, 
+                    Members = {3}, 
+                    Admin = {4}, 
+                    BoardAdmin = {5}, 
+                    Topic = {6} 
+                    WHERE GID = {0}"
+                            , Type(p_cg.GID)
+                            , Type(p_cg.Groupname, true)
+                            , Type(p_cg.ClassName, true)
+                            , Type(p_cg.Members)
+                            , Type(p_cg.Admin)
+                            , Type(p_cg.BoardAdmin)
+                            , Type(p_cg.Topic, true)));
+                    }
+                    else//否則為新增帳號資料的更新。
+                    {
+                        string nextgid = (string)GetSqlData("SELECT MAX(GID) FROM " + DB_ClassGroupData_TableName).Rows[0][0];
+
+                        p_cg.GID = nextgid;
+
+                        ExeSqlCommand(string.Format("UPDATE {0} SET GID = '{1}' WHERE GID = '{2}'"
+                            , DB_ClassGroupData_TableName, (int.Parse(nextgid) + 1).ToString().PadLeft(10, '0'), nextgid));
+
+
+                        ExeSqlCommand(string.Format(@"INSERT INTO " + DB_ClassGroupData_TableName + @" 
+                    (GID, GroupName, ClassName, Members, Admin, BoardAdmin, Topic)
+                    VALUES 
+                    ({0}, {1}, {2}, {3}, {4}, {5}, {6})"
+                            , Type(p_cg.GID)
+                            , Type(p_cg.Groupname, true)
+                            , Type(p_cg.ClassName, true)
+                            , Type(p_cg.Members)
+                            , Type(p_cg.Admin)
+                            , Type(p_cg.BoardAdmin)
+                            , Type(p_cg.Topic, true)));
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw new ModelException(
+                        ModelException.Error.DbSetSqlOperationFail,
+                        "SqlServ類別－Set<T>發生錯誤：ClassGroup設定物件欄位錯誤。\r\n" + e.Message, 
+                        "發生未知錯誤－儲存失敗");
+                }
+            }
+            else if (typeof(T).Equals(typeof(FamilyGroup)))
+            {
+                try
+                {
+                    FamilyGroup p_cg = (FamilyGroup)obj;
+
+                    //若帳號已存在，為修改帳號資料的更新。
+                    if (p_cg.GID != null)
+                    {
+                        ExeSqlCommand(string.Format(@"UPDATE " + DB_FamilyGroupData_TableName + @"
+                    SET GID = {0}, 
+                    GroupName = {1}, 
+                    Members = {2}, 
+                    Admin = {3}, 
+                    BoardAdmin = {4}, 
+                    Topic = {5} 
+                    WHERE GID = {0}"
+                            , Type(p_cg.GID)
+                            , Type(p_cg.Groupname, true)
+                            , Type(p_cg.Members)
+                            , Type(p_cg.Admin)
+                            , Type(p_cg.BoardAdmin)
+                            , Type(p_cg.Topic, true)));
+                    }
+                    else//否則為新增帳號資料的更新。
+                    {
+                        string nextgid = (string)GetSqlData("SELECT MAX(GID) FROM " + DB_FamilyGroupData_TableName).Rows[0][0];
+
+                        p_cg.GID = nextgid;
+
+                        ExeSqlCommand(string.Format("UPDATE {0} SET GID = '{1}' WHERE GID = '{2}'"
+                            , DB_FamilyGroupData_TableName, (int.Parse(nextgid) + 1).ToString().PadLeft(10, '0'), nextgid));
+
+
+                        ExeSqlCommand(string.Format(@"INSERT INTO " + DB_FamilyGroupData_TableName + @" 
+                    (GID, GroupName, Members, Admin, BoardAdmin, Topic)
+                    VALUES 
+                    ({0}, {1}, {2}, {3}, {4}, {5})"
+                            , Type(p_cg.GID)
+                            , Type(p_cg.Groupname, true)
+                            , Type(p_cg.Members)
+                            , Type(p_cg.Admin)
+                            , Type(p_cg.BoardAdmin)
+                            , Type(p_cg.Topic, true)));
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw new ModelException(
+                        ModelException.Error.DbSetSqlOperationFail,
+                        "SqlServ類別－Set<T>發生錯誤：FamilyGroup設定物件欄位錯誤。\r\n" + e.Message, 
+                        "發生未知錯誤－儲存失敗");
+                }
+            }
+            else if (typeof(T).Equals(typeof(Advertise)))
+            {
+                try
+                {
+                    Advertise p_ad = (Advertise)obj;
+
+                    //若帳號已存在，為修改帳號資料的更新。
+                    if (p_ad.DID != null)
+                    {
+                        ExeSqlCommand(string.Format(@"UPDATE " + DB_AdvertiseData_TableName + @"
+                            SET DID = {0}, 
+                            Body = {1}, 
+                            Location = {2}, 
+                            Size = {3}, 
+                            Deadline = {4} 
+                            WHERE DID = {0}"
+                            , Type(p_ad.DID)
+                            , Type(p_ad.Body)
+                            , Type(p_ad.Location)
+                            , Type(p_ad.Size)
+                            , Type(p_ad.Deadline)));
+                    }
+                    else//否則為新增帳號資料的更新。
+                    {
+                        string nextdid = (string)GetSqlData("SELECT MAX(DID) FROM " + DB_AdvertiseData_TableName).Rows[0][0];
+
+                        p_ad.DID = nextdid;
+
+                        ExeSqlCommand(string.Format("UPDATE {0} SET DID = '{1}' WHERE DID = '{2}'"
+                            , DB_AdvertiseData_TableName, (int.Parse(nextdid) + 1).ToString().PadLeft(10, '0'), nextdid));
+
+                        ExeSqlCommand(string.Format(@"INSERT INTO " + DB_AdvertiseData_TableName + @" 
+                            (DID, Body, Location, Size, Deadline)
+                            VALUES 
+                            ({0}, {1}, {2}, {3}, {4})"
+                            , Type(p_ad.DID)
+                            , Type(p_ad.Body)
+                            , Type(p_ad.Location)
+                            , Type(p_ad.Size)
+                            , Type(p_ad.Deadline)));
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw new ModelException(
+                        ModelException.Error.DbSetSqlOperationFail,
+                        "SqlServ類別－Set<T>發生錯誤：Advertise設定物件欄位錯誤。\r\n" + e.Message,
+                        "發生未知錯誤－儲存失敗");
+                }
+            }
+            else
+            {
+                throw new ModelException(
+                    ModelException.Error.DbSetFailure,
+                    "SqlServ類別－Set<T>發生錯誤：要求儲存非特定型別的物件。class : " + typeof(T),
+                    "");
+            }
+        }
+
+
+
+        protected SqlServ(string p_DBconn)
         {
             DB_Conn = p_DBconn;
 
             DB_UserData_TableName = "UserData";
             DB_ArticleData_TableName = "ArticleData";
             DB_AMessageData_TableName = "AMessageData";
+            DB_AdvertiseData_TableName = "AdvertiseData";
             DB_ClassGroupData_TableName = "ClassGroupData";
             DB_FamilyGroupData_TableName = "FamilyGroupData";
         }
@@ -672,397 +1577,6 @@ namespace Project_Tpage.Class
             return dt;
         }
 
-
-
-
-        /// <summary>
-        /// 依識別碼取得指定型別的物件資料。（User、Article、AMessage、ClassGroup、FamilyGroup）
-        /// </summary>
-        /// <typeparam name="T">指定的型別（User、Article、AMessage、ClassGroup、FamilyGroup）。若非特定型別則擲回例外。</typeparam>
-        /// <param name="Iden">識別碼。</param>
-        /// <returns></returns>
-        public override object Get<T>(string Iden)
-        {
-            if (typeof(T).Equals(typeof(User)))
-            {
-                //從資料庫查詢此使用者。未找到則擲回例外(包含錯誤訊息(無此帳號、密碼錯誤))。
-                DataTable dt = GetSqlData(string.Format("SELECT * FROM {0} WHERE UID = {1}"
-                    , DB_UserData_TableName, Iden));
-
-                if (dt.Rows.Count <= 0)
-                {
-                    throw new Model.ModelException("無此帳號。UID = " + Iden, "無此帳號");
-                }
-                else
-                {
-                    User rtn = new User(dt.Rows[0]);
-                    return rtn;
-                }
-            }
-            else if (typeof(T).Equals(typeof(Article)))
-            {
-                DataTable dt = GetSqlData(string.Format("SELECT * FROM {0} WHERE AID = {1}",
-                    DB_ArticleData_TableName, Iden));
-
-                if (dt.Rows.Count == 0)
-                    throw new Model.ModelException("無此文章。AID = " + Iden, "無此文章");
-                else
-                    return new Article(dt.Rows[0]);
-            }
-            else if (typeof(T).Equals(typeof(AMessage)))
-            {
-                DataTable dt = GetSqlData(string.Format("SELECT * FROM {0} WHERE MID = {1}",
-                    DB_AMessageData_TableName, Iden));
-
-                if (dt.Rows.Count == 0)
-                    throw new Model.ModelException("無此留言。MID = " + Iden, "無此留言");
-                else
-                    return new AMessage(dt.Rows[0]);
-            }
-            else if (typeof(T).Equals(typeof(ClassGroup)))
-            {
-                //從資料庫查詢此使用者。未找到則擲回例外(包含錯誤訊息(無此帳號、密碼錯誤))。
-                DataTable dt = GetSqlData(string.Format("SELECT * FROM {0} WHERE GID = {1}"
-                    , DB_ClassGroupData_TableName, Iden));
-
-                if (dt.Rows.Count == 0)
-                    throw new Model.ModelException("無此班級。GID : " + Iden, "無此班級");
-                else
-                    return new ClassGroup(dt.Rows[0]);
-            }
-            else if (typeof(T).Equals(typeof(FamilyGroup)))
-            {
-                //從資料庫查詢此使用者。未找到則擲回例外(包含錯誤訊息(無此帳號、密碼錯誤))。
-                DataTable dt = GetSqlData(string.Format("SELECT * FROM {0} WHERE GID = {1}"
-                    , DB_FamilyGroupData_TableName, Iden));
-
-                if (dt.Rows.Count == 0)
-                    throw new Model.ModelException("無此家族。GID : " + Iden, "無此家族");
-                else
-                    return new FamilyGroup(dt.Rows[0]);
-            }
-            else
-            {
-                throw new Model.ModelException("SqlServ類別－Get<T>發生錯誤：要求非特定型別的物件。class : " + typeof(T)
-                    , "");
-            }
-        }
-        /// <summary>
-        /// 將特定型別的物件存入資料庫。
-        /// </summary>
-        /// <typeparam name="T">指定型別。</typeparam>
-        /// <param name="obj">物件。</param>
-        public override void Set<T>(object obj)
-        {
-            if (typeof(T).Equals(typeof(User)))
-            {
-                try
-                {
-                    User usr = (User)obj;
-
-                    //若帳號已存在，為修改帳號資料的更新。
-                    if (usr.Userinfo.UID != null)
-                    {
-                        ExeSqlCommand(string.Format(@"UPDATE " + DB_UserData_TableName + @"
-                    SET ID = {0}, 
-                    UID = {1}, 
-                    Password = {2}, 
-                    Email = {3}, 
-                    StudentNum = {4}, 
-                    ClassName = {5}, 
-                    RealName = {6}, 
-                    NickName = {7}, 
-                    Picture = {8}, 
-                    Gender = {9}, 
-                    Birthday = {10},
-                    UserPrivacy = {11}, 
-                    Friend = {12}, 
-                    ClassGroup = {13}, 
-                    FamilyGroup = {14}, 
-                    TbitCoin = {15} 
-                    WHERE UID = {1}"
-                            , Type(usr.Userinfo.ID)
-                            , Type(usr.Userinfo.UID)
-                            , Type(usr.Userinfo.Password)
-                            , Type(usr.Userinfo.Email)
-                            , Type(usr.Userinfo.StudentNum)
-                            , Type(usr.Userinfo.ClassName, true)
-                            , Type(usr.Userinfo.Realname, true)
-                            , Type(usr.Userinfo.Nickname, true)
-                            , Type(usr.Userinfo.Picture)
-                            , Type(usr.Userinfo.Gender)
-                            , Type(usr.Userinfo.Birthday, true)
-                            , Type(usr.Usersetting.Userprivacy)
-                            , Type(usr.Friends.Members)
-                            , Type(usr.Groups.Where(x => x is ClassGroup).Select(x => x.GID).ToList())
-                            , Type(usr.Groups.Where(x => x is FamilyGroup).Select(x => x.GID).ToList())
-                            , Type(usr.TbitCoin)));
-                    }
-                    else//否則為新增帳號資料的更新。
-                    {
-                        string nextuid = (string)GetSqlData(@"SELECT MAX(UID) FROM " + DB_UserData_TableName).Rows[0][0];
-
-                        usr.Userinfo.UID = nextuid;
-
-                        ExeSqlCommand(string.Format("UPDATE {0} SET UID = '{1}' WHERE UID = '{2}'"
-                            , DB_UserData_TableName, (int.Parse(nextuid) + 1).ToString().PadLeft(10, '0'), nextuid));
-
-                        ExeSqlCommand(string.Format(@"INSERT INTO " + DB_UserData_TableName + @" 
-                    (ID, UID, Password, Email, StudentNum, ClassName, RealName, NickName, Picture, Gender, Birthday) 
-                    VALUES 
-                    ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15})"
-                            , Type(usr.Userinfo.ID)
-                            , Type(usr.Userinfo.UID)
-                            , Type(usr.Userinfo.Password)
-                            , Type(usr.Userinfo.Email)
-                            , Type(usr.Userinfo.StudentNum)
-                            , Type(usr.Userinfo.ClassName, true)
-                            , Type(usr.Userinfo.Realname, true)
-                            , Type(usr.Userinfo.Nickname, true)
-                            , Type(usr.Userinfo.Picture)
-                            , Type(usr.Userinfo.Gender)
-                            , Type(usr.Userinfo.Birthday, true)
-                            , Type(usr.Usersetting.Userprivacy)
-                            , Type(usr.Friends.Members)
-                            , Type(usr.Groups.Where(x => x is ClassGroup).Select(x => x.GID).ToList())
-                            , Type(usr.Groups.Where(x => x is FamilyGroup).Select(x => x.GID).ToList())
-                            , Type(usr.TbitCoin)));
-                    }
-                }
-                catch (Exception e)
-                {
-                    throw new Model.ModelException("SqlServ類別－Set<T>發生錯誤：User設定物件欄位錯誤。\r\n"
-                        + e.Message, "發生未知錯誤－儲存失敗");
-                }
-            }
-            else if (typeof(T).Equals(typeof(Article)))
-            {
-                try
-                {
-                    Article p_art = (Article)obj;
-
-                    //若帳號已存在，為修改帳號資料的更新。
-                    if (p_art.AID != null)
-                    {
-                        ExeSqlCommand(string.Format(@"UPDATE " + DB_ArticleData_TableName + @"
-                    SET AID = {0}, 
-                    Title = {1}, 
-                    Content = {2}, 
-                    ReleaseUser = {3}, 
-                    ReleaseDate = {4}, 
-                    LikeCount = {5}, 
-                    OfGroup = {6}, 
-                    OfBoard = {7}, 
-                    WHERE AID = {0}"
-                            , Type(p_art.AID)
-                            , Type(p_art.Title, true)
-                            , Type(p_art.Content, true)
-                            , Type(p_art.ReleaseUser)
-                            , Type(p_art.Date)
-                            , Type(p_art.LikeCount)
-                            , Type(p_art.OfGroup)
-                            , Type(p_art.OfBoard, true)));
-                    }
-                    else//否則為新增帳號資料的更新。
-                    {
-                        string nextaid = (string)GetSqlData("SELECT MAX(AID) FROM " + DB_ArticleData_TableName).Rows[0][0];
-
-                        p_art.AID = nextaid;
-
-                        ExeSqlCommand(string.Format("UPDATE {0} SET AID = '{1}' WHERE AID = '{2}'"
-                            , DB_ArticleData_TableName, (int.Parse(nextaid) + 1).ToString().PadLeft(10, '0'), nextaid));
-
-                        ExeSqlCommand(string.Format(@"INSERT INTO " + DB_ArticleData_TableName + @" 
-                    (AID, Title, Content, ReleaseUser, ReleaseDate, LikeCount, OfGroup, OfBoard)
-                    VALUES 
-                    ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7})"
-                            , Type(p_art.AID)
-                            , Type(p_art.Title, true)
-                            , Type(p_art.Content, true)
-                            , Type(p_art.ReleaseUser)
-                            , Type(p_art.Date)
-                            , Type(p_art.LikeCount)
-                            , Type(p_art.OfGroup)
-                            , Type(p_art.OfBoard, true)));
-                    }
-                }
-                catch (Exception e)
-                {
-                    throw new Model.ModelException("SqlServ類別－Set<T>發生錯誤：Article設定物件欄位錯誤。\r\n"
-                        + e.Message, "發生未知錯誤－儲存失敗");
-                }
-            }
-            else if (typeof(T).Equals(typeof(AMessage)))
-            {
-                try
-                {
-                    AMessage p_ame = (AMessage)obj;
-
-                    //若帳號已存在，為修改帳號資料的更新。
-                    if (p_ame.MID != null)
-                    {
-                        ExeSqlCommand(string.Format(@"UPDATE " + DB_AMessageData_TableName + @"
-                    SET MID = {0}, 
-                    ReleaseUser = {1}, 
-                    ReleaseDate = {2}, 
-                    Content = {3}, 
-                    LikeCount = {4}, 
-                    OfArticle = {5}, 
-                    WHERE MID = {0}"
-                            , Type(p_ame.MID)
-                            , Type(p_ame.ReleaseUser)
-                            , Type(p_ame.Date)
-                            , Type(p_ame.Content, true)
-                            , Type(p_ame.LikeCount)
-                            , Type(p_ame.OfArticle)));
-                    }
-                    else//否則為新增帳號資料的更新。
-                    {
-                        string nextmid = (string)GetSqlData("SELECT MAX(MID) FROM " + DB_AMessageData_TableName).Rows[0][0];
-
-                        p_ame.MID = nextmid;
-
-                        ExeSqlCommand(string.Format("UPDATE {0} SET MID = '{1}' WHERE MID = '{2}'"
-                            , DB_AMessageData_TableName, (int.Parse(nextmid) + 1).ToString().PadLeft(10, '0'), nextmid));
-
-
-                        ExeSqlCommand(string.Format(@"INSERT INTO " + DB_AMessageData_TableName + @" 
-                    (MID, ReleaseUser, ReleaseDate, Content, LikeCount, OfArticle)
-                    VALUES 
-                    ({0}, {1}, {2}, {3}, {4}, {5})"
-                            , Type(p_ame.MID)
-                            , Type(p_ame.ReleaseUser)
-                            , Type(p_ame.Date)
-                            , Type(p_ame.Content, true)
-                            , Type(p_ame.LikeCount)
-                            , Type(p_ame.OfArticle)));
-                    }
-                }
-                catch (Exception e)
-                {
-                    throw new Model.ModelException("SqlServ類別－Set<T>發生錯誤：AMessage設定物件欄位錯誤。\r\n"
-                        + e.Message, "發生未知錯誤－儲存失敗");
-                }
-            }
-            else if (typeof(T).Equals(typeof(ClassGroup)))
-            {
-                try
-                {
-                    ClassGroup p_cg = (ClassGroup)obj;
-
-                    //若帳號已存在，為修改帳號資料的更新。
-                    if (p_cg.GID != null)
-                    {
-                        ExeSqlCommand(string.Format(@"UPDATE " + DB_ClassGroupData_TableName + @"
-                    SET GID = {0}, 
-                    GroupName = {1}, 
-                    ClassName = {2}, 
-                    Members = {3}, 
-                    Admin = {4}, 
-                    BoardAdmin = {5}, 
-                    Topic = {6}, 
-                    Articles = {7}, 
-                    WHERE GID = {0}"
-                            , Type(p_cg.GID)
-                            , Type(p_cg.Groupname, true)
-                            , Type(p_cg.ClassName, true)
-                            , Type(p_cg.Members)
-                            , Type(p_cg.Admin)
-                            , Type(p_cg.BoardAdmin)
-                            , Type(p_cg.Topic, true)
-                            , Type(p_cg.Articles)));
-                    }
-                    else//否則為新增帳號資料的更新。
-                    {
-                        string nextgid = (string)GetSqlData("SELECT MAX(GID) FROM " + DB_ClassGroupData_TableName).Rows[0][0];
-
-                        p_cg.GID = nextgid;
-
-                        ExeSqlCommand(string.Format("UPDATE {0} SET GID = '{1}' WHERE GID = '{2}'"
-                            , DB_ClassGroupData_TableName, (int.Parse(nextgid) + 1).ToString().PadLeft(10, '0'), nextgid));
-
-
-                        ExeSqlCommand(string.Format(@"INSERT INTO " + DB_ClassGroupData_TableName + @" 
-                    (GID, GroupName, ClassName, Members, Admin, BoardAdmin, Topic, Articles)
-                    VALUES 
-                    ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7})"
-                            , Type(p_cg.GID)
-                            , Type(p_cg.Groupname, true)
-                            , Type(p_cg.ClassName, true)
-                            , Type(p_cg.Members)
-                            , Type(p_cg.Admin)
-                            , Type(p_cg.BoardAdmin)
-                            , Type(p_cg.Topic, true)
-                            , Type(p_cg.Articles)));
-                    }
-                }
-                catch (Exception e)
-                {
-                    throw new Model.ModelException("SqlServ類別－Set<T>發生錯誤：ClassGroup設定物件欄位錯誤。\r\n"
-                        + e.Message, "發生未知錯誤－儲存失敗");
-                }
-            }
-            else if (typeof(T).Equals(typeof(FamilyGroup)))
-            {
-                try
-                {
-                    FamilyGroup p_cg = (FamilyGroup)obj;
-
-                    //若帳號已存在，為修改帳號資料的更新。
-                    if (p_cg.GID != null)
-                    {
-                        ExeSqlCommand(string.Format(@"UPDATE " + DB_FamilyGroupData_TableName + @"
-                    SET GID = {0}, 
-                    GroupName = {1}, 
-                    Members = {2}, 
-                    Admin = {3}, 
-                    BoardAdmin = {4}, 
-                    Topic = {5}, 
-                    Articles = {6}, 
-                    WHERE GID = {0}"
-                            , Type(p_cg.GID)
-                            , Type(p_cg.Groupname, true)
-                            , Type(p_cg.Members)
-                            , Type(p_cg.Admin)
-                            , Type(p_cg.BoardAdmin)
-                            , Type(p_cg.Topic, true)
-                            , Type(p_cg.Articles)));
-                    }
-                    else//否則為新增帳號資料的更新。
-                    {
-                        string nextgid = (string)GetSqlData("SELECT MAX(GID) FROM " + DB_FamilyGroupData_TableName).Rows[0][0];
-
-                        p_cg.GID = nextgid;
-
-                        ExeSqlCommand(string.Format("UPDATE {0} SET GID = '{1}' WHERE GID = '{2}'"
-                            , DB_FamilyGroupData_TableName, (int.Parse(nextgid) + 1).ToString().PadLeft(10, '0'), nextgid));
-
-
-                        ExeSqlCommand(string.Format(@"INSERT INTO " + DB_FamilyGroupData_TableName + @" 
-                    (GID, GroupName, Members, Admin, BoardAdmin, Topic, Articles)
-                    VALUES 
-                    ({0}, {1}, {2}, {3}, {4}, {5}, {6})"
-                            , Type(p_cg.GID)
-                            , Type(p_cg.Groupname, true)
-                            , Type(p_cg.Members)
-                            , Type(p_cg.Admin)
-                            , Type(p_cg.BoardAdmin)
-                            , Type(p_cg.Topic, true)
-                            , Type(p_cg.Articles)));
-                    }
-                }
-                catch (Exception e)
-                {
-                    throw new Model.ModelException("SqlServ類別－Set<T>發生錯誤：FamilyGroup設定物件欄位錯誤。\r\n"
-                        + e.Message, "發生未知錯誤－儲存失敗");
-                }
-            }
-            else
-            {
-                throw new Model.ModelException("SqlServ類別－Set<T>發生錯誤：要求儲存非特定型別的物件。class : " + typeof(T)
-                    , "");
-            }
-        }
 
         public SqlServ_MySql(string p_dbConn) : base(p_dbConn)
         {
@@ -1169,397 +1683,6 @@ namespace Project_Tpage.Class
             return dt;
         }
 
-        
-
-
-        /// <summary>
-        /// 依識別碼取得指定型別的物件資料。（User、Article、AMessage、ClassGroup、FamilyGroup）
-        /// </summary>
-        /// <typeparam name="T">指定的型別（User、Article、AMessage、ClassGroup、FamilyGroup）。若非特定型別則擲回例外。</typeparam>
-        /// <param name="Iden">識別碼。</param>
-        /// <returns></returns>
-        public override object Get<T>(string Iden)
-        {
-            if (typeof(T).Equals(typeof(User)))
-            {
-                //從資料庫查詢此使用者。未找到則擲回例外(包含錯誤訊息(無此帳號、密碼錯誤))。
-                DataTable dt = GetSqlData(string.Format("SELECT * FROM {0} WHERE UID = {1}"
-                    , DB_UserData_TableName, Iden));
-
-                if (dt.Rows.Count <= 0)
-                {
-                    throw new Model.ModelException("無此帳號。UID = " + Iden, "無此帳號");
-                }
-                else
-                {
-                    User rtn = new User(dt.Rows[0]);
-                    return rtn;
-                }
-            }
-            else if (typeof(T).Equals(typeof(Article)))
-            {
-                DataTable dt = GetSqlData(string.Format("SELECT * FROM {0} WHERE AID = {1}",
-                    DB_ArticleData_TableName, Iden));
-
-                if (dt.Rows.Count == 0)
-                    throw new Model.ModelException("無此文章。AID = " + Iden, "無此文章");
-                else
-                    return new Article(dt.Rows[0]);
-            }
-            else if (typeof(T).Equals(typeof(AMessage)))
-            {
-                DataTable dt = GetSqlData(string.Format("SELECT * FROM {0} WHERE MID = {1}",
-                    DB_AMessageData_TableName, Iden));
-
-                if (dt.Rows.Count == 0)
-                    throw new Model.ModelException("無此留言。MID = " + Iden, "無此留言");
-                else
-                    return new AMessage(dt.Rows[0]);
-            }
-            else if (typeof(T).Equals(typeof(ClassGroup)))
-            {
-                //從資料庫查詢此使用者。未找到則擲回例外(包含錯誤訊息(無此帳號、密碼錯誤))。
-                DataTable dt = GetSqlData(string.Format("SELECT * FROM {0} WHERE GID = {1}"
-                    , DB_ClassGroupData_TableName, Iden));
-
-                if (dt.Rows.Count == 0)
-                    throw new Model.ModelException("無此班級。GID : " + Iden, "無此班級");
-                else
-                    return new ClassGroup(dt.Rows[0]);
-            }
-            else if (typeof(T).Equals(typeof(FamilyGroup)))
-            {
-                //從資料庫查詢此使用者。未找到則擲回例外(包含錯誤訊息(無此帳號、密碼錯誤))。
-                DataTable dt = GetSqlData(string.Format("SELECT * FROM {0} WHERE GID = {1}"
-                    , DB_FamilyGroupData_TableName, Iden));
-
-                if (dt.Rows.Count == 0)
-                    throw new Model.ModelException("無此家族。GID : " + Iden, "無此家族");
-                else
-                    return new FamilyGroup(dt.Rows[0]);
-            }
-            else
-            {
-                throw new Model.ModelException("SqlServ類別－Get<T>發生錯誤：要求非特定型別的物件。class : " + typeof(T)
-                    , "");
-            }
-        }
-        /// <summary>
-        /// 將特定型別的物件存入資料庫。
-        /// </summary>
-        /// <typeparam name="T">指定型別。</typeparam>
-        /// <param name="obj">物件。</param>
-        public override void Set<T>(object obj)
-        {
-            if (typeof(T).Equals(typeof(User)))
-            {
-                try
-                {
-                    User usr = (User)obj;
-
-                    //若帳號已存在，為修改帳號資料的更新。
-                    if (usr.Userinfo.UID != null)
-                    {
-                        ExeSqlCommand(string.Format(@"UPDATE " + DB_UserData_TableName + @"
-                    SET ID = {0}, 
-                    UID = {1}, 
-                    Password = {2}, 
-                    Email = {3}, 
-                    StudentNum = {4}, 
-                    ClassName = {5}, 
-                    RealName = {6}, 
-                    NickName = {7}, 
-                    Picture = {8}, 
-                    Gender = {9}, 
-                    Birthday = {10},
-                    UserPrivacy = {11}, 
-                    Friend = {12}, 
-                    ClassGroup = {13}, 
-                    FamilyGroup = {14}, 
-                    TbitCoin = {15} 
-                    WHERE UID = {1}"
-                            , Type(usr.Userinfo.ID)
-                            , Type(usr.Userinfo.UID)
-                            , Type(usr.Userinfo.Password)
-                            , Type(usr.Userinfo.Email)
-                            , Type(usr.Userinfo.StudentNum)
-                            , Type(usr.Userinfo.ClassName, true)
-                            , Type(usr.Userinfo.Realname, true)
-                            , Type(usr.Userinfo.Nickname, true)
-                            , Type(usr.Userinfo.Picture)
-                            , Type(usr.Userinfo.Gender)
-                            , Type(usr.Userinfo.Birthday, true)
-                            , Type(usr.Usersetting.Userprivacy)
-                            , Type(usr.Friends.Members)
-                            , Type(usr.Groups.Where(x => x is ClassGroup).Select(x => x.GID).ToList())
-                            , Type(usr.Groups.Where(x => x is FamilyGroup).Select(x => x.GID).ToList())
-                            , Type(usr.TbitCoin)));
-                    }
-                    else//否則為新增帳號資料的更新。
-                    {
-                        string nextuid = (string)GetSqlData(@"SELECT MAX(UID) FROM " + DB_UserData_TableName).Rows[0][0];
-
-                        usr.Userinfo.UID = nextuid;
-
-                        ExeSqlCommand(string.Format("UPDATE {0} SET UID = '{1}' WHERE UID = '{2}'"
-                            , DB_UserData_TableName, (int.Parse(nextuid) + 1).ToString().PadLeft(10, '0'), nextuid));
-
-                        ExeSqlCommand(string.Format(@"INSERT INTO " + DB_UserData_TableName + @" 
-                    (ID, UID, Password, Email, StudentNum, ClassName, RealName, NickName, Picture, Gender, Birthday) 
-                    VALUES 
-                    ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15})"
-                            , Type(usr.Userinfo.ID)
-                            , Type(usr.Userinfo.UID)
-                            , Type(usr.Userinfo.Password)
-                            , Type(usr.Userinfo.Email)
-                            , Type(usr.Userinfo.StudentNum)
-                            , Type(usr.Userinfo.ClassName, true)
-                            , Type(usr.Userinfo.Realname, true)
-                            , Type(usr.Userinfo.Nickname, true)
-                            , Type(usr.Userinfo.Picture)
-                            , Type(usr.Userinfo.Gender)
-                            , Type(usr.Userinfo.Birthday, true)
-                            , Type(usr.Usersetting.Userprivacy)
-                            , Type(usr.Friends.Members)
-                            , Type(usr.Groups.Where(x => x is ClassGroup).Select(x => x.GID).ToList())
-                            , Type(usr.Groups.Where(x => x is FamilyGroup).Select(x => x.GID).ToList())
-                            , Type(usr.TbitCoin)));
-                    }
-                }
-                catch (Exception e)
-                {
-                    throw new Model.ModelException("SqlServ類別－Set<T>發生錯誤：User設定物件欄位錯誤。\r\n"
-                        + e.Message, "發生未知錯誤－儲存失敗");
-                }
-            }
-            else if (typeof(T).Equals(typeof(Article)))
-            {
-                try
-                {
-                    Article p_art = (Article)obj;
-
-                    //若帳號已存在，為修改帳號資料的更新。
-                    if (p_art.AID != null)
-                    {
-                        ExeSqlCommand(string.Format(@"UPDATE " + DB_ArticleData_TableName + @"
-                    SET AID = {0}, 
-                    Title = {1}, 
-                    Content = {2}, 
-                    ReleaseUser = {3}, 
-                    ReleaseDate = {4}, 
-                    LikeCount = {5}, 
-                    OfGroup = {6}, 
-                    OfBoard = {7}, 
-                    WHERE AID = {0}"
-                            , Type(p_art.AID)
-                            , Type(p_art.Title, true)
-                            , Type(p_art.Content, true)
-                            , Type(p_art.ReleaseUser)
-                            , Type(p_art.Date)
-                            , Type(p_art.LikeCount)
-                            , Type(p_art.OfGroup)
-                            , Type(p_art.OfBoard, true)));
-                    }
-                    else//否則為新增帳號資料的更新。
-                    {
-                        string nextaid = (string)GetSqlData("SELECT MAX(AID) FROM " + DB_ArticleData_TableName).Rows[0][0];
-
-                        p_art.AID = nextaid;
-
-                        ExeSqlCommand(string.Format("UPDATE {0} SET AID = '{1}' WHERE AID = '{2}'"
-                            , DB_ArticleData_TableName, (int.Parse(nextaid) + 1).ToString().PadLeft(10, '0'), nextaid));
-                        
-                        ExeSqlCommand(string.Format(@"INSERT INTO " + DB_ArticleData_TableName + @" 
-                    (AID, Title, Content, ReleaseUser, ReleaseDate, LikeCount, OfGroup, OfBoard)
-                    VALUES 
-                    ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7})"
-                            , Type(p_art.AID)
-                            , Type(p_art.Title, true)
-                            , Type(p_art.Content, true)
-                            , Type(p_art.ReleaseUser)
-                            , Type(p_art.Date)
-                            , Type(p_art.LikeCount)
-                            , Type(p_art.OfGroup)
-                            , Type(p_art.OfBoard, true)));
-                    }
-                }
-                catch (Exception e)
-                {
-                    throw new Model.ModelException("SqlServ類別－Set<T>發生錯誤：Article設定物件欄位錯誤。\r\n"
-                        + e.Message, "發生未知錯誤－儲存失敗");
-                }
-            }
-            else if (typeof(T).Equals(typeof(AMessage)))
-            {
-                try
-                {
-                    AMessage p_ame = (AMessage)obj;
-
-                    //若帳號已存在，為修改帳號資料的更新。
-                    if (p_ame.MID != null)
-                    {
-                        ExeSqlCommand(string.Format(@"UPDATE " + DB_AMessageData_TableName + @"
-                    SET MID = {0}, 
-                    ReleaseUser = {1}, 
-                    ReleaseDate = {2}, 
-                    Content = {3}, 
-                    LikeCount = {4}, 
-                    OfArticle = {5}, 
-                    WHERE MID = {0}"
-                            , Type(p_ame.MID)
-                            , Type(p_ame.ReleaseUser)
-                            , Type(p_ame.Date)
-                            , Type(p_ame.Content, true)
-                            , Type(p_ame.LikeCount)
-                            , Type(p_ame.OfArticle)));
-                    }
-                    else//否則為新增帳號資料的更新。
-                    {
-                        string nextmid = (string)GetSqlData("SELECT MAX(MID) FROM " + DB_AMessageData_TableName).Rows[0][0];
-
-                        p_ame.MID = nextmid;
-
-                        ExeSqlCommand(string.Format("UPDATE {0} SET MID = '{1}' WHERE MID = '{2}'"
-                            , DB_AMessageData_TableName, (int.Parse(nextmid) + 1).ToString().PadLeft(10, '0'), nextmid));
-
-
-                        ExeSqlCommand(string.Format(@"INSERT INTO " + DB_AMessageData_TableName + @" 
-                    (MID, ReleaseUser, ReleaseDate, Content, LikeCount, OfArticle)
-                    VALUES 
-                    ({0}, {1}, {2}, {3}, {4}, {5})"
-                            , Type(p_ame.MID)
-                            , Type(p_ame.ReleaseUser)
-                            , Type(p_ame.Date)
-                            , Type(p_ame.Content, true)
-                            , Type(p_ame.LikeCount)
-                            , Type(p_ame.OfArticle)));
-                    }
-                }
-                catch (Exception e)
-                {
-                    throw new Model.ModelException("SqlServ類別－Set<T>發生錯誤：AMessage設定物件欄位錯誤。\r\n"
-                        + e.Message, "發生未知錯誤－儲存失敗");
-                }
-            }
-            else if (typeof(T).Equals(typeof(ClassGroup)))
-            {
-                try
-                {
-                    ClassGroup p_cg = (ClassGroup)obj;
-
-                    //若帳號已存在，為修改帳號資料的更新。
-                    if (p_cg.GID != null)
-                    {
-                        ExeSqlCommand(string.Format(@"UPDATE " + DB_ClassGroupData_TableName + @"
-                    SET GID = {0}, 
-                    GroupName = {1}, 
-                    ClassName = {2}, 
-                    Members = {3}, 
-                    Admin = {4}, 
-                    BoardAdmin = {5}, 
-                    Topic = {6}, 
-                    Articles = {7}, 
-                    WHERE GID = {0}"
-                            , Type(p_cg.GID)
-                            , Type(p_cg.Groupname, true)
-                            , Type(p_cg.ClassName, true)
-                            , Type(p_cg.Members)
-                            , Type(p_cg.Admin)
-                            , Type(p_cg.BoardAdmin)
-                            , Type(p_cg.Topic, true)
-                            , Type(p_cg.Articles)));
-                    }
-                    else//否則為新增帳號資料的更新。
-                    {
-                        string nextgid = (string)GetSqlData("SELECT MAX(GID) FROM " + DB_ClassGroupData_TableName).Rows[0][0];
-
-                        p_cg.GID = nextgid;
-
-                        ExeSqlCommand(string.Format("UPDATE {0} SET GID = '{1}' WHERE GID = '{2}'"
-                            , DB_ClassGroupData_TableName, (int.Parse(nextgid) + 1).ToString().PadLeft(10, '0'), nextgid));
-
-
-                        ExeSqlCommand(string.Format(@"INSERT INTO " + DB_ClassGroupData_TableName + @" 
-                    (GID, GroupName, ClassName, Members, Admin, BoardAdmin, Topic, Articles)
-                    VALUES 
-                    ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7})"
-                            , Type(p_cg.GID)
-                            , Type(p_cg.Groupname, true)
-                            , Type(p_cg.ClassName, true)
-                            , Type(p_cg.Members)
-                            , Type(p_cg.Admin)
-                            , Type(p_cg.BoardAdmin)
-                            , Type(p_cg.Topic, true)
-                            , Type(p_cg.Articles)));
-                    }
-                }
-                catch (Exception e)
-                {
-                    throw new Model.ModelException("SqlServ類別－Set<T>發生錯誤：ClassGroup設定物件欄位錯誤。\r\n"
-                        + e.Message, "發生未知錯誤－儲存失敗");
-                }
-            }
-            else if (typeof(T).Equals(typeof(FamilyGroup)))
-            {
-                try
-                {
-                    FamilyGroup p_cg = (FamilyGroup)obj;
-
-                    //若帳號已存在，為修改帳號資料的更新。
-                    if (p_cg.GID != null)
-                    {
-                        ExeSqlCommand(string.Format(@"UPDATE " + DB_FamilyGroupData_TableName + @"
-                    SET GID = {0}, 
-                    GroupName = {1}, 
-                    Members = {2}, 
-                    Admin = {3}, 
-                    BoardAdmin = {4}, 
-                    Topic = {5}, 
-                    Articles = {6}, 
-                    WHERE GID = {0}"
-                            , Type(p_cg.GID)
-                            , Type(p_cg.Groupname, true)
-                            , Type(p_cg.Members)
-                            , Type(p_cg.Admin)
-                            , Type(p_cg.BoardAdmin)
-                            , Type(p_cg.Topic, true)
-                            , Type(p_cg.Articles)));
-                    }
-                    else//否則為新增帳號資料的更新。
-                    {
-                        string nextgid = (string)GetSqlData("SELECT MAX(GID) FROM " + DB_FamilyGroupData_TableName).Rows[0][0];
-
-                        p_cg.GID = nextgid;
-
-                        ExeSqlCommand(string.Format("UPDATE {0} SET GID = '{1}' WHERE GID = '{2}'"
-                            , DB_FamilyGroupData_TableName, (int.Parse(nextgid) + 1).ToString().PadLeft(10, '0'), nextgid));
-
-
-                        ExeSqlCommand(string.Format(@"INSERT INTO " + DB_FamilyGroupData_TableName + @" 
-                    (GID, GroupName, Members, Admin, BoardAdmin, Topic, Articles)
-                    VALUES 
-                    ({0}, {1}, {2}, {3}, {4}, {5}, {6})"
-                            , Type(p_cg.GID)
-                            , Type(p_cg.Groupname, true)
-                            , Type(p_cg.Members)
-                            , Type(p_cg.Admin)
-                            , Type(p_cg.BoardAdmin)
-                            , Type(p_cg.Topic, true)
-                            , Type(p_cg.Articles)));
-                    }
-                }
-                catch (Exception e)
-                {
-                    throw new Model.ModelException("SqlServ類別－Set<T>發生錯誤：FamilyGroup設定物件欄位錯誤。\r\n"
-                        + e.Message, "發生未知錯誤－儲存失敗");
-                }
-            }
-            else
-            {
-                throw new Model.ModelException("SqlServ類別－Set<T>發生錯誤：要求儲存非特定型別的物件。class : " + typeof(T)
-                    , "");
-            }
-        }
 
         public SqlServ_MSSql(string p_DBconn) : base(p_DBconn)
         {

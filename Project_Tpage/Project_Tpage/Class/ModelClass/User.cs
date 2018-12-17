@@ -70,8 +70,6 @@ namespace Project_Tpage.Class
         Public =        14
     }
 
-
-
     /// <summary>
     /// 一個使用者帳戶的資訊。
     /// </summary>
@@ -98,7 +96,7 @@ namespace Project_Tpage.Class
         /// <summary>
         /// 學號。
         /// </summary>
-        public string StudentNum { get; set; }
+        public string StudentID { get; set; }
         /// <summary>
         /// 班級系級。
         /// </summary>
@@ -135,6 +133,31 @@ namespace Project_Tpage.Class
             }
         }
 
+        /// <summary>
+        /// 回傳一個新的UserInfo執行個體，其值為預設的空值。此為唯讀。
+        /// </summary>
+        public static UserInfo New
+        {
+            get
+            {
+                UserInfo rtn = new UserInfo();
+                rtn.UID = null;
+                rtn.ID = "";
+                rtn.Password = "";
+                rtn.Email = "";
+                rtn.StudentID = "";
+                rtn.ClassName = "";
+                rtn.Realname = "";
+                rtn.Nickname = null;
+                rtn.Gender = Gender.Null;
+                rtn.Picture = null;
+                rtn.Birthday = DateTime.MinValue;
+
+                return rtn;
+            }
+        }
+
+        private UserInfo() { }
     }
 
     /// <summary>
@@ -147,7 +170,26 @@ namespace Project_Tpage.Class
         /// </summary>
         public UserPrivacy Userprivacy { get; set; }
 
+        public static UserSetting New
+        {
+            get
+            {
+                UserSetting rtn = new UserSetting();
+                rtn.Userprivacy = UserPrivacy.Public;
+                return rtn;
+            }
+        }
+
+        public static UserSetting Clone(UserSetting us)
+        {
+            UserSetting rtn = new UserSetting();
+            rtn.Userprivacy = us.Userprivacy;
+            return rtn;
+        }
+
+        private UserSetting() { }
     }
+
 
     /// <summary>
     /// 代表登入的使用者。
@@ -195,6 +237,10 @@ namespace Project_Tpage.Class
             return (User)Model.DB.Get<User>(nowuid.ToString().PadLeft(10, '0'));
         }
 
+        /// <summary>
+        /// 檢查一個使用者資訊是否符合規定。
+        /// </summary>
+        /// <param name="p_uif">使用者資訊。</param>
         public static void ValidUserInfo(UserInfo p_uif)
         {
             string error = "";
@@ -210,13 +256,16 @@ namespace Project_Tpage.Class
                 error += "密碼長度不足，至少8位英文或數字組成。\r\n";
 
 
-            if (error != "") throw new Model.ModelException("無效的帳號資料：\r\n" + error, "帳號資料不符合格式：" + error);
+            if (error != "") throw new ModelException(
+                ModelException.Error.InvalidUserInformation,
+                "無效的帳號資料：\r\n" + error, 
+                "帳號資料不符合格式：" + error);
         }
 
         public User()
         {
-            Usersetting = new UserSetting();
-            Userinfo = new UserInfo();
+            Usersetting = UserSetting.New;
+            Userinfo = UserInfo.New;
 
             Usersetting.Userprivacy = UserPrivacy.Public;
             Userinfo.UID = null;
@@ -227,8 +276,8 @@ namespace Project_Tpage.Class
 
         public User(DataRow dr)
         {
-            Usersetting = new UserSetting();
-            Userinfo = new UserInfo();
+            Usersetting = UserSetting.New;
+            Userinfo = UserInfo.New;
             Friends = new FriendGroup();
             try
             {
@@ -236,7 +285,7 @@ namespace Project_Tpage.Class
                 Userinfo.ID = (string)Model.DB.AnlType<string>(dr["ID"]);
                 Userinfo.Password = (string)Model.DB.AnlType<string>(dr["Password"]);
                 Userinfo.Email = (string)Model.DB.AnlType<string>(dr["Email"]);
-                Userinfo.StudentNum = (string)Model.DB.AnlType<string>(dr["StudentNum"]);
+                Userinfo.StudentID = (string)Model.DB.AnlType<string>(dr["StudentNum"]);
                 Userinfo.ClassName = (string)Model.DB.AnlType<string>(dr["ClassName"]);
                 Userinfo.Realname = (string)Model.DB.AnlType<string>(dr["Realname"]);
                 Usersetting.Userprivacy = (UserPrivacy)Model.DB.AnlType<UserPrivacy>(dr["UserPrivacy"]);
@@ -247,8 +296,7 @@ namespace Project_Tpage.Class
                 Userinfo.Picture = (Image)Model.DB.AnlType<Image>(dr["Picture"]);
                 Userinfo.Birthday = (DateTime)Model.DB.AnlType<DateTime>(dr["Birthday"]);
 
-                Friends.Members = (List<string>)Model.DB.AnlType<List<string>>(dr["Friend"]);
-                Friends.UpdateMembersName();
+                Friends.Member_SetAll((List<string>)Model.DB.AnlType<List<string>>(dr["Friend"]));
 
 
                 List<string> ClassGroupLs = (List<string>)Model.DB.AnlType<List<string>>(dr["ClassGroup"]);
@@ -267,8 +315,10 @@ namespace Project_Tpage.Class
             }
             catch (Exception e)
             {
-                throw new Model.ModelException("User類別－建構式User(Datarow)發生錯誤：User設定物件欄位錯誤。\r\n" 
-                    + e.Message, "");
+                throw new ModelException(
+                    ModelException.Error.SetFiledFailUser,
+                    "User類別－建構式User(Datarow)發生錯誤：User設定物件欄位錯誤。\r\n"  + e.Message, 
+                    "");
             }
         }
     }

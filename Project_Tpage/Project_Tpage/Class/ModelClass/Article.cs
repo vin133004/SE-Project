@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Data;
 using System.Data.SqlClient;
+using System.Drawing;
 
 namespace Project_Tpage.Class
 {
@@ -85,8 +86,10 @@ namespace Project_Tpage.Class
             }
             catch (Exception e)
             {
-                throw new Model.ModelException("Article類別－建構式Article(DataRow)發生錯誤：Article設定物件欄位錯誤。\r\n"
-                    + e.Message, "");
+                throw new ModelException(
+                    ModelException.Error.SetFiledFailArticle,
+                    "Article類別－建構式Article(DataRow)發生錯誤：Article設定物件欄位錯誤。\r\n" + e.Message, 
+                    "");
             }
         }
     }
@@ -158,9 +161,89 @@ namespace Project_Tpage.Class
             }
             catch (Exception e)
             {
-                throw new Model.ModelException("AMessage類別－建構式Amessage(DataRow)發生錯誤：AMessage設定物件欄位錯誤。\r\n"
-                    + e.Message, "");
+                throw new ModelException(
+                    ModelException.Error.SetFiledFailAMessage,
+                    "AMessage類別－建構式Amessage(DataRow)發生錯誤：AMessage設定物件欄位錯誤。\r\n" + e.Message, 
+                    "");
             }
+        }
+    }
+
+    /// <summary>
+    /// 代表一個廣告。
+    /// </summary>
+    public class Advertise
+    {
+        /// <summary>
+        /// 廣告識別碼。
+        /// </summary>
+        public string DID { get; set; }
+        /// <summary>
+        /// 廣告的本體，以圖片展示。
+        /// </summary>
+        public Image Body { get; set; }
+        /// <summary>
+        /// 廣告位置區塊索引。
+        /// </summary>
+        public int Location { get; set; }
+        /// <summary>
+        /// 此廣告圖片的大小。
+        /// </summary>
+        public Size Size { get; set; }
+        /// <summary>
+        /// 廣告展示的截止日期。
+        /// </summary>
+        public DateTime Deadline { get; set; }
+
+        /// <summary>
+        /// 建立新的Advertise執行個體，其屬性為預設值。
+        /// </summary>
+        public static Advertise New
+        {
+            get
+            {
+                Advertise rtn = new Advertise();
+                rtn.DID = null;
+                rtn.Body = null;
+                rtn.Location = -1;
+                rtn.Size = Size.Empty;
+                rtn.Deadline = DateTime.MinValue;
+
+                return rtn;
+            }
+        }
+
+        /// <summary>
+        /// 依照傳入的資料列建立新的Advertise執行個體。
+        /// </summary>
+        /// <param name="dr">資料列。</param>
+        /// <returns></returns>
+        public static Advertise Instance(DataRow dr)
+        {
+            Advertise rtn = new Advertise();
+
+            try
+            {
+                rtn.DID = (string)Model.DB.AnlType<string>(dr["DID"]);
+                rtn.Body = (Image)Model.DB.AnlType<Image>(dr["Body"]);
+                rtn.Location = (int)Model.DB.AnlType<int>(dr["Location"]);
+                rtn.Size = (Size)Model.DB.AnlType<Size>(dr["Size"]);
+                rtn.Deadline = (DateTime)Model.DB.AnlType<DateTime>(dr["Deadline"]);
+
+                return rtn;
+            }
+            catch(Exception e)
+            {
+                throw new ModelException(
+                    ModelException.Error.SetFiledFailAdvertise,
+                    "Advertise類別－建立執行個體Instance(in DataRow)發生錯誤：Advertise設定物件欄位錯誤。\r\n" + e.Message,
+                    "");
+            }
+        }
+
+        private Advertise()
+        {
+
         }
     }
 }
