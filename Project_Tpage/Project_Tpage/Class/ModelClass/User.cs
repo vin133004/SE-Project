@@ -209,6 +209,10 @@ namespace Project_Tpage.Class
         /// </summary>
         public FriendGroup Friends { get; private set; }
         /// <summary>
+        /// 要求加為好友的佇列。
+        /// </summary>
+        public List<User> FriendRequestQueue { get; set; }
+        /// <summary>
         /// 使用者所在的團體。
         /// </summary>
         public List<RelationshipGroup> Groups { get; set; }
@@ -216,6 +220,93 @@ namespace Project_Tpage.Class
         /// 台科幣的存量。
         /// </summary>
         public int TbitCoin { get; set; }
+        /// <summary>
+        /// 紀錄上次結算台科幣的時間。
+        /// </summary>
+        public DateTime LastComputeTbit { get; set; }
+
+
+        /// <summary>
+        /// 外部使用者要求申請加此使用者為朋友所叫用的方法。將要求的使用者加入要求佇列。
+        /// </summary>
+        /// <param name="usr">要求的使用者。</param>
+        public void Friend_Add(User usr)
+        {
+            if (Friends.Members.Contains(usr.Userinfo.UID))
+                throw new ModelException(
+                    ModelException.Error.AddFriendFail,
+                    "User類別－Friend_Add()發生例外：該使用者已為朋友。",
+                    "你已經是他的朋友！");
+            else if(FriendRequestQueue.Contains(usr))
+                throw new ModelException(
+                    ModelException.Error.AddFriendFail,
+                    "User類別－Friend_Add()發生例外：使用者已存在於要求佇列。",
+                    "你已經申請加入朋友！");
+            else
+            {
+                FriendRequestQueue.Add(usr);
+                Model.DB.Set<User>(this);
+
+            }
+        }
+        /// <summary>
+        /// 此使用者允許將一位使用者加為好友。並移出要求佇列。
+        /// </summary>
+        /// <param name="usr">允許的使用者。</param>
+        public void Friend_AllowAdd(User usr)
+        {
+            if (FriendRequestQueue.Contains(usr)) FriendRequestQueue.Remove(usr);
+
+            Friends.Member_Add(usr.Userinfo.UID);
+            Model.DB.Set<User>(this);
+
+            usr.Friends.Member_Add(Userinfo.UID);
+            Model.DB.Set<User>(usr);
+        }
+
+        /// <summary>
+        /// 嘗試結算台科幣，若距上次結算日少於30天，則不進行結算，高於30天則進行結算。
+        /// </summary>
+        public void ComputeTbit()
+        {
+            if (new TimeSpan(Math.Abs(DateTime.Now.Ticks - LastComputeTbit.Ticks)).Days < 30) return;
+
+            int totalLikeCount = 0;
+            using (DataTable dt = Model.DB.GetSqlData(string.Format("SELECT * FROM {0}", Model.DB.DB_ArticleData_TableName)))
+            {
+                List<Article> dr = (from x in Enumerable.Cast<DataRow>(dt.Rows)
+                                    where (string)x["ReleaseUser"] == Userinfo.UID
+                                    select x).Select(x => new Article(x)).ToList();
+
+                totalLikeCount += dr.Select(x => x.LikeCount - x.LastComputeTbitLikeCount).Sum();
+                foreach(Article ar in dr)
+                {
+                    ar.LastComputeTbitLikeCount = ar.LikeCount;
+                    Model.DB.Set<Article>(ar);
+                }
+            }
+            using (DataTable dt = Model.DB.GetSqlData(string.Format("SELECT * FROM {0}", Model.DB.DB_AMessageData_TableName)))
+            {
+                List<AMessage> dr = (from x in Enumerable.Cast<DataRow>(dt.Rows)
+                                    where (string)x["ReleaseUser"] == Userinfo.UID
+                                    select x).Select(x => new AMessage(x)).ToList();
+
+                totalLikeCount += dr.Select(x => x.LikeCount - x.LastComputeTbitLikeCount).Sum();
+                foreach (AMessage am in dr)
+                {
+                    am.LastComputeTbitLikeCount = am.LikeCount;
+                    Model.DB.Set<AMessage>(am);
+                }
+            }
+
+            //計算總按讚數轉換為台科幣的公式。
+
+            LastComputeTbit = new DateTime(DateTime.Now.Ticks);
+
+            TbitCoin += totalLikeCount;
+
+            Model.DB.Set<User>(this);
+        }
         
         /// <summary>
         /// 抽卡交友。
@@ -230,11 +321,13 @@ namespace Project_Tpage.Class
             for(int noneloop = 0; noneloop<10000; noneloop++)
             {
                 nowuid = new Random().Next(1, maxuid);
-                if (nowuid == myuid) continue;
-                break;
+                if (nowuid == myuid || Friends.Members.Contains(nowuid.ToString().PadLeft(10, '0'))) continue;
+                return Model.DB.Get<User>(nowuid.ToString().PadLeft(10, '0'));
             }
-
-            return (User)Model.DB.Get<User>(nowuid.ToString().PadLeft(10, '0'));
+            throw new ModelException(
+                ModelException.Error.PickCardFailed,
+                "User類別－Pickcard()發生例外：抽卡迭代次數已達上限，未能成功抽卡。",
+                "使用錯誤。");
         }
 
         /// <summary>
@@ -289,16 +382,21 @@ namespace Project_Tpage.Class
                 Userinfo.ClassName = (string)Model.DB.AnlType<string>(dr["ClassName"]);
                 Userinfo.Realname = (string)Model.DB.AnlType<string>(dr["Realname"]);
                 Usersetting.Userprivacy = (UserPrivacy)Model.DB.AnlType<UserPrivacy>(dr["UserPrivacy"]);
-                TbitCoin = (int)Model.DB.AnlType<int>(dr["TbitCoin"]);
 
                 Userinfo.Nickname = (string)Model.DB.AnlType<string>(dr["Nickname"]);
                 Userinfo.Gender = (Gender)Model.DB.AnlType<Gender>(dr["Gender"]);
                 Userinfo.Picture = (Image)Model.DB.AnlType<Image>(dr["Picture"]);
                 Userinfo.Birthday = (DateTime)Model.DB.AnlType<DateTime>(dr["Birthday"]);
 
+                LastComputeTbit = (DateTime)Model.DB.AnlType<DateTime>(dr["LastComputeTbit"]);
+                TbitCoin = (int)Model.DB.AnlType<int>(dr["TbitCoin"]);
+
+
+                FriendRequestQueue = ((List<User>)Model.DB.AnlType<List<User>>(dr["FriendRequest"]));
+                    
+
                 Friends.Member_SetAll((List<string>)Model.DB.AnlType<List<string>>(dr["Friend"]));
-
-
+                
                 List<string> ClassGroupLs = (List<string>)Model.DB.AnlType<List<string>>(dr["ClassGroup"]);
                 List<string> FamilyGroupLs = (List<string>)Model.DB.AnlType<List<string>>(dr["FamilyGroup"]);
 

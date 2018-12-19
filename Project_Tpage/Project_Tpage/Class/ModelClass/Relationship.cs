@@ -59,16 +59,20 @@ namespace Project_Tpage.Class
             Owner = null;
         }
 
+        /// <summary>
+        /// 將一個使用者加入此朋友圈並更新朋友名字陣列。
+        /// </summary>
+        /// <param name="newmem">使用者識別碼。</param>
         public void Member_Add(string newmem)
         {
             try
             {
-                Members.Add(newmem);
-
                 DataTable dt = Model.DB.GetSqlData(string.Format("SELECT RealName, NickName FROM {0} WHERE UID = {1}"
                     , Model.DB.DB_UserData_TableName, newmem));
                 if (dt.Rows.Count <= 0)
                     throw new Exception("用戶未找到。\r\nUID: " + newmem);
+
+                Members.Add(newmem);
 
 
                 string nickname = (string)Model.DB.AnlType<string>(dt.Rows[0]["NickName"])
@@ -83,7 +87,10 @@ namespace Project_Tpage.Class
                     "未知的使用者！");
             }
         }
-
+        /// <summary>
+        /// 將一個使用者移出此朋友圈並更新朋友名字陣列。
+        /// </summary>
+        /// <param name="remmem">使用者識別碼。</param>
         public void Member_Remove(string remmem)
         {
             int indx = Members.IndexOf(remmem);
@@ -95,7 +102,10 @@ namespace Project_Tpage.Class
             Members.RemoveAt(indx);
             MembersName.RemoveAt(indx);
         }
-
+        /// <summary>
+        /// 將一列使用者識別碼設定為此朋友圈的成員，並更新朋友名字陣列。
+        /// </summary>
+        /// <param name="lismem">使用者識別碼。</param>
         public void Member_SetAll(List<string> lismem)
         {
             Members = new List<string>(lismem);
@@ -151,6 +161,8 @@ namespace Project_Tpage.Class
                 Admin = (List<string>)Model.DB.AnlType<List<string>>(dr["Admin"]);
                 BoardAdmin = (List<BoardAdminPair>)Model.DB.AnlType<List<BoardAdminPair>>(dr["BoardAdmin"]);
                 Topic = (List<string>)Model.DB.AnlType<List<string>>(dr["Topic"]);
+
+                MemberRequestQueue = (List<User>)Model.DB.AnlType<List<User>>(dr["MemberRequest"]);
             }
             catch (Exception e)
             {
@@ -162,6 +174,10 @@ namespace Project_Tpage.Class
             }
         }
 
+        /// <summary>
+        /// 使用者嘗試加入團體，將加入要求佇列。
+        /// </summary>
+        /// <param name="usr">要求的使用者。</param>
         public override void Members_Add(User usr)
         {
             if (usr.Userinfo.ClassName != ClassName)
@@ -174,9 +190,14 @@ namespace Project_Tpage.Class
                     ModelException.Error.JoinGroupFail,
                     "ClassGroup類別－Add_Members()發生例外：此使用者已為班級成員。",
                     "你已為班級成員");
+            else if (MemberRequestQueue.Contains(usr))
+                throw new ModelException(
+                    ModelException.Error.JoinGroupFail,
+                    "ClassGroup類別－Add_Members()發生例外：已存在於要求佇列內。",
+                    "你已申請加入該班級");
             else
             {
-                Members.Add(usr.Userinfo.UID);
+                MemberRequestQueue.Add(usr);
                 Model.DB.Set<ClassGroup>(this);
             }
         }
@@ -203,6 +224,8 @@ namespace Project_Tpage.Class
                 Admin = (List<string>)Model.DB.AnlType<List<string>>(dr["Admin"]);
                 BoardAdmin = (List<BoardAdminPair>)Model.DB.AnlType<List<BoardAdminPair>>(dr["BoardAdmin"]);
                 Topic = (List<string>)Model.DB.AnlType<List<string>>(dr["Topic"]);
+
+                MemberRequestQueue = (List<User>)Model.DB.AnlType<List<User>>(dr["MemberRequest"]);
             }
             catch (Exception e)
             {
@@ -214,6 +237,10 @@ namespace Project_Tpage.Class
             }
         }
 
+        /// <summary>
+        /// 使用者嘗試加入團體，將加入要求佇列。
+        /// </summary>
+        /// <param name="usr">要求的使用者。</param>
         public override void Members_Add(User usr)
         {
             if (Members.Contains(usr.Userinfo.UID))
@@ -221,9 +248,14 @@ namespace Project_Tpage.Class
                     ModelException.Error.JoinGroupFail,
                     "FamilyGroup類別－Add_Members()發生例外：此使用者已為家族成員。",
                     "你已為家族成員");
+            else if (MemberRequestQueue.Contains(usr))
+                throw new ModelException(
+                    ModelException.Error.JoinGroupFail,
+                    "FamilyGroup類別－Add_Members()發生例外：已存在於要求佇列內。",
+                    "你已申請加入該家族");
             else
             {
-                Members.Add(usr.Userinfo.UID);
+                MemberRequestQueue.Add(usr);
                 Model.DB.Set<FamilyGroup>(this);
             }
         }
@@ -258,9 +290,38 @@ namespace Project_Tpage.Class
         /// 主題看板的版主。
         /// </summary>
         public List<BoardAdminPair> BoardAdmin { get; set; }
-        
+        /// <summary>
+        /// 要求加入團體的使用者佇列。
+        /// </summary>
+        public List<User> MemberRequestQueue { get; set; }
 
 
+        /// <summary>
+        /// 管理員接受一名使用者的加入要求。
+        /// </summary>
+        /// <param name="usr">接受的使用者。</param>
+        public void Members_AllowAdd(User usr)
+        {
+            if (MemberRequestQueue.Contains(usr)) MemberRequestQueue.Remove(usr);
+
+            Members.Add(usr.Userinfo.UID);
+            if (this is ClassGroup)
+                Model.DB.Set<ClassGroup>(this);
+            else
+                Model.DB.Set<FamilyGroup>(this);
+
+            usr.Groups.Add(this);
+            Model.DB.Set<User>(usr);
+
+        }
+
+
+
+
+        /// <summary>
+        /// 使用者嘗試加入團體，將加入要求佇列。
+        /// </summary>
+        /// <param name="usr">要求的使用者。</param>
         public abstract void Members_Add(User usr);
         public RelationshipGroup()
         {

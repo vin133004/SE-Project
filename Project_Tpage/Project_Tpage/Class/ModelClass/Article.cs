@@ -45,6 +45,10 @@ namespace Project_Tpage.Class
         /// 按讚數量。
         /// </summary>
         public int LikeCount { get; set; }
+        /// <summary>
+        /// 紀錄上次結算台科幣的按讚數量。
+        /// </summary>
+        public int LastComputeTbitLikeCount { get; set; }
 
 
         /// <summary>
@@ -82,7 +86,7 @@ namespace Project_Tpage.Class
                 OfGroup = (string)Model.DB.AnlType<string>(dr["OfGroup"]);
                 OfBoard = (string)Model.DB.AnlType<string>(dr["OfBoard"]);
                 LikeCount = (int)Model.DB.AnlType<int>(dr["LikeCount"]);
-
+                LastComputeTbitLikeCount = (int)Model.DB.AnlType<int>(dr["TbitLikeCount"]);
             }
             catch (Exception e)
             {
@@ -123,6 +127,10 @@ namespace Project_Tpage.Class
         /// 按讚數量。
         /// </summary>
         public int LikeCount { get; set; }
+        /// <summary>
+        /// 紀錄上次結算台科幣的按讚數量。
+        /// </summary>
+        public int LastComputeTbitLikeCount { get; set; }
 
 
         /// <summary>
@@ -157,7 +165,7 @@ namespace Project_Tpage.Class
                 Content = (string)Model.DB.AnlType<string>(dr["Content"]);
                 LikeCount = (int)Model.DB.AnlType<int>(dr["LikeCount"]);
                 OfArticle = (string)Model.DB.AnlType<string>(dr["OfArticle"]);
-
+                LastComputeTbitLikeCount = (int)Model.DB.AnlType<int>(dr["TbitLikeCount"]);
             }
             catch (Exception e)
             {

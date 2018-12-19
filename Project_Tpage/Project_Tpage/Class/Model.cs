@@ -135,13 +135,21 @@ namespace Project_Tpage.Class
             /// 頁面資料格式錯誤。
             /// </summary>
             PageDataFromatError =           2004,
+            /// <summary>
+            /// 抽卡交友抽卡迭代次數達上限，抽卡失敗。
+            /// </summary>
+            PickCardFailed =                2005,
 
 
             //(錯誤代號:3000)資料結構錯誤
             /// <summary>
             /// 朋友圈成員操作錯誤。
             /// </summary>
-            FriendMemberOperationError =    3001
+            FriendMemberOperationError =    3001,
+            /// <summary>
+            /// 加入朋友錯誤。
+            /// </summary>
+            AddFriendFail =                 3002
 
         }
         /// <summary>
@@ -255,7 +263,7 @@ namespace Project_Tpage.Class
         {
             try
             {
-                user = (User)DB.Get<User>(DB.UserID_UIDconvert(p_ID));
+                user = DB.Get<User>(DB.UserID_UIDconvert(p_ID));
                 if (user == null)
                     return "發生未知錯誤，登入失敗。";
                 else if (!user.Userinfo.Password.Equals(p_Password))
@@ -313,9 +321,8 @@ namespace Project_Tpage.Class
                 cg.ClassName = p_ClassName;
                 cg.Groupname = p_GroupName;
 
-                cg.Members_Add(user);
                 cg.Admin.Add(user.Userinfo.UID);
-                DB.Set<ClassGroup>(cg);
+                cg.Members_AllowAdd(user);
             }
         }
         /// <summary>
@@ -334,9 +341,8 @@ namespace Project_Tpage.Class
                 FamilyGroup fg = new FamilyGroup();
                 fg.Groupname = p_GroupName;
 
-                fg.Members_Add(user);
                 fg.Admin.Add(user.Userinfo.UID);
-                DB.Set<FamilyGroup>(fg);
+                fg.Members_AllowAdd(user);
             }
         }
         /// <summary>
@@ -483,8 +489,8 @@ namespace Project_Tpage.Class
                 PageData.Out.SetData(
                     delegate ()
                     {
-                        PageData.Out.Add("Content", GetDynamicPageContent());
-                        PageData.Out.Add("User", user);
+                        PageData.Out["Content"] = GetDynamicPageContent();
+                        PageData.Out["User"] = user;
                     });
             }
             else if (ToState == StateEnum.UserPage)
@@ -492,7 +498,7 @@ namespace Project_Tpage.Class
                 PageData.Out.SetData(
                     delegate ()
                     {
-                        PageData.Out.Add("Content", GetUserPageContent((string)PageData.In["UserUID"]));
+                        PageData.Out["Content"] = GetUserPageContent((string)PageData.In["UserUID"]);
                     });
             }
             else if (ToState == StateEnum.Group)
@@ -500,19 +506,24 @@ namespace Project_Tpage.Class
                 PageData.Out.SetData(
                     delegate ()
                     {
-                        PageData.Out.Add("Content", GetArticlesFromGroup((string)PageData.In["GID"]));
+                        PageData.Out["Content"] = GetArticlesFromGroup((string)PageData.In["GID"]);
                     });
             }
             else if (ToState == StateEnum.Board)
             {
-
+                PageData.Out.SetData(
+                    delegate ()
+                    {
+                        PageData.Out["Content"] = GetArticlesFromBoard
+                            ((string)PageData.In["GID"], (string)PageData.In["Board"]);
+                    });
             }
             else if (ToState == StateEnum.Article)
             {
                 PageData.Out.SetData(
                     delegate ()
                     {
-                        PageData.Out.Add("Content", DB.Get<Article>((string)PageData.In["AID"]));
+                        PageData.Out["Content"] = DB.Get<Article>((string)PageData.In["AID"]);
                     });
             }
             else if (ToState == StateEnum.EditArticle)
@@ -569,6 +580,7 @@ namespace Project_Tpage.Class
             Out = new PageData(32);          
         }
 
+
         /// <summary>
         /// 清空PageData內的資料並設定新的資料。
         /// </summary>
@@ -580,11 +592,18 @@ namespace Project_Tpage.Class
             {
                 SettingFunc();
             }
+            catch (KeyNotFoundException)
+            {
+                throw new ModelException(
+                    ModelException.Error.PageDataFromatError,
+                    "PageData類別－SetData(Action)發生例外：未找到需要的參數。\r\n",
+                    "");
+            }
             catch (Exception e)
             {
                 throw new ModelException(
                     ModelException.Error.PageDataFromatError,
-                    "PageData類別－SetData(Action)發生例外：設定資料錯誤或未找到需要的參數。\r\n" + e.Message, 
+                    "PageData類別－SetData(Action)發生例外：設定資料錯誤。\r\n" + e.Message, 
                     "");
             }
         }
@@ -592,6 +611,25 @@ namespace Project_Tpage.Class
         ~PageData()
         {
             
+        }
+
+        public new object this[string s]
+        {
+            get
+            {
+                return ((Dictionary<string, object>)this)[s];
+            }
+            set
+            {
+                try
+                {
+                    ((Dictionary<string, object>)this)[s] = value;
+                }
+                catch (KeyNotFoundException)
+                {
+                    Add(s, value);
+                }
+            }
         }
 
         private PageData() : base() { }
@@ -811,6 +849,15 @@ namespace Project_Tpage.Class
             return "'" + sz.Width + "@" + sz.Height + "'";
         }
         /// <summary>
+        /// 將指定型別資料解析為SQL字串的表示方式。
+        /// </summary>
+        /// <param name="ls">使用者陣列格式。</param>
+        /// <returns></returns>
+        public string Type(List<User> ls)
+        {
+            return Type(ls.Select(x => x.Userinfo.UID).ToList());
+        }
+        /// <summary>
         /// 將User的帳號與帳號識別碼進行轉換。
         /// </summary>
         /// <param name="ipt">輸入</param>
@@ -865,13 +912,17 @@ namespace Project_Tpage.Class
                 {
                     return ((string)obj).Split(',').ToList();
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     throw new ModelException(
                         ModelException.Error.AnlTypeErrListOfString,
                         "SqlServ類別－AnlType<List<string>>發生例外：資料庫內字串陣列" +
                         "資料格式錯誤無法解析！\r\n" + e.Message, "");
                 }
+            }
+            else if (typeof(T).Equals(typeof(List<User>)))
+            {
+                return ((List<string>)AnlType<List<string>>(obj)).Select(x => Model.DB.Get<User>(x)).ToList();
             }
             else if(typeof(T).Equals(typeof(List<BoardAdminPair>)))
             {
@@ -981,7 +1032,17 @@ namespace Project_Tpage.Class
         /// <typeparam name="T">指定的型別（User、Article、AMessage、ClassGroup、FamilyGroup）。若非特定型別則擲回例外。</typeparam>
         /// <param name="Iden">識別碼。</param>
         /// <returns></returns>
-        public object Get<T>(string Iden)
+        public T Get<T>(string Iden)
+        {
+            return (T)Get_workshop<T>(Iden);
+        }
+        /// <summary>
+        /// (工作函數)依識別碼取得指定型別的物件資料。未找到則擲回例外。
+        /// </summary>
+        /// <typeparam name="T">指定的型別（User、Article、AMessage、ClassGroup、FamilyGroup）。若非特定型別則擲回例外。</typeparam>
+        /// <param name="Iden">識別碼。</param>
+        /// <returns></returns>
+        private object Get_workshop<T>(string Iden)
         {
             if (typeof(T).Equals(typeof(User)))
             {
@@ -1123,7 +1184,9 @@ namespace Project_Tpage.Class
                     Friend = {12}, 
                     ClassGroup = {13}, 
                     FamilyGroup = {14}, 
-                    TbitCoin = {15} 
+                    TbitCoin = {15},
+                    FriendRequest = {16},
+                    LastComputeTbit = {17} 
                     WHERE UID = {1}"
                             , Type(usr.Userinfo.ID)
                             , Type(usr.Userinfo.UID)
@@ -1140,7 +1203,9 @@ namespace Project_Tpage.Class
                             , Type(usr.Friends.Members)
                             , Type(usr.Groups.Where(x => x is ClassGroup).Select(x => x.GID).ToList())
                             , Type(usr.Groups.Where(x => x is FamilyGroup).Select(x => x.GID).ToList())
-                            , Type(usr.TbitCoin)));
+                            , Type(usr.TbitCoin)
+                            , Type(usr.FriendRequestQueue)
+                            , Type(usr.LastComputeTbit)));
                     }
                     else//否則為新增帳號資料的更新。
                     {
@@ -1152,9 +1217,9 @@ namespace Project_Tpage.Class
                             , DB_UserData_TableName, (int.Parse(nextuid) + 1).ToString().PadLeft(10, '0'), nextuid));
 
                         ExeSqlCommand(string.Format(@"INSERT INTO " + DB_UserData_TableName + @" 
-                    (ID, UID, Password, Email, StudentNum, ClassName, RealName, NickName, Picture, Gender, Birthday) 
+        (ID, UID, Password, Email, StudentNum, ClassName, RealName, NickName, Picture, Gender, Birthday, FriendRequest, LastComputeTbit) 
                     VALUES 
-                    ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15})"
+        ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17})"
                             , Type(usr.Userinfo.ID)
                             , Type(usr.Userinfo.UID)
                             , Type(usr.Userinfo.Password)
@@ -1170,7 +1235,9 @@ namespace Project_Tpage.Class
                             , Type(usr.Friends.Members)
                             , Type(usr.Groups.Where(x => x is ClassGroup).Select(x => x.GID).ToList())
                             , Type(usr.Groups.Where(x => x is FamilyGroup).Select(x => x.GID).ToList())
-                            , Type(usr.TbitCoin)));
+                            , Type(usr.TbitCoin)
+                            , Type(usr.FriendRequestQueue)
+                            , Type(usr.LastComputeTbit)));
                     }
                 }
                 catch (Exception e)
@@ -1198,7 +1265,8 @@ namespace Project_Tpage.Class
                     ReleaseDate = {4}, 
                     LikeCount = {5}, 
                     OfGroup = {6}, 
-                    OfBoard = {7} 
+                    OfBoard = {7}, 
+                    TbitLikeCount = {8} 
                     WHERE AID = {0}"
                             , Type(p_art.AID)
                             , Type(p_art.Title, true)
@@ -1207,7 +1275,8 @@ namespace Project_Tpage.Class
                             , Type(p_art.Date)
                             , Type(p_art.LikeCount)
                             , Type(p_art.OfGroup)
-                            , Type(p_art.OfBoard, true)));
+                            , Type(p_art.OfBoard, true)
+                            , Type(p_art.LastComputeTbitLikeCount)));
                     }
                     else//否則為新增帳號資料的更新。
                     {
@@ -1219,9 +1288,9 @@ namespace Project_Tpage.Class
                             , DB_ArticleData_TableName, (int.Parse(nextaid) + 1).ToString().PadLeft(10, '0'), nextaid));
 
                         ExeSqlCommand(string.Format(@"INSERT INTO " + DB_ArticleData_TableName + @" 
-                    (AID, Title, Content, ReleaseUser, ReleaseDate, LikeCount, OfGroup, OfBoard)
+                    (AID, Title, Content, ReleaseUser, ReleaseDate, LikeCount, OfGroup, OfBoard, TbitLikeCount)
                     VALUES 
-                    ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7})"
+                    ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8})"
                             , Type(p_art.AID)
                             , Type(p_art.Title, true)
                             , Type(p_art.Content, true)
@@ -1229,7 +1298,8 @@ namespace Project_Tpage.Class
                             , Type(p_art.Date)
                             , Type(p_art.LikeCount)
                             , Type(p_art.OfGroup)
-                            , Type(p_art.OfBoard, true)));
+                            , Type(p_art.OfBoard, true)
+                            , Type(p_art.LastComputeTbitLikeCount)));
                     }
                 }
                 catch (Exception e)
@@ -1255,14 +1325,16 @@ namespace Project_Tpage.Class
                     ReleaseDate = {2}, 
                     Content = {3}, 
                     LikeCount = {4}, 
-                    OfArticle = {5} 
+                    OfArticle = {5},
+                    TbitLikeCount = {6} 
                     WHERE MID = {0}"
                             , Type(p_ame.MID)
                             , Type(p_ame.ReleaseUser)
                             , Type(p_ame.Date)
                             , Type(p_ame.Content, true)
                             , Type(p_ame.LikeCount)
-                            , Type(p_ame.OfArticle)));
+                            , Type(p_ame.OfArticle)
+                            , Type(p_ame.LastComputeTbitLikeCount)));
                     }
                     else//否則為新增帳號資料的更新。
                     {
@@ -1275,15 +1347,16 @@ namespace Project_Tpage.Class
 
 
                         ExeSqlCommand(string.Format(@"INSERT INTO " + DB_AMessageData_TableName + @" 
-                    (MID, ReleaseUser, ReleaseDate, Content, LikeCount, OfArticle)
+                    (MID, ReleaseUser, ReleaseDate, Content, LikeCount, OfArticle, TbitLikeCount)
                     VALUES 
-                    ({0}, {1}, {2}, {3}, {4}, {5})"
+                    ({0}, {1}, {2}, {3}, {4}, {5}, {6})"
                             , Type(p_ame.MID)
                             , Type(p_ame.ReleaseUser)
                             , Type(p_ame.Date)
                             , Type(p_ame.Content, true)
                             , Type(p_ame.LikeCount)
-                            , Type(p_ame.OfArticle)));
+                            , Type(p_ame.OfArticle)
+                            , Type(p_ame.LastComputeTbitLikeCount)));
                     }
                 }
                 catch (Exception e)
@@ -1310,7 +1383,8 @@ namespace Project_Tpage.Class
                     Members = {3}, 
                     Admin = {4}, 
                     BoardAdmin = {5}, 
-                    Topic = {6} 
+                    Topic = {6},
+                    MemberRequest = {7} 
                     WHERE GID = {0}"
                             , Type(p_cg.GID)
                             , Type(p_cg.Groupname, true)
@@ -1318,7 +1392,8 @@ namespace Project_Tpage.Class
                             , Type(p_cg.Members)
                             , Type(p_cg.Admin)
                             , Type(p_cg.BoardAdmin)
-                            , Type(p_cg.Topic, true)));
+                            , Type(p_cg.Topic, true)
+                            , Type(p_cg.MemberRequestQueue)));
                     }
                     else//否則為新增帳號資料的更新。
                     {
@@ -1331,16 +1406,17 @@ namespace Project_Tpage.Class
 
 
                         ExeSqlCommand(string.Format(@"INSERT INTO " + DB_ClassGroupData_TableName + @" 
-                    (GID, GroupName, ClassName, Members, Admin, BoardAdmin, Topic)
+                    (GID, GroupName, ClassName, Members, Admin, BoardAdmin, Topic, MemberRequest)
                     VALUES 
-                    ({0}, {1}, {2}, {3}, {4}, {5}, {6})"
+                    ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7})"
                             , Type(p_cg.GID)
                             , Type(p_cg.Groupname, true)
                             , Type(p_cg.ClassName, true)
                             , Type(p_cg.Members)
                             , Type(p_cg.Admin)
                             , Type(p_cg.BoardAdmin)
-                            , Type(p_cg.Topic, true)));
+                            , Type(p_cg.Topic, true)
+                            , Type(p_cg.MemberRequestQueue)));
                     }
                 }
                 catch (Exception e)
@@ -1366,14 +1442,16 @@ namespace Project_Tpage.Class
                     Members = {2}, 
                     Admin = {3}, 
                     BoardAdmin = {4}, 
-                    Topic = {5} 
+                    Topic = {5},
+                    MemberRequest = {6} 
                     WHERE GID = {0}"
                             , Type(p_cg.GID)
                             , Type(p_cg.Groupname, true)
                             , Type(p_cg.Members)
                             , Type(p_cg.Admin)
                             , Type(p_cg.BoardAdmin)
-                            , Type(p_cg.Topic, true)));
+                            , Type(p_cg.Topic, true)
+                            , Type(p_cg.MemberRequestQueue)));
                     }
                     else//否則為新增帳號資料的更新。
                     {
@@ -1386,15 +1464,16 @@ namespace Project_Tpage.Class
 
 
                         ExeSqlCommand(string.Format(@"INSERT INTO " + DB_FamilyGroupData_TableName + @" 
-                    (GID, GroupName, Members, Admin, BoardAdmin, Topic)
+                    (GID, GroupName, Members, Admin, BoardAdmin, Topic, MemberRequest)
                     VALUES 
-                    ({0}, {1}, {2}, {3}, {4}, {5})"
+                    ({0}, {1}, {2}, {3}, {4}, {5}, {6})"
                             , Type(p_cg.GID)
                             , Type(p_cg.Groupname, true)
                             , Type(p_cg.Members)
                             , Type(p_cg.Admin)
                             , Type(p_cg.BoardAdmin)
-                            , Type(p_cg.Topic, true)));
+                            , Type(p_cg.Topic, true)
+                            , Type(p_cg.MemberRequestQueue)));
                     }
                 }
                 catch (Exception e)
