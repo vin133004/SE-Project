@@ -213,6 +213,9 @@ namespace Project_Tpage.Class
         EditArticle
     }
 
+    /// <summary>
+    /// 資料模型。
+    /// </summary>
     public class Model
     {
         /// <summary>
@@ -477,6 +480,12 @@ namespace Project_Tpage.Class
             return rtn;
         }
 
+        public bool IsAdmin(string Family_GID, string UID)
+        {
+            return string.Concat(DB.Get<FamilyGroup>(Family_GID).Members.Select
+                ((x, indx) => indx == 0 ? x : "," + x)).Contains(UID);
+        }
+
         /// <summary>
         /// 在切換頁面時，向Model要求新的頁面資料。
         /// </summary>
@@ -580,7 +589,7 @@ namespace Project_Tpage.Class
             Out = new PageData(32);          
         }
 
-
+        
         /// <summary>
         /// 清空PageData內的資料並設定新的資料。
         /// </summary>
@@ -607,6 +616,7 @@ namespace Project_Tpage.Class
                     "");
             }
         }
+        
 
         ~PageData()
         {
@@ -1217,7 +1227,8 @@ namespace Project_Tpage.Class
                             , DB_UserData_TableName, (int.Parse(nextuid) + 1).ToString().PadLeft(10, '0'), nextuid));
 
                         ExeSqlCommand(string.Format(@"INSERT INTO " + DB_UserData_TableName + @" 
-        (ID, UID, Password, Email, StudentNum, ClassName, RealName, NickName, Picture, Gender, Birthday, FriendRequest, LastComputeTbit) 
+        (ID, UID, Password, Email, StudentNum, ClassName, RealName, NickName, Picture, Gender, Birthday, UserPrivacy, Friend
+		, ClassGroup, FamilyGroup, TbitCoin, FriendRequest, LastComputeTbit) 
                     VALUES 
         ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17})"
                             , Type(usr.Userinfo.ID)
