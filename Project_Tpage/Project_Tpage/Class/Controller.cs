@@ -89,11 +89,12 @@ namespace Project_Tpage.Class
         {
             if (model.State != StateEnum.Login)
                 return;
-            if (model.Login(p_ID, p_Password) == string.Empty)
+            try
             {
+                model.Login(p_ID, p_Password);
                 ToHome();
             }
-            else
+            catch
             {
                 ToLogin();
             }
