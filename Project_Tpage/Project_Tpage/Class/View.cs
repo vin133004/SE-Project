@@ -13,6 +13,7 @@ namespace Project_Tpage.Class
         public View(Controller controller)
         {
             this.controller = controller;
+
         }
     }
 }
