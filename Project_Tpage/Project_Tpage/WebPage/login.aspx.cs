@@ -4,10 +4,9 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-
 namespace Project_Tpage.WebPage
 {
-    public partial class login : System.Web.UI.Page
+    public partial class login : Project_Tpage.Class.View
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -18,7 +17,7 @@ namespace Project_Tpage.WebPage
         {
             String account = TextBox1.Text;
             String password = TextBox2.Text;
-            //controller get value
+            this.controller.Login(account,password);
 
         }
 

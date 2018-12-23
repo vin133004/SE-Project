@@ -12,7 +12,6 @@ namespace Project_Tpage.Class
 
         public Controller()
         {
-            view = new View(this);
             model = new Model(view);
         }
 
