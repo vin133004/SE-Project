@@ -10,7 +10,7 @@
 namespace Project_Tpage.WebPage {
     
     
-    public partial class editor {
+    public partial class chose {
         
         /// <summary>
         /// form1 控制項。
@@ -22,66 +22,66 @@ namespace Project_Tpage.WebPage {
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
         
         /// <summary>
-        /// Tittle 控制項。
+        /// Button1 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox Tittle;
+        protected global::System.Web.UI.WebControls.Button Button1;
         
         /// <summary>
-        /// Setting 控制項。
+        /// Button2 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button Setting;
+        protected global::System.Web.UI.WebControls.Button Button2;
         
         /// <summary>
-        /// Group 控制項。
+        /// Button3 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox Group;
+        protected global::System.Web.UI.WebControls.Button Button3;
         
         /// <summary>
-        /// Board 控制項。
+        /// Image1 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox Board;
+        protected global::System.Web.UI.WebControls.Image Image1;
         
         /// <summary>
-        /// Content 控制項。
+        /// Button4 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox Content;
+        protected global::System.Web.UI.WebControls.Button Button4;
         
         /// <summary>
-        /// Back 控制項。
+        /// Button5 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button Back;
+        protected global::System.Web.UI.WebControls.Button Button5;
         
         /// <summary>
-        /// Send 控制項。
+        /// Button6 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button Send;
+        protected global::System.Web.UI.WebControls.Button Button6;
     }
 }

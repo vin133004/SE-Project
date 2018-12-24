@@ -599,7 +599,7 @@ namespace Project_Tpage.Class
             Clear();
             try
             {
-                SettingFunc();
+                //SettingFunc();
             }
             catch (KeyNotFoundException)
             {
