@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Project_Tpage.Class;
 
 namespace Project_Tpage.WebPage
 {
@@ -16,26 +17,26 @@ namespace Project_Tpage.WebPage
         protected void Board(object sender, EventArgs e)
         {
 
-            this.controller.ToBoard();
-            this.model.RequestPageData(controller.model.State);
+            Controller.controller.ToBoard();
+            Controller.model.RequestPageData(Controller.model.State);
         }
         protected void group(object sender, EventArgs e)
         {
 
-            this.controller.ToGroup();
-            this.model.RequestPageData(controller.model.State);
+            Controller.controller.ToGroup();
+            Controller.model.RequestPageData(Controller.model.State);
         }
         protected void artic(object sender, EventArgs e)
         {
 
-            this.controller.ToEdit();
-            this.model.RequestPageData(controller.model.State);
+            Controller.controller.ToEdit();
+            Controller.model.RequestPageData(Controller.model.State);
         }
         protected void setting(object sender, EventArgs e)
         {
 
-            this.controller.ToUserSetting();
-            this.model.RequestPageData(controller.model.State);
+            Controller.controller.ToUserSetting();
+            Controller.model.RequestPageData(Controller.model.State);
         }
     }
 }

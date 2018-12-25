@@ -130,6 +130,7 @@
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="WebPage\editor.aspx" />
     <Content Include="WebPage\login.aspx" />
+    <Content Include="WebPage\RegisterExample.aspx" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -242,6 +243,13 @@
     </Compile>
     <Compile Include="WebPage\login.aspx.designer.cs">
       <DependentUpon>login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="WebPage\RegisterExample.aspx.cs">
+      <DependentUpon>RegisterExample.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WebPage\RegisterExample.aspx.designer.cs">
+      <DependentUpon>RegisterExample.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

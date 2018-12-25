@@ -239,10 +239,6 @@ namespace Project_Tpage.Class
         /// </summary>
         public StateEnum State { get; set; }
         /// <summary>
-        /// 取得顯示。
-        /// </summary>
-        public View view { get; set; }
-        /// <summary>
         /// 當前頁面的使用者。
         /// </summary>
         public User user { get; set; }
@@ -699,10 +695,8 @@ namespace Project_Tpage.Class
             return PageData.Out;
         }
 
-        public Model(View view)
+        public Model()
         {
-            this.view = view;
-
             State = StateEnum.Login;
             user = null;
             DB = new SqlServ_MSSql("");
@@ -743,7 +737,7 @@ namespace Project_Tpage.Class
             Clear();
             try
             {
-                //SettingFunc();
+                SettingFunc();
             }
             catch (KeyNotFoundException)
             {

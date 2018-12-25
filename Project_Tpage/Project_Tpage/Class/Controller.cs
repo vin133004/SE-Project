@@ -7,12 +7,21 @@ namespace Project_Tpage.Class
 {
     public class Controller
     {
-        public Model model { get; set; }
-        public View view { get; set; }
+        public static Controller controller { get; set; }
+        public static Model model { get; set; }
+        public static View view { get; set; }
 
         public Controller()
         {
-            model = new Model(view);
+
+        }
+
+        public static void Initial(StateEnum state)
+        {
+            model = new Model();
+            view = new View();
+            controller = new Controller();
+            model.State = state;
         }
 
         public void ToRegister()
@@ -173,7 +182,7 @@ namespace Project_Tpage.Class
                 ToArticle();
             }
         }
-
+        /*
         public List<Article> GetArticlesFromGroup(string p_Group)
         {
             List<Article> Articles;
@@ -181,7 +190,7 @@ namespace Project_Tpage.Class
                 return null;
             try
             {
-                Articles = model.GetArticlesFromGroup(p_Group);
+                //Articles = model.GetArticlesFromGroup(p_Group);
                 ToBoard();
                 return Articles;
             }
@@ -199,7 +208,7 @@ namespace Project_Tpage.Class
                 return null;
             try
             {
-                Articles = model.GetArticlesFromBoard(p_Group, p_Board);
+                //Articles = model.GetArticlesFromBoard(p_Group, p_Board);
                 ToBoard();
                 return Articles;
             }
@@ -217,7 +226,7 @@ namespace Project_Tpage.Class
                 return null;
             try
             {
-                rtn = model.GetDynamicPageContent();
+                //rtn = model.GetDynamicPageContent();
                 ToHome();
                 return rtn;
             }
@@ -235,7 +244,7 @@ namespace Project_Tpage.Class
                 return null;
             try
             {
-                rtn = model.GetUserPageContent(uid);
+                //rtn = model.GetUserPageContent(uid);
                 ToUserPage();
                 return rtn;
             }
@@ -245,5 +254,6 @@ namespace Project_Tpage.Class
                 return null;
             }
         }
+        */
     }
 }
