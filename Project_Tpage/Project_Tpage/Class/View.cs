@@ -13,8 +13,8 @@ namespace Project_Tpage.Class
         {
             this.controller = new Controller();
             this.model = new Model(this);
-                this.model.RequestPageData(model.State);
-            
         }
+       
+
     }
 }

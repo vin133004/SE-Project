@@ -46,6 +46,10 @@ namespace Project_Tpage.Class
             /// 資料庫寫入SQL行為錯誤。
             /// </summary>
             DbSetSqlOperationFail =         1031,
+            /// <summary>
+            /// 資料庫移除資料時錯誤。
+            /// </summary>
+            DbRemoveFailure =               1040,
 
             //(錯誤代號:1100)資料庫物件未找到
             /// <summary>
@@ -90,6 +94,10 @@ namespace Project_Tpage.Class
             /// 尺寸資料解析錯誤。
             /// </summary>
             AnlTypeErrSize =                1205,
+            /// <summary>
+            /// 反解析型別不支援。
+            /// </summary>
+            AnlTypeErr =                    1206,
 
             //(錯誤代號:1300)將資料列寫入物件執行個體錯誤
             /// <summary>
@@ -139,6 +147,14 @@ namespace Project_Tpage.Class
             /// 抽卡交友抽卡迭代次數達上限，抽卡失敗。
             /// </summary>
             PickCardFailed =                2005,
+            /// <summary>
+            /// 登入失敗。
+            /// </summary>
+            LoginFailed =                   2006,
+            /// <summary>
+            /// 申請看板失敗。
+            /// </summary>
+            ApplyForBoardFail =             2007,
 
 
             //(錯誤代號:3000)資料結構錯誤
@@ -257,30 +273,50 @@ namespace Project_Tpage.Class
             DB.Set<User>(temp);
         }
         /// <summary>
-        /// 登入帳號。成功登入時回傳空字串。否則回傳登入錯誤的資訊。
+        /// 登入帳號。成功登入時回傳空字串。否則擲回例外。
         /// </summary>
         /// <param name="p_ID">帳號。</param>
         /// <param name="p_Password">密碼。</param>
-        /// <returns>回傳登入錯誤的資訊。成功登入時回傳空字串。</returns>
-        public string Login(string p_ID, string p_Password)
+        public void Login(string p_ID, string p_Password)
         {
             try
             {
                 user = DB.Get<User>(DB.UserID_UIDconvert(p_ID));
                 if (user == null)
-                    return "發生未知錯誤，登入失敗。";
+                    throw new ModelException(
+                        ModelException.Error.LoginFailed,
+                        "Model類別－Login()發生例外：登入失敗：未知錯誤。",
+                        "發生未知錯誤，登入失敗。");
                 else if (!user.Userinfo.Password.Equals(p_Password))
                 {
                     user = null;
-                    return "密碼錯誤。";
+                    throw new ModelException(
+                        ModelException.Error.LoginFailed,
+                        "Model類別－Login()發生例外：登入失敗：密碼錯誤。",
+                        "密碼錯誤。");
                 }
+            }
+            catch(ModelException me)
+            {
+                user = null;
+                if (me.ErrorNumber == ModelException.Error.UIDnotFound)
+                    throw new ModelException(
+                        ModelException.Error.LoginFailed,
+                        "Model類別－Login()發生例外：登入失敗：無此帳號。",
+                        "無此帳號。");
                 else
-                    return string.Empty;
+                    throw new ModelException(
+                        ModelException.Error.LoginFailed,
+                        "Model類別－Login()發生例外：登入失敗：\r\n" + me.Message,
+                        "");
             }
             catch (Exception e)
             {
                 user = null;
-                return e.Message;
+                throw new ModelException(
+                    ModelException.Error.LoginFailed,
+                    "Model類別－Login()發生例外：登入失敗：\r\n" + e.Message,
+                    "");
             }
         }
         /// <summary>
@@ -324,8 +360,14 @@ namespace Project_Tpage.Class
                 cg.ClassName = p_ClassName;
                 cg.Groupname = p_GroupName;
 
+                cg.Members_AllowAdd(user.Userinfo.UID);
                 cg.Admin.Add(user.Userinfo.UID);
-                cg.Members_AllowAdd(user);
+
+                DB.Set<ClassGroup>(cg);
+
+                user.Groups.Add(cg);
+
+                DB.Set<User>(user);
             }
         }
         /// <summary>
@@ -344,8 +386,14 @@ namespace Project_Tpage.Class
                 FamilyGroup fg = new FamilyGroup();
                 fg.Groupname = p_GroupName;
 
+                fg.Members_AllowAdd(user.Userinfo.UID);
                 fg.Admin.Add(user.Userinfo.UID);
-                fg.Members_AllowAdd(user);
+
+                DB.Set<FamilyGroup>(fg);
+
+                user.Groups.Add(fg);
+
+                DB.Set<User>(user);
             }
         }
         /// <summary>
@@ -376,11 +424,85 @@ namespace Project_Tpage.Class
         }
 
         /// <summary>
+        /// 判斷一個使用者是否為一個家族團體的管理者。
+        /// </summary>
+        /// <param name="Family_GID">家族團體識別碼。</param>
+        /// <param name="UID">使用者識別碼。</param>
+        /// <returns></returns>
+        public bool IsAdmin_Family(string Family_GID, string UID)
+        {
+            return DB.Get<FamilyGroup>(Family_GID).Admin.Contains(UID);
+        }
+        /// <summary>
+        /// 判斷一個使用者是否為一個家族團體的成員。
+        /// </summary>
+        /// <param name="Family_GID">家族團體識別碼。</param>
+        /// <param name="UID">使用者識別碼。</param>
+        /// <returns></returns>
+        public bool IsMember_Family(string Family_GID, string UID)
+        {
+            return DB.Get<FamilyGroup>(Family_GID).Members.Contains(UID);
+        }
+        /// <summary>
+        /// 判斷一個使用者是否為一個家族團體看板的版主。
+        /// </summary>
+        /// <param name="Family_GID">家族團體識別碼。</param>
+        /// <param name="board">看板名稱。</param>
+        /// <param name="UID">使用者識別碼。</param>
+        /// <returns></returns>
+        public bool IsBoardAdmin_Family(string Family_GID, string board, string UID)
+        {
+            return DB.Get<FamilyGroup>(Family_GID).BoardAdmin.Where(x => x.Board == board && x.Admin == UID).Count() > 0;
+        }
+        /// <summary>
+        /// 判斷一個使用者是否為一個班級團體的管理者。
+        /// </summary>
+        /// <param name="Family_GID">班級團體識別碼。</param>
+        /// <param name="UID">使用者識別碼。</param>
+        /// <returns></returns>
+        public bool IsAdmin_Class(string Class_GID, string UID)
+        {
+            return DB.Get<ClassGroup>(Class_GID).Admin.Contains(UID);
+        }
+        /// <summary>
+        /// 判斷一個使用者是否為一個班級團體的成員。
+        /// </summary>
+        /// <param name="Class_GID">班級團體識別碼。</param>
+        /// <param name="UID">使用者識別碼。</param>
+        /// <returns></returns>
+        public bool IsMember_Class(string Class_GID, string UID)
+        {
+            return DB.Get<ClassGroup>(Class_GID).Members.Contains(UID);
+        }
+        /// <summary>
+        /// 判斷一個使用者是否為一個家族團體看板的版主。
+        /// </summary>
+        /// <param name="Class_GID">班級團體識別碼。</param>
+        /// <param name="board">看板名稱。</param>
+        /// <param name="UID">使用者識別碼。</param>
+        /// <returns></returns>
+        public bool IsBoardAdmin_Class(string Class_GID, string board, string UID)
+        {
+            return DB.Get<ClassGroup>(Class_GID).BoardAdmin.Where(x => x.Board == board && x.Admin == UID).Count() > 0;
+        }
+        /// <summary>
+        /// 判斷一個團體是班級還是家族。非團體回傳0。班級團體回傳1。家族團體回傳2。
+        /// </summary>
+        /// <param name="obj">判斷的物件。</param>
+        /// <returns></returns>
+        public int IsClassOrFamily(object obj)
+        {
+            if (!(obj is RelationshipGroup)) return 0;
+            else if (obj is ClassGroup) return 1;
+            else return 2;
+        }
+
+        /// <summary>
         /// 取得特定的團體的文章。
         /// </summary>
         /// <param name="p_Group">團體識別碼。</param>
         /// <returns></returns>
-        public List<Article> GetArticlesFromGroup(string p_Group)
+        private List<Article> GetArticlesFromGroup(string p_Group)
         {
             List<Article> rtn;
             using (DataTable dt = DB.GetSqlData("SELECT * FROM " + DB.DB_ArticleData_TableName))
@@ -401,7 +523,7 @@ namespace Project_Tpage.Class
         /// <param name="p_Group">團體識別碼。</param>
         /// <param name="p_Board">看板名稱。</param>
         /// <returns></returns>
-        public List<Article> GetArticlesFromBoard(string p_Group, string p_Board)
+        private List<Article> GetArticlesFromBoard(string p_Group, string p_Board)
         {
             List<Article> rtn;
             using (DataTable dt = DB.GetSqlData("SELECT * FROM " + DB.DB_ArticleData_TableName))
@@ -420,7 +542,7 @@ namespace Project_Tpage.Class
         /// 取得目前使用者的動態頁面的內容，內容為該使用者的好友之發文與留言物件。
         /// </summary>
         /// <returns></returns>
-        public List<object> GetDynamicPageContent()
+        private List<object> GetDynamicPageContent()
         {
             List<Article> dr1;
             using (DataTable dt = DB.GetSqlData("SELECT * FROM " + DB.DB_ArticleData_TableName))
@@ -452,7 +574,7 @@ namespace Project_Tpage.Class
         /// </summary>
         /// <param name="uid">指定使用者識別碼。</param>
         /// <returns></returns>
-        public List<object> GetUserPageContent(string uid)
+        private List<object> GetUserPageContent(string uid)
         {
             List<Article> dr1;
             using (DataTable dt = DB.GetSqlData(string.Format("SELECT * FROM " + DB.DB_ArticleData_TableName + 
@@ -480,11 +602,33 @@ namespace Project_Tpage.Class
             return rtn;
         }
 
-        public bool IsAdmin(string Family_GID, string UID)
+        private List<RelationshipGroup> GetGroupFromName(string groupname)
         {
-            return string.Concat(DB.Get<FamilyGroup>(Family_GID).Members.Select
-                ((x, indx) => indx == 0 ? x : "," + x)).Contains(UID);
+            List<RelationshipGroup> rtn = new List<RelationshipGroup>();
+
+            List<string> temp1;
+            List<DataRow> temp;
+
+            temp = Enumerable.Cast<DataRow>(DB.GetSqlData(string.Format(
+            "SELECT GID, GroupName FROM {0}", DB.DB_ClassGroupData_TableName)).Rows).ToList();
+
+            temp1 = temp.Select(x => DB.AnlType<string>(x["GroupName"]).Contains(groupname) 
+                ? DB.AnlType<string>(x["GID"]) : "").Where(x => x != "").ToList();
+
+            rtn.Concat(temp1.Select(x => (RelationshipGroup)DB.Get<ClassGroup>(x)));
+
+
+            temp = Enumerable.Cast<DataRow>(DB.GetSqlData(string.Format(
+            "SELECT GID, GroupName FROM {0}", DB.DB_FamilyGroupData_TableName)).Rows).ToList();
+
+            temp1 = temp.Select(x => DB.AnlType<string>(x["GroupName"]).Contains(groupname)
+                ? DB.AnlType<string>(x["GID"]) : "").Where(x => x != "").ToList();
+
+            rtn.Concat(temp1.Select(x => (RelationshipGroup)DB.Get<FamilyGroup>(x)));
+
+            return rtn;
         }
+
 
         /// <summary>
         /// 在切換頁面時，向Model要求新的頁面資料。
@@ -567,7 +711,7 @@ namespace Project_Tpage.Class
     }
 
     /// <summary>
-    /// 提供一個靜態欄位，存放切換狀態時，該狀態要求的頁面資料。
+    /// 提供一組靜態欄位，存放切換狀態時，該狀態要求的頁面資料。
     /// </summary>
     public class PageData : Dictionary<string, object>
     {
@@ -651,15 +795,15 @@ namespace Project_Tpage.Class
          * 
          *      To "UserPage" State
          *          
-         *          PageData.In["UserUID"] = a UID          (type: string)
+         *          PageData.In["UserUID"] = a UID              (type: string)
          *          存放要前往的使用者頁面之使用者的識別碼。
          *          
-         *          PageData.In["AdvertiseBlocks"] = a list (type: List<int>)
+         *          PageData.In["AdvertiseBlocks"] = a list     (type: List<int>)
          *          存放頁面上的廣告區塊代碼。
          *          
          *      To "Group" State
          *      
-         *          PageData.In["GroupGID"] = a GID         (type: string)
+         *          PageData.In["GroupGID"] = a GID             (type: string)
          * 
          */
 
@@ -668,15 +812,33 @@ namespace Project_Tpage.Class
          * 
          *      To "Home" State
          *      
-         *          Instant["Content"] =  a list  (type: List<object>)
+         *          PageData.Out["Content"] =  a list           (type: List<object>)
          *          存放要顯示的文章與留言。其內的物件不是Article就是AMessage。
          *          
-         *          Instant["User"] =   a object  (type: User)
+         *          PageData.Out["User"] =   a object           (type: User)
          *          存放現在使用者的資訊(包含好友與團體資訊User.Friends, User.Groups)
+         *          
+         *          PageData.Out["Advertise"] = a list          (type: List<Advertise>)
+         *          存放此頁面上要呈現的廣告
          *          
          *      To "UserPage" State
          *      
-         *          PUserPage[""] =     
+         *          PageData.Out["User"] = a object             (type: User)
+         *          存放此UserPage的所屬User物件。
+         *          
+         *          PageData.Out["Content"] = a list            (type: List<object>)
+         *          存放要顯示的文章與留言。其內的物件不是Article就是AMessage。
+         *          
+         *          PageData.Out["Advertise"] = a list          (type: List<Advertise>)
+         *          存放此頁面上要呈現的廣告
+         *          
+         *      To "ViewArticle" State
+         *          
+         *          PageData["Content"] = a article             (type: Article)
+         *          存放此頁面上要顯示的文章物件。
+         *          
+         *          PageData.Out["Advertise"] = a list          (type: List<Advertise>)
+         *          存放此頁面上要呈現的廣告
          *          
          *          
          *      To "Login" || "Register" State
@@ -892,7 +1054,11 @@ namespace Project_Tpage.Class
         /// <typeparam name="T">指定輸出型別。</typeparam>
         /// <param name="obj">從資料庫讀取的資料。</param>
         /// <returns></returns>
-        public object AnlType<T>(object obj)
+        public T AnlType<T>(object obj)
+        {
+            return (T)AnlType_workshop<T>(obj);
+        }
+        private object AnlType_workshop<T>(object obj)
         {
             if (typeof(T).Equals(typeof(DateTime)))
             {
@@ -1030,8 +1196,13 @@ namespace Project_Tpage.Class
             }
             else
             {
-                if (obj is DBNull) return null;
-                return obj;
+                throw new ModelException(
+                    ModelException.Error.AnlTypeErr,
+                    "SqlServ類別－AnlType<T>(object)發生例外：不支援的反解析型別。",
+                    "");
+
+                //if (obj is DBNull) return null;
+                //return obj;
             }
         }
 
@@ -1395,7 +1566,8 @@ namespace Project_Tpage.Class
                     Admin = {4}, 
                     BoardAdmin = {5}, 
                     Topic = {6},
-                    MemberRequest = {7} 
+                    MemberRequest = {7},
+                    BoardRequest = {8} 
                     WHERE GID = {0}"
                             , Type(p_cg.GID)
                             , Type(p_cg.Groupname, true)
@@ -1403,8 +1575,9 @@ namespace Project_Tpage.Class
                             , Type(p_cg.Members)
                             , Type(p_cg.Admin)
                             , Type(p_cg.BoardAdmin)
-                            , Type(p_cg.Topic, true)
-                            , Type(p_cg.MemberRequestQueue)));
+                            , Type(p_cg.Board, true)
+                            , Type(p_cg.MemberRequestQueue)
+                            , Type(p_cg.BoardRequestQueue)));
                     }
                     else//否則為新增帳號資料的更新。
                     {
@@ -1417,17 +1590,18 @@ namespace Project_Tpage.Class
 
 
                         ExeSqlCommand(string.Format(@"INSERT INTO " + DB_ClassGroupData_TableName + @" 
-                    (GID, GroupName, ClassName, Members, Admin, BoardAdmin, Topic, MemberRequest)
+                    (GID, GroupName, ClassName, Members, Admin, BoardAdmin, Topic, MemberRequest, BoardRequest)
                     VALUES 
-                    ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7})"
+                    ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8})"
                             , Type(p_cg.GID)
                             , Type(p_cg.Groupname, true)
                             , Type(p_cg.ClassName, true)
                             , Type(p_cg.Members)
                             , Type(p_cg.Admin)
                             , Type(p_cg.BoardAdmin)
-                            , Type(p_cg.Topic, true)
-                            , Type(p_cg.MemberRequestQueue)));
+                            , Type(p_cg.Board, true)
+                            , Type(p_cg.MemberRequestQueue)
+                            , Type(p_cg.BoardRequestQueue)));
                     }
                 }
                 catch (Exception e)
@@ -1454,15 +1628,17 @@ namespace Project_Tpage.Class
                     Admin = {3}, 
                     BoardAdmin = {4}, 
                     Topic = {5},
-                    MemberRequest = {6} 
+                    MemberRequest = {6},
+                    BoardRequest = {7} 
                     WHERE GID = {0}"
                             , Type(p_cg.GID)
                             , Type(p_cg.Groupname, true)
                             , Type(p_cg.Members)
                             , Type(p_cg.Admin)
                             , Type(p_cg.BoardAdmin)
-                            , Type(p_cg.Topic, true)
-                            , Type(p_cg.MemberRequestQueue)));
+                            , Type(p_cg.Board, true)
+                            , Type(p_cg.MemberRequestQueue)
+                            , Type(p_cg.BoardRequestQueue)));
                     }
                     else//否則為新增帳號資料的更新。
                     {
@@ -1475,16 +1651,17 @@ namespace Project_Tpage.Class
 
 
                         ExeSqlCommand(string.Format(@"INSERT INTO " + DB_FamilyGroupData_TableName + @" 
-                    (GID, GroupName, Members, Admin, BoardAdmin, Topic, MemberRequest)
+                    (GID, GroupName, Members, Admin, BoardAdmin, Topic, MemberRequest, BoardRequest)
                     VALUES 
-                    ({0}, {1}, {2}, {3}, {4}, {5}, {6})"
+                    ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7})"
                             , Type(p_cg.GID)
                             , Type(p_cg.Groupname, true)
                             , Type(p_cg.Members)
                             , Type(p_cg.Admin)
                             , Type(p_cg.BoardAdmin)
-                            , Type(p_cg.Topic, true)
-                            , Type(p_cg.MemberRequestQueue)));
+                            , Type(p_cg.Board, true)
+                            , Type(p_cg.MemberRequestQueue)
+                            , Type(p_cg.BoardRequestQueue)));
                     }
                 }
                 catch (Exception e)
@@ -1553,8 +1730,207 @@ namespace Project_Tpage.Class
                     "");
             }
         }
+        /// <summary>
+        /// 將特定型別的物件從資料庫中移除。
+        /// </summary>
+        /// <typeparam name="T">指定型別。</typeparam>
+        /// <param name="Iden">物件識別碼。</param>
+        public void Remove<T>(string Iden)
+        {
+            if (typeof(T).Equals(typeof(User)))
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(Iden))
+                        throw new Exception("1");
+                    if (IsExist(DB_UserData_TableName, "UID", Iden))
+                        throw new Exception("2");
 
+                    ExeSqlCommand(string.Format("DELETE FROM {0} WHERE UID = {1}",
+                        DB_UserData_TableName, Type(Iden)));
+                }
+                catch (Exception e)
+                {
+                    if (e.Message == "1")
+                        throw new ModelException(
+                            ModelException.Error.DbRemoveFailure,
+                            "SqlServ類別－Remove<T>發生例外：未知的使用者。",
+                            "");
+                    else if (e.Message == "2")
+                        throw new ModelException(
+                            ModelException.Error.DbRemoveFailure,
+                            "SqlServ類別－Remove<T>發生例外：無此使用者。",
+                            "無此使用者－刪除失敗");
+                    else
+                        throw new ModelException(
+                            ModelException.Error.DbRemoveFailure,
+                            "SqlServ類別－Remove<T>發生例外：\r\n" + e.Message,
+                            "發生未知錯誤－刪除失敗");
+                }
+            }
+            else if (typeof(T).Equals(typeof(Article)))
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(Iden))
+                        throw new Exception("1");
+                    if (IsExist(DB_ArticleData_TableName, "AID", Iden))
+                        throw new Exception("2");
 
+                    ExeSqlCommand(string.Format("DELETE FROM {0} WHERE AID = {1}",
+                        DB_ArticleData_TableName, Type(Iden)));
+                }
+                catch (Exception e)
+                {
+                    if (e.Message == "1")
+                        throw new ModelException(
+                            ModelException.Error.DbRemoveFailure,
+                            "SqlServ類別－Remove<T>發生例外：未知的文章。",
+                            "");
+                    else if (e.Message == "2")
+                        throw new ModelException(
+                            ModelException.Error.DbRemoveFailure,
+                            "SqlServ類別－Remove<T>發生例外：無此文章。",
+                            "無此文章－刪除失敗");
+                    else
+                        throw new ModelException(
+                            ModelException.Error.DbRemoveFailure,
+                            "SqlServ類別－Remove<T>發生例外：\r\n" + e.Message,
+                            "發生未知錯誤－刪除失敗");
+                }
+            }
+            else if (typeof(T).Equals(typeof(AMessage)))
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(Iden))
+                        throw new Exception("1");
+                    if (IsExist(DB_AMessageData_TableName, "MID", Iden))
+                        throw new Exception("2");
+
+                    ExeSqlCommand(string.Format("DELETE FROM {0} WHERE MID = {1}",
+                        DB_AMessageData_TableName, Type(Iden)));
+                }
+                catch (Exception e)
+                {
+                    if (e.Message == "1")
+                        throw new ModelException(
+                            ModelException.Error.DbRemoveFailure,
+                            "SqlServ類別－Remove<T>發生例外：未知的留言。",
+                            "");
+                    else if (e.Message == "2")
+                        throw new ModelException(
+                            ModelException.Error.DbRemoveFailure,
+                            "SqlServ類別－Remove<T>發生例外：無此留言。",
+                            "無此留言－刪除失敗");
+                    else
+                        throw new ModelException(
+                            ModelException.Error.DbRemoveFailure,
+                            "SqlServ類別－Remove<T>發生例外：\r\n" + e.Message,
+                            "發生未知錯誤－刪除失敗");
+                }
+            }
+            else if (typeof(T).Equals(typeof(Advertise)))
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(Iden))
+                        throw new Exception("1");
+                    if (IsExist(DB_AdvertiseData_TableName, "DID", Iden))
+                        throw new Exception("2");
+
+                    ExeSqlCommand(string.Format("DELETE FROM {0} WHERE DID = {1}",
+                        DB_AdvertiseData_TableName, Type(Iden)));
+                }
+                catch (Exception e)
+                {
+                    if (e.Message == "1")
+                        throw new ModelException(
+                            ModelException.Error.DbRemoveFailure,
+                            "SqlServ類別－Remove<T>發生例外：未知的廣告。",
+                            "");
+                    else if (e.Message == "2")
+                        throw new ModelException(
+                            ModelException.Error.DbRemoveFailure,
+                            "SqlServ類別－Remove<T>發生例外：無此廣告。",
+                            "無此廣告－刪除失敗");
+                    else
+                        throw new ModelException(
+                            ModelException.Error.DbRemoveFailure,
+                            "SqlServ類別－Remove<T>發生例外：\r\n" + e.Message,
+                            "發生未知錯誤－刪除失敗");
+                }
+            }
+            else if (typeof(T).Equals(typeof(ClassGroup)))
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(Iden))
+                        throw new Exception("1");
+                    if (IsExist(DB_ClassGroupData_TableName, "GID", Iden))
+                        throw new Exception("2");
+
+                    ExeSqlCommand(string.Format("DELETE FROM {0} WHERE GID = {1}",
+                        DB_ClassGroupData_TableName, Type(Iden)));
+                }
+                catch (Exception e)
+                {
+                    if (e.Message == "1")
+                        throw new ModelException(
+                            ModelException.Error.DbRemoveFailure,
+                            "SqlServ類別－Remove<T>發生例外：未知的班級。",
+                            "");
+                    else if (e.Message == "2")
+                        throw new ModelException(
+                            ModelException.Error.DbRemoveFailure,
+                            "SqlServ類別－Remove<T>發生例外：無此班級。",
+                            "無此班級－刪除失敗");
+                    else
+                        throw new ModelException(
+                            ModelException.Error.DbRemoveFailure,
+                            "SqlServ類別－Remove<T>發生例外：\r\n" + e.Message,
+                            "發生未知錯誤－刪除失敗");
+                }
+            }
+            else if (typeof(T).Equals(typeof(FamilyGroup)))
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(Iden))
+                        throw new Exception("1");
+                    if (IsExist(DB_FamilyGroupData_TableName, "GID", Iden))
+                        throw new Exception("2");
+
+                    ExeSqlCommand(string.Format("DELETE FROM {0} WHERE GID = {1}",
+                        DB_FamilyGroupData_TableName, Type(Iden)));
+                }
+                catch (Exception e)
+                {
+                    if (e.Message == "1")
+                        throw new ModelException(
+                            ModelException.Error.DbRemoveFailure,
+                            "SqlServ類別－Remove<T>發生例外：未知的家族。",
+                            "");
+                    else if (e.Message == "2")
+                        throw new ModelException(
+                            ModelException.Error.DbRemoveFailure,
+                            "SqlServ類別－Remove<T>發生例外：無此家族。",
+                            "無此家族－刪除失敗");
+                    else
+                        throw new ModelException(
+                            ModelException.Error.DbRemoveFailure,
+                            "SqlServ類別－Remove<T>發生例外：\r\n" + e.Message,
+                            "發生未知錯誤－刪除失敗");
+                }
+            }
+            else
+            {
+                throw new ModelException(
+                    ModelException.Error.DbRemoveFailure,
+                    "SqlServ類別－Remove<T>發生錯誤：要求儲存非特定型別的物件。class : " + typeof(T),
+                    "");
+            }
+        }
 
         protected SqlServ(string p_DBconn)
         {

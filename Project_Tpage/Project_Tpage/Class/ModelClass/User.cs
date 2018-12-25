@@ -318,9 +318,11 @@ namespace Project_Tpage.Class
 
             int myuid = int.Parse(Userinfo.UID);
             int nowuid = myuid;
+
+            Random r = new Random();
             for(int noneloop = 0; noneloop<10000; noneloop++)
             {
-                nowuid = new Random().Next(1, maxuid);
+                nowuid = r.Next(1, maxuid);
                 if (nowuid == myuid || Friends.Members.Contains(nowuid.ToString().PadLeft(10, '0'))) continue;
                 return Model.DB.Get<User>(nowuid.ToString().PadLeft(10, '0'));
             }
@@ -362,9 +364,14 @@ namespace Project_Tpage.Class
 
             Usersetting.Userprivacy = UserPrivacy.Public;
             Userinfo.UID = null;
-
+            
             Friends = new FriendGroup();
+            FriendRequestQueue = new List<User>();
+
             Groups = new List<RelationshipGroup>();
+
+            TbitCoin = 0;
+            LastComputeTbit = new DateTime(DateTime.Now.Ticks);
         }
 
         public User(DataRow dr)
@@ -374,31 +381,31 @@ namespace Project_Tpage.Class
             Friends = new FriendGroup();
             try
             {
-                Userinfo.UID = (string)Model.DB.AnlType<string>(dr["UID"]);
-                Userinfo.ID = (string)Model.DB.AnlType<string>(dr["ID"]);
-                Userinfo.Password = (string)Model.DB.AnlType<string>(dr["Password"]);
-                Userinfo.Email = (string)Model.DB.AnlType<string>(dr["Email"]);
-                Userinfo.StudentID = (string)Model.DB.AnlType<string>(dr["StudentNum"]);
-                Userinfo.ClassName = (string)Model.DB.AnlType<string>(dr["ClassName"]);
-                Userinfo.Realname = (string)Model.DB.AnlType<string>(dr["Realname"]);
-                Usersetting.Userprivacy = (UserPrivacy)Model.DB.AnlType<UserPrivacy>(dr["UserPrivacy"]);
+                Userinfo.UID = Model.DB.AnlType<string>(dr["UID"]);
+                Userinfo.ID = Model.DB.AnlType<string>(dr["ID"]);
+                Userinfo.Password = Model.DB.AnlType<string>(dr["Password"]);
+                Userinfo.Email = Model.DB.AnlType<string>(dr["Email"]);
+                Userinfo.StudentID = Model.DB.AnlType<string>(dr["StudentNum"]);
+                Userinfo.ClassName = Model.DB.AnlType<string>(dr["ClassName"]);
+                Userinfo.Realname = Model.DB.AnlType<string>(dr["Realname"]);
+                Usersetting.Userprivacy = Model.DB.AnlType<UserPrivacy>(dr["UserPrivacy"]);
 
-                Userinfo.Nickname = (string)Model.DB.AnlType<string>(dr["Nickname"]);
-                Userinfo.Gender = (Gender)Model.DB.AnlType<Gender>(dr["Gender"]);
-                Userinfo.Picture = (Image)Model.DB.AnlType<Image>(dr["Picture"]);
-                Userinfo.Birthday = (DateTime)Model.DB.AnlType<DateTime>(dr["Birthday"]);
+                Userinfo.Nickname = Model.DB.AnlType<string>(dr["Nickname"]);
+                Userinfo.Gender = Model.DB.AnlType<Gender>(dr["Gender"]);
+                Userinfo.Picture = Model.DB.AnlType<Image>(dr["Picture"]);
+                Userinfo.Birthday = Model.DB.AnlType<DateTime>(dr["Birthday"]);
 
-                LastComputeTbit = (DateTime)Model.DB.AnlType<DateTime>(dr["LastComputeTbit"]);
-                TbitCoin = (int)Model.DB.AnlType<int>(dr["TbitCoin"]);
+                LastComputeTbit = Model.DB.AnlType<DateTime>(dr["LastComputeTbit"]);
+                TbitCoin = Model.DB.AnlType<int>(dr["TbitCoin"]);
 
 
-                FriendRequestQueue = ((List<User>)Model.DB.AnlType<List<User>>(dr["FriendRequest"]));
+                FriendRequestQueue = Model.DB.AnlType<List<User>>(dr["FriendRequest"]);
                     
 
-                Friends.Member_SetAll((List<string>)Model.DB.AnlType<List<string>>(dr["Friend"]));
+                Friends.Member_SetAll(Model.DB.AnlType<List<string>>(dr["Friend"]));
                 
-                List<string> ClassGroupLs = (List<string>)Model.DB.AnlType<List<string>>(dr["ClassGroup"]);
-                List<string> FamilyGroupLs = (List<string>)Model.DB.AnlType<List<string>>(dr["FamilyGroup"]);
+                List<string> ClassGroupLs = Model.DB.AnlType<List<string>>(dr["ClassGroup"]);
+                List<string> FamilyGroupLs = Model.DB.AnlType<List<string>>(dr["FamilyGroup"]);
 
                 if (ClassGroupLs == null && FamilyGroupLs == null)
                     Groups = null;
