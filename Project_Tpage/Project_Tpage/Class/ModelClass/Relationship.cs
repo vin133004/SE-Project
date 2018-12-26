@@ -71,24 +71,21 @@ namespace Project_Tpage.Class
         {
             try
             {
-                DataTable dt = Model.DB.GetSqlData(string.Format("SELECT RealName, NickName FROM {0} WHERE UID = {1}"
-                    , Model.DB.DB_UserData_TableName, newmem));
-                if (dt.Rows.Count <= 0)
-                    throw new Exception("用戶未找到。\r\nUID: " + newmem);
+                User temp = Model.DB.Get<User>(newmem);
 
                 Members.Add(newmem);
-
-
-                string nickname = (string)Model.DB.AnlType<string>(dt.Rows[0]["NickName"])
-                    , realname = (string)Model.DB.AnlType<string>(dt.Rows[0]["RealName"]);
-                MembersName.Add(string.IsNullOrEmpty(nickname) ? (realname ?? "") : nickname);
+                MembersName.Add(temp.Name);
+            }
+            catch(ModelException me)
+            {
+                throw me;
             }
             catch(Exception e)
             {
                 throw new ModelException(
                     ModelException.Error.FriendMemberOperationError,
                     "FriendGroup類別－Member_Add(string)發生例外：" + e.Message,
-                    "未知的使用者！");
+                    "");
             }
         }
         /// <summary>
@@ -119,15 +116,16 @@ namespace Project_Tpage.Class
             {
                 for (int i = 0; i < Members.Count; i++)
                 {
-                    DataRow dr = Model.DB.GetSqlData(string.Format("SELECT RealName, NickName FROM {0} WHERE UID = {1}"
-                    , Model.DB.DB_UserData_TableName, Members[i])).Rows[0];
+                    User temp = Model.DB.Get<User>(Members[i]);
 
-                    string nickname = (string)Model.DB.AnlType<string>(dr["NickName"])
-                        , realname = (string)Model.DB.AnlType<string>(dr["RealName"]);
-                    MembersName.Add(string.IsNullOrEmpty(nickname) ? realname : nickname);
+                    MembersName.Add(temp.Name);
                 }
             }
-            catch(Exception e)
+            catch (ModelException me)
+            {
+                throw me;
+            }
+            catch (Exception e)
             {
                 throw new ModelException(
                     ModelException.Error.FriendMemberOperationError,

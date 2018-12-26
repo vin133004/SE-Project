@@ -15,7 +15,7 @@ namespace Project_Tpage.WebPage
             //this.Image1.ImageUrl = "..\\..\\App_Data/pictures/2p3o0003noq07q391981.jpg";
             this.Image1.ImageUrl = "./pictures/2p3o0003noq07q391981.jpg";
 
-            if (!IsPostBack && Controller.controller == null)
+            if (!Controller.IsConstrut)
             {
                 //建構MVC
                 Controller.Initial(Session["state"] == null ? StateEnum.Login : (StateEnum)Session["state"]);
@@ -31,6 +31,7 @@ namespace Project_Tpage.WebPage
 
         protected void Button2_Click(object sender, EventArgs e)
         {
+            Controller.controller.GetUserInput(ViewOp.Login_toregister);
             Response.Redirect("RegisterExample.aspx");
         }
     }

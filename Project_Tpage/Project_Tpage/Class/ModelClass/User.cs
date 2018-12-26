@@ -224,6 +224,19 @@ namespace Project_Tpage.Class
         /// 紀錄上次結算台科幣的時間。
         /// </summary>
         public DateTime LastComputeTbit { get; set; }
+        /// <summary>
+        /// 取得此使用者對外的名稱，若使用者有設定暱稱，則回傳暱稱，否則回傳真實姓名。
+        /// </summary>
+        public string Name
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(Userinfo.Nickname))
+                    return Userinfo.Realname;
+                else
+                    return Userinfo.Nickname;
+            }
+        }
 
 
         /// <summary>

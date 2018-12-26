@@ -12,6 +12,9 @@
         <div>
 			<asp:Label runat="server" ID="lblTitle" Text="Register" Font-Names="微軟正黑體" Font-Size="Larger"></asp:Label>
         </div>
+        <div>
+			<asp:Label runat="server" Visible="false" ID="lblInfo" Text="" Font-Names="微軟正黑體" Font-Size="Medium"></asp:Label>
+        </div>
 		<div>
 			<asp:Label runat="server" ID="lbl1" Text="帳號" Width="200"></asp:Label><asp:TextBox runat="server" ID="tbx1"></asp:TextBox>
 		</div>
@@ -26,6 +29,7 @@
 		</div>
 		<div>
 			<asp:Button runat="server" ID="btn1" Text="Register" Font-Names="微軟正黑體" Font-Size="Larger" OnClick="btn1_Click"/>
+			<asp:Button runat="server" ID="btn" Text="Back" Font-Names="微軟正黑體" Font-Size="Larger" OnClick="btn2_Click"/>
 		</div>
     </form>
 </body>

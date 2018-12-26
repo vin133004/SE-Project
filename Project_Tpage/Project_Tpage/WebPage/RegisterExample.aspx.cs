@@ -12,7 +12,7 @@ namespace Project_Tpage.WebPage
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if(!IsPostBack && Controller.controller == null)
+            if (!Controller.IsConstrut)
             {
                 //建構MVC
                 Controller.Initial(Session["state"] == null ? StateEnum.Login : (StateEnum)Session["state"]);
@@ -32,7 +32,21 @@ namespace Project_Tpage.WebPage
                 });
 
             //呼叫Controller方法，切換狀態，要求頁面資料
+            Controller.controller.GetUserInput(ViewOp.Register_register);
 
+            if (PageData.Out.Keys.Contains("failinfo"))
+            {
+                Label lbl = FindControl("lblInfo") as Label;
+                lbl.Visible = true;
+                lbl.Text = PageData.Out["failinfo"] as string;
+            }
+            else
+                Response.Redirect("login.aspx");
+        }
+
+        protected void btn2_Click(object sender, EventArgs e)
+        {
+            Controller.controller.GetUserInput(ViewOp.Register_back);
             Response.Redirect("login.aspx");
         }
     }

@@ -266,6 +266,7 @@ namespace Project_Tpage.Class
 
             User temp = new User();
             temp.Userinfo = p_uif;
+            temp.Userinfo.UID = null;
             DB.Set<User>(temp);
         }
         /// <summary>
@@ -685,21 +686,25 @@ namespace Project_Tpage.Class
             }
             else if (ToState == StateEnum.Login)
             {
-                PageData.Out.SetData(delegate () { });
+                //PageData.Out.SetData(delegate () { });
             }
             else if (ToState == StateEnum.Register)
             {
-                PageData.Out.SetData(delegate () { });
+                //PageData.Out.SetData(delegate () { });
             }
 
             return PageData.Out;
         }
 
-        public Model()
+        /// <summary>
+        /// Model建構式，需設定資料庫連結字串。
+        /// </summary>
+        /// <param name="databaseConn"></param>
+        public Model(string databaseConn)
         {
             State = StateEnum.Login;
             user = null;
-            DB = new SqlServ_MSSql("");
+            DB = new SqlServ_MSSql(databaseConn);
             PageData.InitPageData();
         }
     }
@@ -734,7 +739,6 @@ namespace Project_Tpage.Class
         /// <param name="SettingFunc">設定新資料的委派函數。</param>
         public void SetData(Action SettingFunc)
         {
-            Clear();
             try
             {
                 SettingFunc();
@@ -798,6 +802,15 @@ namespace Project_Tpage.Class
          *      To "Group" State
          *      
          *          PageData.In["GroupGID"] = a GID             (type: string)
+         *          存放要前往的團體之識別碼。
+         *          
+         *      To "Home" State
+         *      
+         *          PageData.In["ID"] = account                 (type: string)
+         *          存放使用者登入的帳號。
+         *          
+         *          PageData.In["Password"] = password          (type: string)
+         *          存放使用者登入的密碼。
          * 
          */
 
@@ -2088,8 +2101,8 @@ namespace Project_Tpage.Class
             using (SqlConnection icn = OpenSqlConn(DB_Conn))
             {
                 SqlCommand isc = new SqlCommand(@"SELECT TOP 1 1 FROM " + TableName + " WHERE " + FiledName
-                    + " = " + FiledValue, icn);
-                opt = isc.ExecuteScalar() == null;
+                    + " = " + Type(FiledValue), icn);
+                opt = isc.ExecuteScalar() != null;
                 CloseSqlConn(icn);
             }
             return opt;
