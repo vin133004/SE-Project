@@ -362,6 +362,8 @@ namespace Project_Tpage.Class
                 error += "密碼格式錯誤，非英文、數字所組成。\r\n";
             if (p_uif.Password.Length < 8)
                 error += "密碼長度不足，至少8位英文或數字組成。\r\n";
+            if (Model.DB.IsExist(Model.DB.DB_UserData_TableName, "StudentNum", p_uif.StudentID))
+                error += "此學號已被註冊。\r\n";
 
 
             if (error != "") throw new ModelException(

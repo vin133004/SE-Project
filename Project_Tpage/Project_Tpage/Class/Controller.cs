@@ -263,8 +263,6 @@ namespace Project_Tpage.Class
 
         public void GetUserInput(ViewOp op)
         {
-            PageData.Out.Clear();
-
             int clsf = ((int)op) / 100;
 
             #region Login State Operation
@@ -299,16 +297,18 @@ namespace Project_Tpage.Class
                     //若無錯誤資訊，則為成功登入，切換至Home state
                     if (failinfo == "")
                     {
+                        model.RequestPageData(StateEnum.Home);
+
                         model.State = StateEnum.Home;
                     }
                     else//否則為登入失敗，重回Login state
                     {
-                        PageData.Out.SetData(
-                        delegate ()
+                        model.RequestPageData(StateEnum.Login, delegate ()
                         {
-                                //將錯誤資訊存入PageData.Out
-                                PageData.Out["failinfo"] = failinfo;
+                            //將錯誤資訊存入PageData.Out
+                            PageData.Out["failinfo"] = failinfo;
                         });
+
 
                         model.State = StateEnum.Login;
                     }
@@ -357,12 +357,13 @@ namespace Project_Tpage.Class
 
                     if (failinfo == "")
                     {
+                        model.RequestPageData(StateEnum.Login);
+
                         model.State = StateEnum.Login;
                     }
                     else
                     {
-                        PageData.Out.SetData(
-                            delegate ()
+                        model.RequestPageData(StateEnum.Register, delegate ()
                             {
                                 //將錯誤資訊存入PageData.Out
                                 PageData.Out["failinfo"] = failinfo;

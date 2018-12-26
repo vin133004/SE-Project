@@ -269,11 +269,11 @@ namespace Project_Tpage.Class
 
             try
             {
-                rtn.DID = (string)Model.DB.AnlType<string>(dr["DID"]);
-                rtn.Body = (Image)Model.DB.AnlType<Image>(dr["Body"]);
-                rtn.Location = (int)Model.DB.AnlType<int>(dr["Location"]);
-                rtn.Size = (Size)Model.DB.AnlType<Size>(dr["Size"]);
-                rtn.Deadline = (DateTime)Model.DB.AnlType<DateTime>(dr["Deadline"]);
+                rtn.DID = Model.DB.AnlType<string>(dr["DID"]);
+                rtn.Body = Model.DB.AnlType<Image>(dr["Body"]);
+                rtn.Location = Model.DB.AnlType<int>(dr["Location"]);
+                rtn.Size = Model.DB.AnlType<Size>(dr["Size"]);
+                rtn.Deadline = Model.DB.AnlType<DateTime>(dr["Deadline"]);
 
                 return rtn;
             }
