@@ -109,6 +109,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="WebPage\About.aspx" />
+    <Content Include="WebPage\article.aspx" />
+    <Content Include="WebPage\ArticleList.aspx" />
+    <Content Include="WebPage\BoardList.aspx" />
     <Content Include="WebPage\chose.aspx" />
     <Content Include="WebPage\Contact.aspx" />
     <Content Include="Content\bootstrap-theme.css" />
@@ -130,6 +133,7 @@
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="WebPage\editor.aspx" />
     <Content Include="WebPage\login.aspx" />
+    <Content Include="WebPage\RegisterExample.aspx" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -183,6 +187,27 @@
       <DependentUpon>About.aspx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="WebPage\article.aspx.cs">
+      <DependentUpon>article.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WebPage\article.aspx.designer.cs">
+      <DependentUpon>article.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="WebPage\ArticleList.aspx.cs">
+      <DependentUpon>ArticleList.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WebPage\ArticleList.aspx.designer.cs">
+      <DependentUpon>ArticleList.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="WebPage\BoardList.aspx.cs">
+      <DependentUpon>BoardList.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WebPage\BoardList.aspx.designer.cs">
+      <DependentUpon>BoardList.aspx</DependentUpon>
+    </Compile>
     <Compile Include="WebPage\chose.aspx.cs">
       <DependentUpon>chose.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -242,6 +267,13 @@
     </Compile>
     <Compile Include="WebPage\login.aspx.designer.cs">
       <DependentUpon>login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="WebPage\RegisterExample.aspx.cs">
+      <DependentUpon>RegisterExample.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WebPage\RegisterExample.aspx.designer.cs">
+      <DependentUpon>RegisterExample.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

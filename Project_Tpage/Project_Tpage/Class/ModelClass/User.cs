@@ -224,6 +224,19 @@ namespace Project_Tpage.Class
         /// 紀錄上次結算台科幣的時間。
         /// </summary>
         public DateTime LastComputeTbit { get; set; }
+        /// <summary>
+        /// 取得此使用者對外的名稱，若使用者有設定暱稱，則回傳暱稱，否則回傳真實姓名。
+        /// </summary>
+        public string Name
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(Userinfo.Nickname))
+                    return Userinfo.Realname;
+                else
+                    return Userinfo.Nickname;
+            }
+        }
 
 
         /// <summary>
@@ -318,9 +331,11 @@ namespace Project_Tpage.Class
 
             int myuid = int.Parse(Userinfo.UID);
             int nowuid = myuid;
+
+            Random r = new Random();
             for(int noneloop = 0; noneloop<10000; noneloop++)
             {
-                nowuid = new Random().Next(1, maxuid);
+                nowuid = r.Next(1, maxuid);
                 if (nowuid == myuid || Friends.Members.Contains(nowuid.ToString().PadLeft(10, '0'))) continue;
                 return Model.DB.Get<User>(nowuid.ToString().PadLeft(10, '0'));
             }
@@ -347,6 +362,8 @@ namespace Project_Tpage.Class
                 error += "密碼格式錯誤，非英文、數字所組成。\r\n";
             if (p_uif.Password.Length < 8)
                 error += "密碼長度不足，至少8位英文或數字組成。\r\n";
+            if (Model.DB.IsExist(Model.DB.DB_UserData_TableName, "StudentNum", p_uif.StudentID))
+                error += "此學號已被註冊。\r\n";
 
 
             if (error != "") throw new ModelException(
@@ -362,9 +379,14 @@ namespace Project_Tpage.Class
 
             Usersetting.Userprivacy = UserPrivacy.Public;
             Userinfo.UID = null;
-
+            
             Friends = new FriendGroup();
+            FriendRequestQueue = new List<User>();
+
             Groups = new List<RelationshipGroup>();
+
+            TbitCoin = 0;
+            LastComputeTbit = new DateTime(DateTime.Now.Ticks);
         }
 
         public User(DataRow dr)
@@ -374,31 +396,31 @@ namespace Project_Tpage.Class
             Friends = new FriendGroup();
             try
             {
-                Userinfo.UID = (string)Model.DB.AnlType<string>(dr["UID"]);
-                Userinfo.ID = (string)Model.DB.AnlType<string>(dr["ID"]);
-                Userinfo.Password = (string)Model.DB.AnlType<string>(dr["Password"]);
-                Userinfo.Email = (string)Model.DB.AnlType<string>(dr["Email"]);
-                Userinfo.StudentID = (string)Model.DB.AnlType<string>(dr["StudentNum"]);
-                Userinfo.ClassName = (string)Model.DB.AnlType<string>(dr["ClassName"]);
-                Userinfo.Realname = (string)Model.DB.AnlType<string>(dr["Realname"]);
-                Usersetting.Userprivacy = (UserPrivacy)Model.DB.AnlType<UserPrivacy>(dr["UserPrivacy"]);
+                Userinfo.UID = Model.DB.AnlType<string>(dr["UID"]);
+                Userinfo.ID = Model.DB.AnlType<string>(dr["ID"]);
+                Userinfo.Password = Model.DB.AnlType<string>(dr["Password"]);
+                Userinfo.Email = Model.DB.AnlType<string>(dr["Email"]);
+                Userinfo.StudentID = Model.DB.AnlType<string>(dr["StudentNum"]);
+                Userinfo.ClassName = Model.DB.AnlType<string>(dr["ClassName"]);
+                Userinfo.Realname = Model.DB.AnlType<string>(dr["Realname"]);
+                Usersetting.Userprivacy = Model.DB.AnlType<UserPrivacy>(dr["UserPrivacy"]);
 
-                Userinfo.Nickname = (string)Model.DB.AnlType<string>(dr["Nickname"]);
-                Userinfo.Gender = (Gender)Model.DB.AnlType<Gender>(dr["Gender"]);
-                Userinfo.Picture = (Image)Model.DB.AnlType<Image>(dr["Picture"]);
-                Userinfo.Birthday = (DateTime)Model.DB.AnlType<DateTime>(dr["Birthday"]);
+                Userinfo.Nickname = Model.DB.AnlType<string>(dr["Nickname"]);
+                Userinfo.Gender = Model.DB.AnlType<Gender>(dr["Gender"]);
+                Userinfo.Picture = Model.DB.AnlType<Image>(dr["Picture"]);
+                Userinfo.Birthday = Model.DB.AnlType<DateTime>(dr["Birthday"]);
 
-                LastComputeTbit = (DateTime)Model.DB.AnlType<DateTime>(dr["LastComputeTbit"]);
-                TbitCoin = (int)Model.DB.AnlType<int>(dr["TbitCoin"]);
+                LastComputeTbit = Model.DB.AnlType<DateTime>(dr["LastComputeTbit"]);
+                TbitCoin = Model.DB.AnlType<int>(dr["TbitCoin"]);
 
 
-                FriendRequestQueue = ((List<User>)Model.DB.AnlType<List<User>>(dr["FriendRequest"]));
+                FriendRequestQueue = Model.DB.AnlType<List<User>>(dr["FriendRequest"]);
                     
 
-                Friends.Member_SetAll((List<string>)Model.DB.AnlType<List<string>>(dr["Friend"]));
+                Friends.Member_SetAll(Model.DB.AnlType<List<string>>(dr["Friend"]));
                 
-                List<string> ClassGroupLs = (List<string>)Model.DB.AnlType<List<string>>(dr["ClassGroup"]);
-                List<string> FamilyGroupLs = (List<string>)Model.DB.AnlType<List<string>>(dr["FamilyGroup"]);
+                List<string> ClassGroupLs = Model.DB.AnlType<List<string>>(dr["ClassGroup"]);
+                List<string> FamilyGroupLs = Model.DB.AnlType<List<string>>(dr["FamilyGroup"]);
 
                 if (ClassGroupLs == null && FamilyGroupLs == null)
                     Groups = null;

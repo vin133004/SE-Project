@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Project_Tpage.Class;
 
 namespace Project_Tpage.WebPage
 {
@@ -11,13 +12,17 @@ namespace Project_Tpage.WebPage
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            if (!Controller.IsConstrut)
+            {
+                //建構MVC
+                Controller.Initial(Session["state"] == null ? StateEnum.EditArticle : (StateEnum)Session["state"]);
+            }
         }
         protected void Back_Click(object sender, EventArgs e)
         {
 
-            this.controller.ToHome();
-            this.model.RequestPageData(controller.model.State);
+            Controller.controller.ToHome();
+            Controller.model.RequestPageData(Controller.model.State);
         }
         protected void Setting_Click(object sender, EventArgs e)
         {
@@ -31,8 +36,8 @@ namespace Project_Tpage.WebPage
             String tittle = Tittle.Text;
             String group = Group.Text;
             String board = Board.Text;
-            this.controller.ReleaseArticle(tittle,content,group,board);
-            this.model.RequestPageData(controller.model.State);
+            Controller.controller.ReleaseArticle(tittle,content,group,board);
+            Controller.model.RequestPageData(Controller.model.State);
         }
     }
 }

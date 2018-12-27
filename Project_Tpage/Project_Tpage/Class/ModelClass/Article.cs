@@ -51,6 +51,27 @@ namespace Project_Tpage.Class
         public int LastComputeTbitLikeCount { get; set; }
 
 
+        public Article New
+        {
+            get
+            {
+                Article rtn = new Article();
+                rtn.OfGroup = "";
+                rtn.OfBoard = "";
+                rtn.Date = new DateTime(DateTime.Now.Ticks);
+                rtn.ReleaseUser = null;
+                rtn.Title = "";
+                rtn.Content = "";
+                rtn.LikeCount = 0;
+                rtn.LastComputeTbitLikeCount = 0;
+
+
+                return rtn;
+            }
+        }
+
+
+        
         /// <summary>
         /// 建構式。
         /// </summary>
@@ -69,7 +90,7 @@ namespace Project_Tpage.Class
             Content = "";
         }
 
-        public Article()
+        private Article()
         {
             AID = null;
         }
@@ -133,6 +154,22 @@ namespace Project_Tpage.Class
         public int LastComputeTbitLikeCount { get; set; }
 
 
+        public AMessage New
+        {
+            get
+            {
+                AMessage rtn = new AMessage();
+                rtn.OfArticle = "";
+                rtn.ReleaseUser = null;
+                rtn.Date = new DateTime(DateTime.Now.Ticks);
+                rtn.Content = "";
+                rtn.LikeCount = 0;
+                LastComputeTbitLikeCount = 0;
+
+                return rtn;
+            }
+        }
+
         /// <summary>
         /// 建構式。
         /// </summary>
@@ -150,7 +187,7 @@ namespace Project_Tpage.Class
             Content = "";
         }
 
-        public AMessage()
+        private AMessage()
         {
             MID = null;
         }
@@ -232,11 +269,11 @@ namespace Project_Tpage.Class
 
             try
             {
-                rtn.DID = (string)Model.DB.AnlType<string>(dr["DID"]);
-                rtn.Body = (Image)Model.DB.AnlType<Image>(dr["Body"]);
-                rtn.Location = (int)Model.DB.AnlType<int>(dr["Location"]);
-                rtn.Size = (Size)Model.DB.AnlType<Size>(dr["Size"]);
-                rtn.Deadline = (DateTime)Model.DB.AnlType<DateTime>(dr["Deadline"]);
+                rtn.DID = Model.DB.AnlType<string>(dr["DID"]);
+                rtn.Body = Model.DB.AnlType<Image>(dr["Body"]);
+                rtn.Location = Model.DB.AnlType<int>(dr["Location"]);
+                rtn.Size = Model.DB.AnlType<Size>(dr["Size"]);
+                rtn.Deadline = Model.DB.AnlType<DateTime>(dr["Deadline"]);
 
                 return rtn;
             }
