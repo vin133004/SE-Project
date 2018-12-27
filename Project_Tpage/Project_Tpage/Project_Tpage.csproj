@@ -110,6 +110,7 @@
   <ItemGroup>
     <Content Include="WebPage\About.aspx" />
     <Content Include="WebPage\article.aspx" />
+    <Content Include="WebPage\Article2.aspx" />
     <Content Include="WebPage\ArticleList.aspx" />
     <Content Include="WebPage\BoardList.aspx" />
     <Content Include="WebPage\chose.aspx" />
@@ -193,6 +194,13 @@
     </Compile>
     <Compile Include="WebPage\article.aspx.designer.cs">
       <DependentUpon>article.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="WebPage\Article2.aspx.cs">
+      <DependentUpon>Article2.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WebPage\Article2.aspx.designer.cs">
+      <DependentUpon>Article2.aspx</DependentUpon>
     </Compile>
     <Compile Include="WebPage\ArticleList.aspx.cs">
       <DependentUpon>ArticleList.aspx</DependentUpon>

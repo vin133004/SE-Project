@@ -26,12 +26,19 @@ namespace Project_Tpage.WebPage
             Controller.controller.GetUserInput(ViewOp.Article_viewarticle);
             Response.Redirect("article.aspx");
         }
-        protected void back_Click(object sender, EventArgs e)
-        {
 
+        // 返回看板
+        protected void btnBack_Click(object sender, EventArgs e)
+        {
             Controller.controller.GetUserInput(ViewOp.ArticleList_back);
             Response.Redirect("BoardList.aspx");
+        }
 
+        // 發新文章
+        protected void btnPo_Click(object sender, EventArgs e)
+        {
+            Controller.controller.GetUserInput(ViewOp.Board_editarticle);
+            Response.Redirect("editor.aspx");
         }
     }
 }

@@ -26,9 +26,8 @@
                 <asp:ListItem>kkk</asp:ListItem>
                 <asp:ListItem>lll</asp:ListItem>
             </asp:ListBox><br />
-
-            <asp:Button ID="btnBack" runat="server"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="XX-Large" Width="350" Height="75" BorderStyle="None" Text="返回看板" OnClick="back_Click"/>
-            <asp:Button ID="btnPo" runat="server"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="XX-Large" Width="350" Height="75" BorderStyle="None" Text="發文"/>
+            <asp:Button ID="btnBack" runat="server"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="XX-Large" Width="350" Height="75" BorderStyle="None" Text="返回看板" OnClick="btnBack_Click"/>
+            <asp:Button ID="btnPo" runat="server"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="XX-Large" Width="350" Height="75" BorderStyle="None" Text="發文" OnClick="btnPo_Click"/>
             <br />
         </center>
     </form>
