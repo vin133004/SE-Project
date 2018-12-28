@@ -8,32 +8,34 @@ using Project_Tpage.Class;
 
 namespace Project_Tpage.WebPage
 {
-    public partial class article : System.Web.UI.Page
+    public partial class Article : System.Web.UI.Page
     {
+        //  初始化
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!Controller.IsConstrut)
-            {
-                //建構MVC
-                Controller.Initial(Session["state"] == null ? StateEnum.Article : (StateEnum)Session["state"]);
-            }
         }
-        protected void Back_Click(object sender, EventArgs e)
-        {
-            
-                Controller.controller.GetUserInput(ViewOp.Article_back);
-                Response.Redirect("ArticleList.aspx");
-            
-        }
-        protected void Good_Click(object sender, EventArgs e)
+
+        //  返回看板
+        protected void btnBack_Click(object sender, EventArgs e)
         {
 
-           //點讚
         }
-        protected void Send_Click(object sender, EventArgs e)
+
+        //  留言
+        protected void btnSend_Click(object sender, EventArgs e)
         {
-            string message = TextBox1.Text;
-            Controller.controller.ReleaseAMessage(message, Tittle.Text);
+
+        }
+
+        //  傳送點讚事件
+        protected void btnLike_Click(object sender, ImageClickEventArgs e)
+        {
+
+        }
+        //  返回首頁
+        protected void btnHome_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

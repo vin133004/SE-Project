@@ -21,8 +21,6 @@ namespace Project_Tpage.WebPage
         protected void Back_Click(object sender, EventArgs e)
         {
 
-            Controller.controller.ToHome();
-            Controller.model.RequestPageData(Controller.model.State);
         }
         protected void Setting_Click(object sender, EventArgs e)
         {
@@ -36,8 +34,6 @@ namespace Project_Tpage.WebPage
             String tittle = Tittle.Text;
             String group = Group.Text;
             String board = Board.Text;
-            Controller.controller.ReleaseArticle(tittle,content,group,board);
-            Controller.model.RequestPageData(Controller.model.State);
         }
     }
 }

@@ -21,10 +21,11 @@
             <br />
             <asp:Button ID="Button4" Text="群組" Width="333" Height="60" runat="server" OnClick="group"/>
                   <asp:Button ID="Button5" Text="發文" Width="333" Height="60" runat="server" OnClick="artic"/>
-                    <asp:Button ID="Button6" Text="設定" Width="333" Height="60" runat="server" OnClick="setting"/>
-                   
-                    
+                    <asp:Button ID="Button6" Text="設定" Width="333" Height="60" runat="server" OnClick="setting"/>               
     </div>
+        <div>
+            asdfasfsa
+        </div>
     </form>
 </body>
 </html>

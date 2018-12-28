@@ -10,7 +10,7 @@
 namespace Project_Tpage.WebPage {
     
     
-    public partial class Article {
+    public partial class AD {
         
         /// <summary>
         /// form1 控制項。
@@ -22,103 +22,85 @@ namespace Project_Tpage.WebPage {
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
         
         /// <summary>
-        /// Title 控制項。
+        /// IDLabel 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Title;
+        protected global::System.Web.UI.WebControls.Label IDLabel;
         
         /// <summary>
-        /// Content 控制項。
+        /// IDInfo 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Content;
+        protected global::System.Web.UI.WebControls.Label IDInfo;
         
         /// <summary>
-        /// Blank1 控制項。
+        /// moneyLabel 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Blank1;
+        protected global::System.Web.UI.WebControls.Label moneyLabel;
         
         /// <summary>
-        /// allMessage 控制項。
+        /// moneyInfo 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ListBox allMessage;
+        protected global::System.Web.UI.WebControls.Label moneyInfo;
         
         /// <summary>
-        /// picLike 控制項。
+        /// upInfo 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Image picLike;
+        protected global::System.Web.UI.WebControls.Label upInfo;
         
         /// <summary>
-        /// numLike 控制項。
+        /// flie 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label numLike;
+        protected global::System.Web.UI.WebControls.FileUpload flie;
         
         /// <summary>
-        /// Blank2 控制項。
+        /// btnUp 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Blank2;
+        protected global::System.Web.UI.WebControls.Button btnUp;
         
         /// <summary>
-        /// btnLike 控制項。
+        /// costInfo 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton btnLike;
+        protected global::System.Web.UI.WebControls.Label costInfo;
         
         /// <summary>
-        /// Message 控制項。
+        /// btnList 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox Message;
-        
-        /// <summary>
-        /// btnSend 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSend;
-        
-        /// <summary>
-        /// btnBack 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnBack;
+        protected global::System.Web.UI.WebControls.RadioButtonList btnList;
         
         /// <summary>
         /// btnHome 控制項。
@@ -128,5 +110,14 @@ namespace Project_Tpage.WebPage {
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnHome;
+        
+        /// <summary>
+        /// btnSend 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnSend;
     }
 }

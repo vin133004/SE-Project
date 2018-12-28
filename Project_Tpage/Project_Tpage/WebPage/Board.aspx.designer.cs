@@ -10,7 +10,7 @@
 namespace Project_Tpage.WebPage {
     
     
-    public partial class BoardList {
+    public partial class Board {
         
         /// <summary>
         /// form1 控制項。
@@ -31,22 +31,22 @@ namespace Project_Tpage.WebPage {
         protected global::System.Web.UI.WebControls.Label Title;
         
         /// <summary>
-        /// ListOfBoard 控制項。
+        /// Follow 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ListBox ListOfBoard;
+        protected global::System.Web.UI.WebControls.ImageButton Follow;
         
         /// <summary>
-        /// btnNew 控制項。
+        /// ListOfArticle 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnNew;
+        protected global::System.Web.UI.WebControls.ListBox ListOfArticle;
         
         /// <summary>
         /// btnBack 控制項。
@@ -58,12 +58,12 @@ namespace Project_Tpage.WebPage {
         protected global::System.Web.UI.WebControls.Button btnBack;
         
         /// <summary>
-        /// lblInfo 控制項。
+        /// btnPo 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblInfo;
+        protected global::System.Web.UI.WebControls.Button btnPo;
     }
 }

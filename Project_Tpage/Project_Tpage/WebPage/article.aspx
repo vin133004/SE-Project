@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="article.aspx.cs" Inherits="Project_Tpage.WebPage.article" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Article.aspx.cs" Inherits="Project_Tpage.WebPage.Article" %>
 
 <!DOCTYPE html>
 
@@ -9,26 +9,32 @@
 </head>
 <body>
     <form id="form1" runat="server">
-        <div>
-            <h1>
-            <p>
-                文章標題 ： 
-                    <asp:label ID="Tittle" Font-Size="Medium"  Width="500" Height="60" TextMode="SingleLine" runat="server" ></asp:label>
-                    <asp:Button ID="Setting" Text="點讚" Width="100" Height="60" runat="server" OnClick="Good_Click"/>
-                
-                    <br />   
-            </p>
-            <p>
-                文章內容 ： <br />
-                <asp:label ID="Content" runat="server" Width="1000" Height="500" /><br />
-                <asp:Button ID="Back" runat="server" Width="100" Height="60" Text="返回" OnClick="Back_Click"/>  
-               <br /> 
-                <h3>留言:</h3>
-                 <asp:TextBox ID="TextBox1" runat="server" Width="500" Height="60" TextMode="MultiLine" /><br />
-                <asp:Button ID="Send" runat="server" Width="100" Height="60" Text="送出留言"  OnClick="Send_Click"/>
-            </p>
-            </h1>
-        </div>
+        <center>
+            <asp:Label ID="Title" runat="server" Height="100" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="XX-Large" Text="文章主題" />
+            <br/>
+            <asp:Label ID="Content" runat="server" Height="250" Width="700" Font-Names="微軟正黑體" Font-Size="Larger" Text="文章內容" />
+            <br/>
+            <asp:Label ID="Blank1" runat="server" Height="75"  />
+            <br/>
+            <asp:ListBox ID="allMessage" runat="server" Height="200" Width="700" Font-Names="微軟正黑體" Font-Size="Large" >
+                <asp:ListItem>留言aaa</asp:ListItem>
+                <asp:ListItem>留言bbb</asp:ListItem>
+                <asp:ListItem>留言ccc</asp:ListItem>
+                <asp:ListItem>留言ddd</asp:ListItem>
+            </asp:ListBox>
+            <br />
+            <asp:Image ID="picLike" runat="server" Height="50" Width="50" ImageUrl="./pictures/Like.jpg" /> 
+            <asp:Label ID="numLike" runat="server" Height="50" Width="50" Text="X 15"/>
+            <asp:Label ID="Blank2" runat="server" Height="50" Width="500"  />
+            <asp:ImageButton ID="btnLike" runat="server" Height="50" Width="50" OnClick="btnLike_Click" ImageUrl="./pictures/Like.jpg" /> 
+            <br />     
+            <asp:TextBox ID="Message" runat="server" Height="40" Width="600" />
+            <asp:Button ID="btnSend" runat="server" Height="50" Width="50" Text="發送" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="Large" OnClick="btnSend_Click" />
+             
+            <br />
+           <asp:Button ID="btnBack" runat="server" Height="40" Width="350" Text="返回看板" BorderStyle="None" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" OnClick="btnBack_Click" />
+           <asp:Button ID="btnHome" runat="server" Height="40" Width="350" Text="返回首頁" BorderStyle="None" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" OnClick="btnHome_Click" />
+        </center>
     </form>
 </body>
 </html>

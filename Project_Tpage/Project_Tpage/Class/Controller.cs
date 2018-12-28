@@ -56,6 +56,16 @@ namespace Project_Tpage.Class
                 (p as Register).DoRegister += RegisterState_Register;
                 (p as Register).ToBack += RegisterState_ToBack;
             }
+            else if (p is Home)    //  Home State
+            {
+                (p as Home).ToBoard += HomeState_ToBoard;
+                (p as Home).ToAD += HomeState_ToAD;
+                (p as Home).DoSearch += HomeState_DoSearch;
+                (p as Home).DoCreateBoard += HomeState_DoCreateBoard;
+                (p as Home).DoCard += HomeState_DoCard;
+                (p as Home).DoStyle += HomeState_DoStyle;
+            }
+
         }
 
         public void LoginState_Login(ViewEventArgs e, out DAT opt)
@@ -161,6 +171,39 @@ namespace Project_Tpage.Class
             opt = model.RequestPageData(StateEnum.Login, e.data);
 
             e.page.Response.Redirect("Login.aspx");
+        }
+
+        public void HomeState_ToBoard(ViewEventArgs e, out DAT opt) {
+            opt = model.RequestPageData(StateEnum.Board, e.data);
+            e.page.Response.Redirect("Board.aspx");
+        }
+        public void HomeState_ToAD(ViewEventArgs e, out DAT opt)
+        {
+            // 待修正資料
+            opt = model.RequestPageData(StateEnum.Board, e.data);
+            e.page.Response.Redirect("AD.aspx");
+        }
+        public void HomeState_DoSearch(ViewEventArgs e, out DAT opt)
+        {
+            // 待修正資料
+            opt = model.RequestPageData(StateEnum.Board, e.data);
+            e.page.Response.Redirect("Board.aspx");
+        }
+        public void HomeState_DoCreateBoard(ViewEventArgs e, out DAT opt)
+        {
+            // 待修正資料
+            opt = model.RequestPageData(StateEnum.Board, e.data);
+        }
+        public void HomeState_DoCard(ViewEventArgs e, out DAT opt)
+        {
+            // 待修正資料
+            opt = model.RequestPageData(StateEnum.Board, e.data);
+        }
+        public void HomeState_DoStyle(ViewEventArgs e, out DAT opt)
+        {
+            // 待修正資料
+            opt = model.RequestPageData(StateEnum.Board, e.data);
+            e.page.Response.Redirect("Home.aspx");
         }
 
         public void ToRegister()

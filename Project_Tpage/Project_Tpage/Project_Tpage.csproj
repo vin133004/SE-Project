@@ -108,10 +108,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="WebPage\article.aspx" />
-    <Content Include="WebPage\Article2.aspx" />
-    <Content Include="WebPage\ArticleList.aspx" />
-    <Content Include="WebPage\BoardList.aspx" />
+    <Content Include="WebPage\AD.aspx" />
+    <Content Include="WebPage\Article.aspx" />
+    <Content Include="WebPage\Board.aspx" />
     <Content Include="WebPage\chose.aspx" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
@@ -130,6 +129,7 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="WebPage\Editor.aspx" />
+    <Content Include="WebPage\Home.aspx" />
     <Content Include="WebPage\Login.aspx" />
     <Content Include="WebPage\Register.aspx" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
@@ -178,33 +178,26 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="WebPage\article.aspx.cs">
-      <DependentUpon>article.aspx</DependentUpon>
+    <Compile Include="WebPage\AD.aspx.cs">
+      <DependentUpon>AD.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="WebPage\article.aspx.designer.cs">
-      <DependentUpon>article.aspx</DependentUpon>
+    <Compile Include="WebPage\AD.aspx.designer.cs">
+      <DependentUpon>AD.aspx</DependentUpon>
     </Compile>
-    <Compile Include="WebPage\Article2.aspx.cs">
-      <DependentUpon>Article2.aspx</DependentUpon>
+    <Compile Include="WebPage\Article.aspx.cs">
+      <DependentUpon>Article.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="WebPage\Article2.aspx.designer.cs">
-      <DependentUpon>Article2.aspx</DependentUpon>
+    <Compile Include="WebPage\Article.aspx.designer.cs">
+      <DependentUpon>Article.aspx</DependentUpon>
     </Compile>
-    <Compile Include="WebPage\ArticleList.aspx.cs">
-      <DependentUpon>ArticleList.aspx</DependentUpon>
+    <Compile Include="WebPage\Board.aspx.cs">
+      <DependentUpon>Board.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="WebPage\ArticleList.aspx.designer.cs">
-      <DependentUpon>ArticleList.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="WebPage\BoardList.aspx.cs">
-      <DependentUpon>BoardList.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="WebPage\BoardList.aspx.designer.cs">
-      <DependentUpon>BoardList.aspx</DependentUpon>
+    <Compile Include="WebPage\Board.aspx.designer.cs">
+      <DependentUpon>Board.aspx</DependentUpon>
     </Compile>
     <Compile Include="WebPage\chose.aspx.cs">
       <DependentUpon>chose.aspx</DependentUpon>
@@ -244,6 +237,13 @@
     </Compile>
     <Compile Include="WebPage\Editor.aspx.designer.cs">
       <DependentUpon>Editor.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="WebPage\Home.aspx.cs">
+      <DependentUpon>Home.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WebPage\Home.aspx.designer.cs">
+      <DependentUpon>Home.aspx</DependentUpon>
     </Compile>
     <Compile Include="WebPage\Login.aspx.cs">
       <DependentUpon>Login.aspx</DependentUpon>
