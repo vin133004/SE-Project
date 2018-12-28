@@ -142,7 +142,7 @@ namespace Project_Tpage.Class
             /// <summary>
             /// 頁面資料格式錯誤。
             /// </summary>
-            RequestPageDataErr =           2004,
+            RequestPageDataErr =            2004,
             /// <summary>
             /// 抽卡交友抽卡迭代次數達上限，抽卡失敗。
             /// </summary>
@@ -616,7 +616,7 @@ namespace Project_Tpage.Class
                 .Select(x => Advertise.Instance(x)).ToList();
         }
 
-		
+
         /// <summary>
         /// 根據團體名稱搜尋團體。
         /// </summary>

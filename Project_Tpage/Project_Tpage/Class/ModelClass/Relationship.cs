@@ -20,7 +20,7 @@ namespace Project_Tpage.Class
         {
             return new BoardAdminPair(s, ss);
         }
-        public BoardAdminPair(string s, string ss) { Admin = s;Board = ss; }
+        public BoardAdminPair(string s, string ss) { Admin = s; Board = ss; }
     }
 
     /// <summary>
@@ -76,11 +76,11 @@ namespace Project_Tpage.Class
                 Members.Add(newmem);
                 MembersName.Add(temp.Name);
             }
-            catch(ModelException me)
+            catch (ModelException me)
             {
                 throw me;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw new ModelException(
                     ModelException.Error.FriendMemberOperationError,
@@ -97,7 +97,7 @@ namespace Project_Tpage.Class
             int indx = Members.IndexOf(remmem);
             if (indx == -1) throw new ModelException(
                     ModelException.Error.FriendMemberOperationError,
-                    "FriendGroup類別－Member_Remove(string)發生錯誤：無此成員： " + remmem, 
+                    "FriendGroup類別－Member_Remove(string)發生錯誤：無此成員： " + remmem,
                     "");
 
             Members.RemoveAt(indx);
@@ -129,7 +129,7 @@ namespace Project_Tpage.Class
             {
                 throw new ModelException(
                     ModelException.Error.FriendMemberOperationError,
-                    "FriendGroup類別－Member_Add(string)發生錯誤：" + e.Message, 
+                    "FriendGroup類別－Member_Add(string)發生錯誤：" + e.Message,
                     "");
             }
         }
@@ -172,7 +172,7 @@ namespace Project_Tpage.Class
                 throw new ModelException(
                     ModelException.Error.SetFiledFailClassGroup,
                     "ClassGroup類別－建構式ClassGroup(DataRow)發生錯誤：" +
-                    "ClassGroup設定物件欄位錯誤。\r\n" + e.Message, 
+                    "ClassGroup設定物件欄位錯誤。\r\n" + e.Message,
                     "");
             }
         }
@@ -236,7 +236,7 @@ namespace Project_Tpage.Class
                 throw new ModelException(
                     ModelException.Error.SetFiledFailFamilyGroup,
                     "FamilyGroup類別－建構式FamilyGroup(DataRow)發生錯誤：" +
-                    "FamilyGroup設定物件欄位錯誤。\r\n" + e.Message, 
+                    "FamilyGroup設定物件欄位錯誤。\r\n" + e.Message,
                     "");
             }
         }
@@ -376,7 +376,7 @@ namespace Project_Tpage.Class
         {
             if (!Members.Contains(uid) || !Board.Contains(board)
                 || BoardAdmin.Where(x => x.Admin == uid && x.Board == board).Count() > 0) return;
-            
+
             BoardAdmin.Add(BoardAdminPair.New(uid, board));
             this.DBSet();
         }
@@ -428,7 +428,7 @@ namespace Project_Tpage.Class
             {
                 BoardRequestQueue.RemoveAll(x => x.Split('@')[1] == board);
             }
-            catch(IndexOutOfRangeException)
+            catch (IndexOutOfRangeException)
             {
                 BoardRequestQueue.RemoveAll(x => !x.Contains("@"));
                 BoardRequestQueue.RemoveAll(x => x.Split('@')[1] == board);
@@ -451,7 +451,7 @@ namespace Project_Tpage.Class
 
             Board[position] = board_new;
             this.DBSet();
-			
+
             List<Article> colle = Enumerable.Cast<DataRow>(Model.DB.GetSqlData(string.Format(@"SELECT * FROM {0} 
                 WHERE OfBoard = {1} AND OfGroup = {2}",
                 Model.DB.DB_ArticleData_TableName, board_old, GID)).Rows).Select(x => new Article(x)).ToList();
@@ -474,7 +474,7 @@ namespace Project_Tpage.Class
             this.DBSet();
 
             List<Article> colle = Enumerable.Cast<DataRow>(Model.DB.GetSqlData(string.Format(@"SELECT * FROM {0} 
-                WHERE OfBoard = {1} AND OfGroup = {2}", 
+                WHERE OfBoard = {1} AND OfGroup = {2}",
                 Model.DB.DB_ArticleData_TableName, board, GID)).Rows).Select(x => new Article(x)).ToList();
             foreach (Article art in colle)
             {

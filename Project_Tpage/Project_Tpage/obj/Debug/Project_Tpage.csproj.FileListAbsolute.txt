@@ -398,8 +398,6 @@ D:\SE-project\Project_Tpage\Project_Tpage\obj\Debug\Project_Tpage.dll
 D:\SE-project\Project_Tpage\Project_Tpage\obj\Debug\Project_Tpage.pdb
 E:\SE-project\Project_Tpage\Project_Tpage\bin\Google.Protobuf.dll
 E:\SE-project\Project_Tpage\Project_Tpage\bin\MySql.Data.xml
-<<<<<<< HEAD
-=======
 D:\SE-project\Project_Tpage\Project_Tpage\bin\roslyn\csc.exe
 D:\SE-project\Project_Tpage\Project_Tpage\bin\roslyn\csc.exe.config
 D:\SE-project\Project_Tpage\Project_Tpage\bin\roslyn\csc.rsp
@@ -446,4 +444,3 @@ D:\SE-project\Project_Tpage\Project_Tpage\bin\roslyn\vbc.exe.config
 D:\SE-project\Project_Tpage\Project_Tpage\bin\roslyn\vbc.rsp
 D:\SE-project\Project_Tpage\Project_Tpage\bin\roslyn\VBCSCompiler.exe
 D:\SE-project\Project_Tpage\Project_Tpage\bin\roslyn\VBCSCompiler.exe.config
->>>>>>> 8121cb08ff19d42cc620e1f56476230e59b053ec

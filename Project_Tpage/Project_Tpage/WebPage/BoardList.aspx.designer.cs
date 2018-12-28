@@ -56,8 +56,6 @@ namespace Project_Tpage.WebPage {
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnBack;
-<<<<<<< HEAD
-=======
         
         /// <summary>
         /// lblInfo 控制項。
@@ -67,6 +65,5 @@ namespace Project_Tpage.WebPage {
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblInfo;
->>>>>>> 8121cb08ff19d42cc620e1f56476230e59b053ec
     }
 }

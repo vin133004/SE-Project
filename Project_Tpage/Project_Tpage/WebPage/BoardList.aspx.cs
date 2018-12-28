@@ -23,11 +23,6 @@ namespace Project_Tpage.WebPage
         // 選擇要看文章
         protected void SelectArticle(object sender, EventArgs e)
         {
-<<<<<<< HEAD
-            int index = this.ListOfBoard.SelectedIndex;
-            Controller.controller.GetUserInput(ViewOp.Board_viewarticle);
-            Response.Redirect("ArticleList.aspx");
-=======
             //將註冊的資料(輸入參數)寫入PageData.In
             PageData.In.SetData(
                 delegate ()
@@ -45,7 +40,6 @@ namespace Project_Tpage.WebPage
             }
             else
                 Response.Redirect("ArticleList.aspx");
->>>>>>> 8121cb08ff19d42cc620e1f56476230e59b053ec
         }
     }
 }

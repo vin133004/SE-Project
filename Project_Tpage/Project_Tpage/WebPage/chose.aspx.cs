@@ -23,25 +23,25 @@ namespace Project_Tpage.WebPage
         {
 
             Controller.controller.ToBoard();
-            //Controller.model.RequestPageData(Controller.model.State);
+            Controller.model.RequestPageData(Controller.model.State);
         }
         protected void group(object sender, EventArgs e)
         {
 
             Controller.controller.ToGroup();
-            //Controller.model.RequestPageData(Controller.model.State);
+            Controller.model.RequestPageData(Controller.model.State);
         }
         protected void artic(object sender, EventArgs e)
         {
 
             Controller.controller.ToEdit();
-            //Controller.model.RequestPageData(Controller.model.State);
+            Controller.model.RequestPageData(Controller.model.State);
         }
         protected void setting(object sender, EventArgs e)
         {
 
             Controller.controller.ToUserSetting();
-            //Controller.model.RequestPageData(Controller.model.State);
+            Controller.model.RequestPageData(Controller.model.State);
         }
     }
 }
