@@ -451,6 +451,15 @@ namespace Project_Tpage.Class
 
             Board[position] = board_new;
             this.DBSet();
+			
+            List<Article> colle = Enumerable.Cast<DataRow>(Model.DB.GetSqlData(string.Format(@"SELECT * FROM {0} 
+                WHERE OfBoard = {1} AND OfGroup = {2}",
+                Model.DB.DB_ArticleData_TableName, board_old, GID)).Rows).Select(x => new Article(x)).ToList();
+            foreach (Article art in colle)
+            {
+                art.OfBoard = board_new;
+                Model.DB.Set<Article>(art);
+            }
         }
         /// <summary>
         /// 將一個看板移除。將原本屬於此看板的文章轉移至團體之下。
@@ -464,8 +473,9 @@ namespace Project_Tpage.Class
             Board.RemoveAt(position);
             this.DBSet();
 
-            List<Article> colle = Enumerable.Cast<DataRow>(Model.DB.GetSqlData(string.Format("SELECT * FROM {0} WHERE OfBoard = {1}", 
-                Model.DB.DB_ArticleData_TableName, board)).Rows).Select(x => new Article(x)).ToList();
+            List<Article> colle = Enumerable.Cast<DataRow>(Model.DB.GetSqlData(string.Format(@"SELECT * FROM {0} 
+                WHERE OfBoard = {1} AND OfGroup = {2}", 
+                Model.DB.DB_ArticleData_TableName, board, GID)).Rows).Select(x => new Article(x)).ToList();
             foreach (Article art in colle)
             {
                 art.OfBoard = "";

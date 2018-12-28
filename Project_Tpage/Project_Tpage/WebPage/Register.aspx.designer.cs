@@ -7,10 +7,11 @@
 // </自動產生的>
 //------------------------------------------------------------------------------
 
-namespace Project_Tpage.WebPage {
+namespace Project_Tpage.WebPage
+{
     
     
-    public partial class RegisterExample {
+    public partial class Register {
         
         /// <summary>
         /// form1 控制項。
@@ -22,22 +23,13 @@ namespace Project_Tpage.WebPage {
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
         
         /// <summary>
-        /// lblTitle 控制項。
+        /// pnlMain 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblTitle;
-        
-        /// <summary>
-        /// lblInfo 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblInfo;
+        protected global::System.Web.UI.WebControls.Panel pnlMain;
         
         /// <summary>
         /// lbl1 控制項。
@@ -112,6 +104,15 @@ namespace Project_Tpage.WebPage {
         protected global::System.Web.UI.WebControls.TextBox tbx4;
         
         /// <summary>
+        /// lblError 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblError;
+        
+        /// <summary>
         /// btn1 控制項。
         /// </summary>
         /// <remarks>
@@ -121,12 +122,12 @@ namespace Project_Tpage.WebPage {
         protected global::System.Web.UI.WebControls.Button btn1;
         
         /// <summary>
-        /// btn 控制項。
+        /// btn2 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btn;
+        protected global::System.Web.UI.WebControls.Button btn2;
     }
 }

@@ -109,6 +109,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="WebPage\About.aspx" />
+    <Content Include="WebPage\article.aspx" />
+    <Content Include="WebPage\ArticleList.aspx" />
+    <Content Include="WebPage\BoardList.aspx" />
     <Content Include="WebPage\chose.aspx" />
     <Content Include="WebPage\Contact.aspx" />
     <Content Include="Content\bootstrap-theme.css" />
@@ -129,8 +132,8 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="WebPage\editor.aspx" />
-    <Content Include="WebPage\login.aspx" />
-    <Content Include="WebPage\RegisterExample.aspx" />
+    <Content Include="WebPage\Login.aspx" />
+    <Content Include="WebPage\Register.aspx" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -184,6 +187,27 @@
       <DependentUpon>About.aspx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="WebPage\article.aspx.cs">
+      <DependentUpon>article.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WebPage\article.aspx.designer.cs">
+      <DependentUpon>article.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="WebPage\ArticleList.aspx.cs">
+      <DependentUpon>ArticleList.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WebPage\ArticleList.aspx.designer.cs">
+      <DependentUpon>ArticleList.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="WebPage\BoardList.aspx.cs">
+      <DependentUpon>BoardList.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WebPage\BoardList.aspx.designer.cs">
+      <DependentUpon>BoardList.aspx</DependentUpon>
+    </Compile>
     <Compile Include="WebPage\chose.aspx.cs">
       <DependentUpon>chose.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -237,19 +261,19 @@
     <Compile Include="WebPage\editor.aspx.designer.cs">
       <DependentUpon>editor.aspx</DependentUpon>
     </Compile>
-    <Compile Include="WebPage\login.aspx.cs">
-      <DependentUpon>login.aspx</DependentUpon>
+    <Compile Include="WebPage\Login.aspx.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="WebPage\login.aspx.designer.cs">
-      <DependentUpon>login.aspx</DependentUpon>
+    <Compile Include="WebPage\Login.aspx.designer.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
     </Compile>
-    <Compile Include="WebPage\RegisterExample.aspx.cs">
-      <DependentUpon>RegisterExample.aspx</DependentUpon>
+    <Compile Include="WebPage\Register.aspx.cs">
+      <DependentUpon>Register.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="WebPage\RegisterExample.aspx.designer.cs">
-      <DependentUpon>RegisterExample.aspx</DependentUpon>
+    <Compile Include="WebPage\Register.aspx.designer.cs">
+      <DependentUpon>Register.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

@@ -142,7 +142,7 @@ namespace Project_Tpage.Class
             /// <summary>
             /// 頁面資料格式錯誤。
             /// </summary>
-            PageDataFromatError =           2004,
+            RequestPageDataErr =           2004,
             /// <summary>
             /// 抽卡交友抽卡迭代次數達上限，抽卡失敗。
             /// </summary>
@@ -226,7 +226,12 @@ namespace Project_Tpage.Class
         /// <summary>
         /// 代表編輯文章頁面。
         /// </summary>
-        EditArticle
+        EditArticle,
+        /// <summary>
+        /// 代表瀏覽文章列表頁面。
+        /// </summary>
+        ArticleList
+
     }
 
     /// <summary>
@@ -611,6 +616,12 @@ namespace Project_Tpage.Class
                 .Select(x => Advertise.Instance(x)).ToList();
         }
 
+		
+        /// <summary>
+        /// 根據團體名稱搜尋團體。
+        /// </summary>
+        /// <param name="groupname">團體名稱。</param>
+        /// <returns></returns>
         private List<RelationshipGroup> GetGroupFromName(string groupname)
         {
             List<RelationshipGroup> rtn = new List<RelationshipGroup>();
@@ -639,121 +650,110 @@ namespace Project_Tpage.Class
         }
 
         /// <summary>
+        /// 根據使用者名稱搜尋使用者。真實姓名或暱稱其中之一包含指定字串即回傳。
+        /// </summary>
+        /// <param name="uname">指定的字串。</param>
+        /// <returns></returns>
+        public List<User> GetUserFromName(string uname)
+        {
+            return (from us in Enumerable.Cast<DataRow>(DB.GetSqlData(string.Format(
+                       "SELECT UID, RealName, NickName FROM {0}", DB.DB_UserData_TableName)).Rows)
+                    where DB.AnlType<string>(us["RealName"]).Contains(uname) ||
+                       DB.AnlType<string>(us["NickName"]).Contains(uname)
+                    select DB.Get<User>(DB.AnlType<string>(us["UID"]))).ToList();
+        }
+
+        /// <summary>
         /// 在切換頁面時，向Model要求新的頁面資料。
         /// </summary>
         /// <param name="ToState">要前往的狀態。</param>
         /// <param name="AppendData">Controller附加給View的資料。</param>
         /// <returns></returns>
-        public PageData RequestPageData(StateEnum ToState, Action AppendData = null)
+        public DAT RequestPageData(StateEnum ToState, DAT ipt)
         {
-            if (AppendData == null) AppendData = delegate () { };
-
-            if (ToState == StateEnum.Home)
+            DAT opt = new DAT();
+            try
             {
-                PageData.Out.SetData(
-                    delegate ()
-                    {
-                        PageData.Out["Content"] = GetDynamicPageContent();
-                        PageData.Out["User"] = user;
-
-                        if (PageData.In.Keys.Contains("AdvertiseBlocks"))
-                            PageData.Out["Advertise"] = GetAdForBlocks(PageData.In["AdvertiseBlocks"] as List<int>);
-                        AppendData();
-                    });
-            }
-            else if (ToState == StateEnum.UserPage)
-            {
-                PageData.Out.SetData(
-                    delegate ()
-                    {
-                        PageData.Out["Content"] = GetUserPageContent((string)PageData.In["UserUID"]);
-                        PageData.Out["User"] = DB.Get<User>(PageData.In["UID"] as string);
-
-                        if (PageData.In.Keys.Contains("AdvertiseBlocks"))
-                            PageData.Out["Advertise"] = GetAdForBlocks(PageData.In["AdvertiseBlocks"] as List<int>);
-                        AppendData();
-                    });
-            }
-            else if (ToState == StateEnum.Group)
-            {
-                PageData.Out.SetData(
-                    delegate ()
-                    {
-                        bool isClass = (bool)PageData.In["GroupType"];
-                        PageData.Out["Group"] = isClass ? (RelationshipGroup)DB.Get<ClassGroup>(PageData.In["GID"] as string)
-                            : DB.Get<FamilyGroup>(PageData.In["GID"] as string);
-                        PageData.Out["Content"] = GetArticlesFromGroup((string)PageData.In["GID"]);
-
-                        if (PageData.In.Keys.Contains("AdvertiseBlocks"))
-                            PageData.Out["Advertise"] = GetAdForBlocks(PageData.In["AdvertiseBlocks"] as List<int>);
-                        AppendData();
-                    });
-            }
-            else if (ToState == StateEnum.Board)
-            {
-                PageData.Out.SetData(
-                    delegate ()
-                    {
-                        bool isClass = (bool)PageData.In["GroupType"];
-                        PageData.Out["Group"] = isClass ? (RelationshipGroup)DB.Get<ClassGroup>(PageData.In["GID"] as string)
-                            : DB.Get<FamilyGroup>(PageData.In["GID"] as string);
-                        PageData.Out["Content"] = GetArticlesFromBoard
-                            ((string)PageData.In["GID"], (string)PageData.In["Board"]);
-                        PageData.Out["Board"] = PageData.In["Board"];
-
-                        if (PageData.In.Keys.Contains("AdvertiseBlocks"))
-                            PageData.Out["Advertise"] = GetAdForBlocks(PageData.In["AdvertiseBlocks"] as List<int>);
-                        AppendData();
-                    });
-            }
-            else if (ToState == StateEnum.Article)
-            {
-                PageData.Out.SetData(
-                    delegate ()
-                    {
-                        PageData.Out["Content"] = DB.Get<Article>((string)PageData.In["AID"]);
-
-                        if (PageData.In.Keys.Contains("AdvertiseBlocks"))
-                            PageData.Out["Advertise"] = GetAdForBlocks(PageData.In["AdvertiseBlocks"] as List<int>);
-                        AppendData();
-                    });
-            }
-            else if (ToState == StateEnum.EditArticle)
-            {
-                PageData.Out.SetData(
-                    delegate ()
-                    {
-                        PageData.Out["Content"] = DB.Get<Article>((string)PageData.In["AID"]);
-                        AppendData();
-                    });
-            }
-            else if (ToState == StateEnum.Setting)
-            {
-                PageData.Out.SetData(
-                    delegate ()
-                    {
-                        PageData.Out["Userinfo"] = user.Userinfo;
-                        PageData.Out["Usersetting"] = user.Usersetting;
-
-                        AppendData();
-                    });
-            }
-            else if (ToState == StateEnum.Login)
-            {
-                PageData.Out.SetData(delegate () 
+                if (ToState == StateEnum.Home)
                 {
-                    AppendData();
-                });
-            }
-            else if (ToState == StateEnum.Register)
-            {
-                PageData.Out.SetData(delegate () 
-                {
-                    AppendData();
-                });
-            }
+                    opt["Content"] = GetDynamicPageContent();
+                    opt["User"] = user;
 
-            return PageData.Out;
+                    if (ipt.Keys.Contains("AdvertiseBlocks"))
+                        opt["Advertise"] = GetAdForBlocks(ipt["AdvertiseBlocks"] as List<int>);
+                }
+                else if (ToState == StateEnum.UserPage)
+                {
+                    opt["Content"] = GetUserPageContent((string)ipt["UserUID"]);
+                    opt["User"] = DB.Get<User>(ipt["UID"] as string);
+
+                    if (ipt.Keys.Contains("AdvertiseBlocks"))
+                        opt["Advertise"] = GetAdForBlocks(ipt["AdvertiseBlocks"] as List<int>);
+                }
+                else if (ToState == StateEnum.Group)
+                {
+                    bool isClass = (bool)ipt["GroupType"];
+                    opt["Group"] = isClass ? (RelationshipGroup)DB.Get<ClassGroup>(ipt["GID"] as string)
+                        : DB.Get<FamilyGroup>(ipt["GID"] as string);
+                    opt["Content"] = GetArticlesFromGroup((string)ipt["GID"]);
+
+                    if (ipt.Keys.Contains("AdvertiseBlocks"))
+                        opt["Advertise"] = GetAdForBlocks(ipt["AdvertiseBlocks"] as List<int>);
+                }
+                else if (ToState == StateEnum.Board)
+                {
+                    bool isClass = (bool)ipt["GroupType"];
+
+                    opt["Group"] = isClass ? (RelationshipGroup)DB.Get<ClassGroup>(ipt["GID"] as string)
+                        : DB.Get<FamilyGroup>(ipt["GID"] as string);
+                    opt["Content"] = GetArticlesFromBoard
+                        ((string)ipt["GID"], (string)ipt["Board"]);
+                    opt["Board"] = ipt["Board"];
+
+                    if (ipt.Keys.Contains("AdvertiseBlocks"))
+                        opt["Advertise"] = GetAdForBlocks(ipt["AdvertiseBlocks"] as List<int>);
+                }
+                else if (ToState == StateEnum.Article)
+                {
+                    opt["Content"] = DB.Get<Article>((string)ipt["AID"]);
+
+                    if (ipt.Keys.Contains("AdvertiseBlocks"))
+                        opt["Advertise"] = GetAdForBlocks(ipt["AdvertiseBlocks"] as List<int>);
+                }
+                else if (ToState == StateEnum.EditArticle)
+                {
+                    opt["Content"] = DB.Get<Article>((string)ipt["AID"]);
+                }
+                else if (ToState == StateEnum.Setting)
+                {
+                    opt["Userinfo"] = user.Userinfo;
+                    opt["Usersetting"] = user.Usersetting;
+                }
+                else if (ToState == StateEnum.Login)
+                {
+
+                }
+                else if (ToState == StateEnum.Register)
+                {
+
+                }
+
+                return opt;
+            }
+            catch (KeyNotFoundException)
+            {
+                throw new ModelException(
+                    ModelException.Error.RequestPageDataErr,
+                    "Model類別－RequestPageData發生例外：未找到需要的參數。\r\n",
+                    "");
+            }
+            catch (Exception e)
+            {
+                throw new ModelException(
+                    ModelException.Error.RequestPageDataErr,
+                    "Model類別－RequestPageData發生例外：設定資料錯誤。\r\n" + e.Message,
+                    "");
+            }
         }
 
         /// <summary>
@@ -765,240 +765,159 @@ namespace Project_Tpage.Class
             State = StateEnum.Login;
             user = null;
             DB = new SqlServ_MSSql(databaseConn);
-            PageData.InitPageData();
         }
     }
 
-    /// <summary>
-    /// 提供一組靜態欄位，存放切換狀態時，該狀態要求的頁面資料。
-    /// </summary>
-    public class PageData : Dictionary<string, object>
-    {
-        /// <summary>
-        /// 切換狀態時Control提供給Model的參數資料。
-        /// </summary>
-        public static PageData In;
-        /// <summary>
-        /// 切換狀態時View所要求的頁面資料。
-        /// </summary>
-        public static PageData Out;
+    /* PageDate.In(View to Model): 當View接收使用者輸入後提供給Model的參數資料。
+        * PageData.In的內容根據不同的使用者行為而存放不同資料。
+        *                    
+        *      Login_login
+        *      
+        *          PageData.In["ID"] = account                 (type: string)
+        *          存放使用者登入的帳號。
+        *          
+        *          PageData.In["Password"] = password          (type: string)
+        *          存放使用者登入的密碼。
+        *          
+        *      Register_register
+        *      
+        *          PageData.In["ID"] = account                 (type: string)
+        *          存放使用者註冊的帳號。
+        *          
+        *          PageData.In["Password"] = password          (type: string)
+        *          存放使用者註冊的密碼。
+        *      
+        *          PageData.In["Email"] = email                (type: string)
+        *          存放使用者註冊的電子郵件。
+        *          
+        *          PageData.In["StudentID"] = studentid        (type: string)
+        *          存放使用者註冊的學號。
+        *          
+        *      Home_viewarticle || Group_viewarticle || Board_viewarticle || Userpage_viewarticle
+        *      
+        *          PageData.In["AID"] = a AID                  (type: string)
+        *          存放要瀏覽的文章之識別碼。
+        *          
+        *      Home_togroup || Board_togroup
+        *      
+        *          PageData.In["GID"] = a GID                  (type: string)
+        *          存放要前往的團體之識別碼。
+        *          
+        *          PageData.In["GroupType"] = bool             (type: bool)
+        *          存放要前往的團體是班級(true)或家族(false)。
+        *          
+        *      Home_touserpage
+        *      
+        *          PageData.In["UID"] = a UID                  (type: string)
+        *          存放要前往的使用者頁面所屬使用者之識別碼。
+        *      
+        *      Home_editarticle || Group_editarticle || Board_editarticle || Article_editarticle
+        *      
+        *          PageData.In["AID"] = a AID                  (type: string)
+        *          存放要編輯的文章之識別碼。若為發布文章，將此值設定為null。
+        *      
+        *      Group_toboard
+        *      
+        *          PageData.In["GID"] = a GID                  (type: string)
+        *          存放現在所在的團體之識別碼。
+        *          
+        *          PageData.In["GroupType"] = bool             (type: bool)
+        *          存放現在所在的團體是班級(true)或家族(false)。
+        *                    
+        *          PageData.In["Board"] = board                (type: string)
+        *          存放要前往的看板名稱。
+        *      
+        *      Editarticle_release
+        *                    
+        *          PageData.In["Article"] = an article         (type: Article)
+        *          存放要發布的文章物件。
+        *          
+        *          
+        *          
+        *      ****在需要放置廣告的頁面上，要設定PageData.In["AdvertiseBlocks"](type: List<int>)
+        *                                      定義：在此頁面上的廣告區塊代碼。
+        * 
+        */
 
-        //public StateEnum State { get; set; }
-
-        public static void InitPageData()
-        {
-            In = new PageData(32);
-
-            Out = new PageData(32);          
-        }
-
-        
-        /// <summary>
-        /// 清空PageData內的資料並設定新的資料。
-        /// </summary>
-        /// <param name="SettingFunc">設定新資料的委派函數。</param>
-        public void SetData(Action SettingFunc)
-        {
-            Clear();
-            try
-            {
-                SettingFunc();
-            }
-            catch (KeyNotFoundException)
-            {
-                throw new ModelException(
-                    ModelException.Error.PageDataFromatError,
-                    "PageData類別－SetData(Action)發生例外：未找到需要的參數。\r\n",
-                    "");
-            }
-            catch (Exception e)
-            {
-                throw new ModelException(
-                    ModelException.Error.PageDataFromatError,
-                    "PageData類別－SetData(Action)發生例外：設定資料錯誤。\r\n" + e.Message, 
-                    "");
-            }
-        }
-        
-
-        ~PageData()
-        {
-            
-        }
-
-        public new object this[string s]
-        {
-            get
-            {
-                return ((Dictionary<string, object>)this)[s];
-            }
-            set
-            {
-                try
-                {
-                    ((Dictionary<string, object>)this)[s] = value;
-                }
-                catch (KeyNotFoundException)
-                {
-                    Add(s, value);
-                }
-            }
-        }
-
-        private PageData() : base() { }
-
-        private PageData(int capacity) : base(capacity) { }
-
-        /* PageDate.In(View to Model): 當View接收使用者輸入後提供給Model的參數資料。
-         * PageData.In的內容根據不同的使用者行為而存放不同資料。
-         *                    
-         *      Login_login
-         *      
-         *          PageData.In["ID"] = account                 (type: string)
-         *          存放使用者登入的帳號。
-         *          
-         *          PageData.In["Password"] = password          (type: string)
-         *          存放使用者登入的密碼。
-         *          
-         *      Register_register
-         *      
-         *          PageData.In["ID"] = account                 (type: string)
-         *          存放使用者註冊的帳號。
-         *          
-         *          PageData.In["Password"] = password          (type: string)
-         *          存放使用者註冊的密碼。
-         *      
-         *          PageData.In["Email"] = email                (type: string)
-         *          存放使用者註冊的電子郵件。
-         *          
-         *          PageData.In["StudentID"] = studentid        (type: string)
-         *          存放使用者註冊的學號。
-         *          
-         *      Home_viewarticle || Group_viewarticle || Board_viewarticle || Userpage_viewarticle
-         *      
-         *          PageData.In["AID"] = a AID                  (type: string)
-         *          存放要瀏覽的文章之識別碼。
-         *          
-         *      Home_togroup || Board_togroup
-         *      
-         *          PageData.In["GID"] = a GID                  (type: string)
-         *          存放要前往的團體之識別碼。
-         *          
-         *          PageData.In["GroupType"] = bool             (type: bool)
-         *          存放要前往的團體是班級(true)或家族(false)。
-         *          
-         *      Home_touserpage
-         *      
-         *          PageData.In["UID"] = a UID                  (type: string)
-         *          存放要前往的使用者頁面所屬使用者之識別碼。
-         *      
-         *      Home_editarticle || Group_editarticle || Board_editarticle || Article_editarticle
-         *      
-         *          PageData.In["AID"] = a AID                  (type: string)
-         *          存放要編輯的文章之識別碼。若為發布文章，將此值設定為null。
-         *      
-         *      Group_toboard
-         *      
-         *          PageData.In["GID"] = a GID                  (type: string)
-         *          存放現在所在的團體之識別碼。
-         *          
-         *          PageData.In["GroupType"] = bool             (type: bool)
-         *          存放現在所在的團體是班級(true)或家族(false)。
-         *                    
-         *          PageData.In["Board"] = board                (type: string)
-         *          存放要前往的看板名稱。
-         *      
-         *      Editarticle_release
-         *                    
-         *          PageData.In["Article"] = an article         (type: Article)
-         *          存放要發布的文章物件。
-         *          
-         *          
-         *          
-         *      ****在需要放置廣告的頁面上，要設定PageData.In["AdvertiseBlocks"](type: List<int>)
-         *                                      定義：在此頁面上的廣告區塊代碼。
-         * 
-         */
-
-        /* PageData.Out(Model to View): View所要求的資料。
-         * PageData.Out的內容根據不同的狀態要求而存放不同資料。
-         *                  
-         *          
-         *      To "Login" || "Register" State
-         *      
-         *          無。
-         *          
-         *      To "Home" State
-         *      
-         *          PageData.Out["Content"] =  a list           (type: List<object>)
-         *          存放要顯示的文章與留言。其內的物件不是Article就是AMessage。
-         *          
-         *          PageData.Out["User"] =   a object           (type: User)
-         *          存放現在使用者的資訊(包含好友與團體資訊User.Friends, User.Groups)
-         *          
-         *          PageData.Out["Advertise"] = a list          (type: List<Advertise>)
-         *          存放此頁面上要呈現的廣告
-         *          
-         *      To "UserPage" State
-         *      
-         *          PageData.Out["User"] = a object             (type: User)
-         *          存放此UserPage的所屬User物件。
-         *          
-         *          PageData.Out["Content"] = a list            (type: List<object>)
-         *          存放要顯示的文章與留言。其內的物件不是Article就是AMessage。
-         *          
-         *          PageData.Out["Advertise"] = a list          (type: List<Advertise>)
-         *          存放此頁面上要呈現的廣告
-         *          
-         *      To "ViewArticle" State
-         *          
-         *          PageData.Out["Content"] = a article         (type: Article)
-         *          存放此頁面上要顯示的文章物件。
-         *          
-         *          PageData.Out["Advertise"] = a list          (type: List<Advertise>)
-         *          存放此頁面上要呈現的廣告。
-         *          
-         *      To "Usersetting" State
-         *          
-         *          PageData.Out["Userinfo"] = a UserInfo       (type: UserInfo)
-         *          存放使用者的使用者資訊。
-         *          
-         *          PageData.Out["Usersetting"] = a UserSetting (type: UserPrivace)
-         *          存放使用者的使用者設定。
-         *          
-         *      To "Group" State
-         *      
-         *          PageData.Out["Group"] = a group             (type: RelationshipGroup)
-         *          存放現在頁面的所屬團體（包含看板資訊）。
-         *          
-         *          PageData.Out["Advertise"] = a list          (type: List<Advertise>)
-         *          存放此頁面上要呈現的廣告。
-         *                            
-         *          PageData.Out["Content"] = a list            (type: List<Article>)
-         *          存放要顯示的文章。
-         *          
-         *      To "Board" State
-         *      
-         *          PageData.Out["Group"] = a group             (type: RelationshipGroup)
-         *          存放現在頁面的所屬團體（包含看板資訊）。
-         *          
-         *          PageData.Out["Board"] = a string            (type: string)
-         *          存放現在頁面的所屬看板。
-         *          
-         *          PageData.Out["Advertise"] = a list          (type: List<Advertise>)
-         *          存放此頁面上要呈現的廣告。
-         *                            
-         *          PageData.Out["Content"] = a list            (type: List<Article>)
-         *          存放要顯示的文章。         *          存放要顯示的文章。
-         *          
-         *      To "EditArticle" State
-         *          
-         *          PageData.Out["Content"] = a article         (type: Article)
-         *          存放此頁面上要顯示的文章物件。
-         *          
-         * 
-         */
-    }
+    /* PageData.Out(Model to View): View所要求的資料。
+        * PageData.Out的內容根據不同的狀態要求而存放不同資料。
+        *                  
+        *          
+        *      To "Login" || "Register" State
+        *      
+        *          無。
+        *          
+        *      To "Home" State
+        *      
+        *          PageData.Out["Content"] =  a list           (type: List<object>)
+        *          存放要顯示的文章與留言。其內的物件不是Article就是AMessage。
+        *          
+        *          PageData.Out["User"] =   a object           (type: User)
+        *          存放現在使用者的資訊(包含好友與團體資訊User.Friends, User.Groups)
+        *          
+        *          PageData.Out["Advertise"] = a list          (type: List<Advertise>)
+        *          存放此頁面上要呈現的廣告
+        *          
+        *      To "UserPage" State
+        *      
+        *          PageData.Out["User"] = a object             (type: User)
+        *          存放此UserPage的所屬User物件。
+        *          
+        *          PageData.Out["Content"] = a list            (type: List<object>)
+        *          存放要顯示的文章與留言。其內的物件不是Article就是AMessage。
+        *          
+        *          PageData.Out["Advertise"] = a list          (type: List<Advertise>)
+        *          存放此頁面上要呈現的廣告
+        *          
+        *      To "ViewArticle" State
+        *          
+        *          PageData.Out["Content"] = a article         (type: Article)
+        *          存放此頁面上要顯示的文章物件。
+        *          
+        *          PageData.Out["Advertise"] = a list          (type: List<Advertise>)
+        *          存放此頁面上要呈現的廣告。
+        *          
+        *      To "Usersetting" State
+        *          
+        *          PageData.Out["Userinfo"] = a UserInfo       (type: UserInfo)
+        *          存放使用者的使用者資訊。
+        *          
+        *          PageData.Out["Usersetting"] = a UserSetting (type: UserPrivace)
+        *          存放使用者的使用者設定。
+        *          
+        *      To "Group" State
+        *      
+        *          PageData.Out["Group"] = a group             (type: RelationshipGroup)
+        *          存放現在頁面的所屬團體（包含看板資訊）。
+        *          
+        *          PageData.Out["Advertise"] = a list          (type: List<Advertise>)
+        *          存放此頁面上要呈現的廣告。
+        *                            
+        *          PageData.Out["Content"] = a list            (type: List<Article>)
+        *          存放要顯示的文章。
+        *          
+        *      To "Board" State
+        *      
+        *          PageData.Out["Group"] = a group             (type: RelationshipGroup)
+        *          存放現在頁面的所屬團體（包含看板資訊）。
+        *          
+        *          PageData.Out["Board"] = a string            (type: string)
+        *          存放現在頁面的所屬看板。
+        *          
+        *          PageData.Out["Advertise"] = a list          (type: List<Advertise>)
+        *          存放此頁面上要呈現的廣告。
+        *                            
+        *          PageData.Out["Content"] = a list            (type: List<Article>)
+        *          存放要顯示的文章。         *          存放要顯示的文章。
+        *          
+        *      To "EditArticle" State
+        *          
+        *          PageData.Out["Content"] = a article         (type: Article)
+        *          存放此頁面上要顯示的文章物件。
+        *          
+        * 
+        */
+    
 
     /// <summary>
     /// SQL Service類別提供SQL資料庫的服務。

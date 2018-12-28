@@ -7,11 +7,10 @@
 // </自動產生的>
 //------------------------------------------------------------------------------
 
-namespace Project_Tpage.WebPage
-{
+namespace Project_Tpage.WebPage {
     
     
-    public partial class Login {
+    public partial class ArticleList {
         
         /// <summary>
         /// form1 控制項。
@@ -23,66 +22,39 @@ namespace Project_Tpage.WebPage
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
         
         /// <summary>
-        /// lblTitle 控制項。
+        /// Title 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblTitle;
+        protected global::System.Web.UI.WebControls.Label Title;
         
         /// <summary>
-        /// lbl1 控制項。
+        /// ListOfArticle 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lbl1;
+        protected global::System.Web.UI.WebControls.ListBox ListOfArticle;
         
         /// <summary>
-        /// tbx1 控制項。
+        /// btnBack 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox tbx1;
+        protected global::System.Web.UI.WebControls.Button btnBack;
         
         /// <summary>
-        /// lbl2 控制項。
+        /// btnPo 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lbl2;
-        
-        /// <summary>
-        /// tbx2 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox tbx2;
-        
-        /// <summary>
-        /// btn1 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btn1;
-        
-        /// <summary>
-        /// btn2 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btn2;
+        protected global::System.Web.UI.WebControls.Button btnPo;
     }
 }

@@ -8,16 +8,16 @@ using Project_Tpage.Class;
 
 namespace Project_Tpage.WebPage
 {
-    public partial class Login : System.Web.UI.Page
+    public partial class Register : System.Web.UI.Page
     {
         /// <summary>
-        /// 登入事件。
+        /// 註冊事件。
         /// </summary>
-        public event ViewEventHandler DoLogin;
+        public event ViewEventHandler DoRegister;
         /// <summary>
-        /// 前往註冊頁面事件。
+        /// 返回前頁面事件。
         /// </summary>
-        public event ViewEventHandler ToRegister;
+        public event ViewEventHandler ToBack;
 
         /// <summary>
         /// 每次事件後取得的輸出結果。
@@ -26,11 +26,11 @@ namespace Project_Tpage.WebPage
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            //在登入頁面，未初始化Controller的情況，初始化Controller
+            //不在登入頁面，Controller未初始化的情況，導向登入頁面。
             if (!Controller.IsConstrut)
-                Controller.Initial(StateEnum.Login);
+                Response.Redirect("Login.aspx");
             
-            
+
             //讓Controller內的function訂閱這個頁面上的事件。
             //Do this in each Page_Load()
             Controller.controller.SubsribeEvent(this);
@@ -38,25 +38,35 @@ namespace Project_Tpage.WebPage
 
         public void btn1_Click(object sender, EventArgs e)
         {
-            //當使用者按下登入按鈕，引發登入事件。
+            //當使用者按下註冊按鈕，引發註冊事件。
 
 
             //設定輸入參數資料
             DAT dat = new DAT();
-            dat["ID"] = tbx1.Text;
+            dat["Id"] = tbx1.Text;
             dat["Password"] = tbx2.Text;
+            dat["Email"] = tbx3.Text;
+            dat["StudentID"] = tbx4.Text;
 
             //引發事件，取得輸出結果在optDAT裡。
-            DoLogin(new ViewEventArgs(dat, this), out optDAT);
+            DoRegister(new ViewEventArgs(dat, this), out optDAT);
+
+            //若有錯誤資訊，表示註冊發生錯誤，顯示錯誤資訊在頁面上。
+            if(optDAT.Keys.Contains("failinfo"))
+            {
+                lblError.Visible = true;
+                lblError.Text = optDAT["failinfo"] as string;
+
+                tbx1.Text = tbx2.Text = tbx3.Text = tbx4.Text = "";
+            }
         }
-
-
+        
         public void btn2_Click(object sender, EventArgs e)
         {
-            //當使用者按下註冊按鈕，引發前往註冊頁面事件。
+            //當使用者按下返回按鈕，引發返回前頁面事件。
 
             //引發事件。
-            ToRegister(new ViewEventArgs(this), out optDAT);
+            ToBack(new ViewEventArgs(this), out optDAT);
         }
     }
 }
