@@ -48,5 +48,11 @@ namespace Project_Tpage.WebPage
             Controller.controller.ReleaseAMessage(this.Message.Text, this.Title.Text);
             Response.Redirect("Article2.aspx");
         }
+
+        // 傳送點讚事件
+        protected void btnLike_Click(object sender, ImageClickEventArgs e)
+        {
+
+        }
     }
 }

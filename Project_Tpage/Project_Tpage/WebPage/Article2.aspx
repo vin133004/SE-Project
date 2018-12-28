@@ -23,9 +23,14 @@
                 <asp:ListItem>留言ddd</asp:ListItem>
             </asp:ListBox>
             <br />
-             <asp:Label ID="Blank2" runat="server" Height="50"  />
-            <asp:TextBox ID="Message" runat="server" Height="40" Width="650" />
+            <asp:Image ID="picLike" runat="server" Height="50" Width="50" ImageUrl="./pictures/2p3o0003noq07q391981.jpg" /> 
+            <asp:Label ID="numLike" runat="server" Height="50" Width="50" Text="X 15"/>
+            <asp:Label ID="Blank2" runat="server" Height="50" Width="500"  />
+            <asp:ImageButton ID="btnLike" runat="server" Height="50" Width="50" OnClick="btnLike_Click" ImageUrl="./pictures/2p3o0003noq07q391981.jpg" /> 
+            <br />     
+            <asp:TextBox ID="Message" runat="server" Height="40" Width="600" />
             <asp:Button ID="btnSend" runat="server" Height="50" Width="50" Text="發送" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="Large" OnClick="btnSend_Click" />
+             
             <br />
            <asp:Button ID="btnBack" runat="server" Height="40" Width="700" Text="返回文章" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="Large" OnClick="btnBack_Click" />
         </center>

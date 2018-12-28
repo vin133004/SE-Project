@@ -9,6 +9,7 @@ namespace Project_Tpage.WebPage
 {
     public partial class ArticleList : System.Web.UI.Page
     {
+
         // 資料庫在這邊給資料。顯示於listbox
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -17,6 +18,9 @@ namespace Project_Tpage.WebPage
                 //建構MVC
                 Controller.Initial(Session["state"] == null ? StateEnum.Article : (StateEnum)Session["state"]);
             }
+            //Controller.model.RequestPageData(Controller.model.State);
+            if (PageData.Out.ContainsKey("Board"))
+                this.Title.Text = PageData.Out["Board"] as string;
         }
 
         // 選擇要看文章

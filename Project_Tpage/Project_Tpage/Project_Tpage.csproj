@@ -108,19 +108,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="WebPage\About.aspx" />
     <Content Include="WebPage\article.aspx" />
     <Content Include="WebPage\Article2.aspx" />
     <Content Include="WebPage\ArticleList.aspx" />
     <Content Include="WebPage\BoardList.aspx" />
     <Content Include="WebPage\chose.aspx" />
-    <Content Include="WebPage\Contact.aspx" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Site.css" />
-    <Content Include="WebPage\Default.aspx" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -132,7 +129,7 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
-    <Content Include="WebPage\editor.aspx" />
+    <Content Include="WebPage\Editor.aspx" />
     <Content Include="WebPage\login.aspx" />
     <Content Include="WebPage\RegisterExample.aspx" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
@@ -180,13 +177,6 @@
     <Compile Include="Class\View.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="WebPage\About.aspx.cs">
-      <DependentUpon>About.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="WebPage\About.aspx.designer.cs">
-      <DependentUpon>About.aspx</DependentUpon>
-    </Compile>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="WebPage\article.aspx.cs">
       <DependentUpon>article.aspx</DependentUpon>
@@ -223,20 +213,6 @@
     <Compile Include="WebPage\chose.aspx.designer.cs">
       <DependentUpon>chose.aspx</DependentUpon>
     </Compile>
-    <Compile Include="WebPage\Contact.aspx.cs">
-      <DependentUpon>Contact.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="WebPage\Contact.aspx.designer.cs">
-      <DependentUpon>Contact.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="WebPage\Default.aspx.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="WebPage\Default.aspx.designer.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -262,12 +238,12 @@
     <Compile Include="ViewSwitcher.ascx.designer.cs">
       <DependentUpon>ViewSwitcher.ascx</DependentUpon>
     </Compile>
-    <Compile Include="WebPage\editor.aspx.cs">
-      <DependentUpon>editor.aspx</DependentUpon>
+    <Compile Include="WebPage\Editor.aspx.cs">
+      <DependentUpon>Editor.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="WebPage\editor.aspx.designer.cs">
-      <DependentUpon>editor.aspx</DependentUpon>
+    <Compile Include="WebPage\Editor.aspx.designer.cs">
+      <DependentUpon>Editor.aspx</DependentUpon>
     </Compile>
     <Compile Include="WebPage\login.aspx.cs">
       <DependentUpon>login.aspx</DependentUpon>
