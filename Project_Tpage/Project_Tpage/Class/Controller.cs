@@ -686,6 +686,7 @@ namespace Project_Tpage.Class
         /// 在文章列表返回看板。
         /// </summary>
         ArticleList_back = 0901,
+<<<<<<< HEAD
     }
 
 
@@ -779,5 +780,7 @@ namespace Project_Tpage.Class
         /// </summary>
         /// <param name="dat"></param>
         public DAT(Dictionary<string, object> dat) : base(dat) { }
+=======
+>>>>>>> 8121cb08ff19d42cc620e1f56476230e59b053ec
     }
 }

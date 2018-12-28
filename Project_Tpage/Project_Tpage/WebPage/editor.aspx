@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="editor.aspx.cs" Inherits="Project_Tpage.WebPage.editor" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Editor.aspx.cs" Inherits="Project_Tpage.WebPage.editor" %>
 
 <!DOCTYPE html>
 

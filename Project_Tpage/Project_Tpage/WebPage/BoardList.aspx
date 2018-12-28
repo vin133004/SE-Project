@@ -29,6 +29,10 @@
 
             <asp:Button ID="btnNew" runat="server"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="XX-Large" Width="700" Height="75" BorderStyle="None" Text="申請新版"/><br />        
             <asp:Button ID="btnBack" runat="server"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="XX-Large" Width="700" Height="75" BorderStyle="None" Text="返回首頁" />
+<<<<<<< HEAD
+=======
+            <asp:Label ID="lblInfo" runat="server"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="XX-Large" Width="700" Height="75" Text="" Visible="false" />
+>>>>>>> 8121cb08ff19d42cc620e1f56476230e59b053ec
         </center>
     </form>
 </body>
