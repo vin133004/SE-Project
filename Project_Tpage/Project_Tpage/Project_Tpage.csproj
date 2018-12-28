@@ -108,13 +108,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-<<<<<<< HEAD
+
     <Content Include="WebPage\About.aspx" />
     <Content Include="WebPage\article.aspx" />
-=======
+
     <Content Include="WebPage\article.aspx" />
     <Content Include="WebPage\Article2.aspx" />
->>>>>>> 8121cb08ff19d42cc620e1f56476230e59b053ec
+
     <Content Include="WebPage\ArticleList.aspx" />
     <Content Include="WebPage\BoardList.aspx" />
     <Content Include="WebPage\chose.aspx" />
@@ -134,15 +134,15 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
-<<<<<<< HEAD
+
     <Content Include="WebPage\editor.aspx" />
     <Content Include="WebPage\Login.aspx" />
     <Content Include="WebPage\Register.aspx" />
-=======
+
     <Content Include="WebPage\Editor.aspx" />
     <Content Include="WebPage\login.aspx" />
     <Content Include="WebPage\RegisterExample.aspx" />
->>>>>>> 8121cb08ff19d42cc620e1f56476230e59b053ec
+
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -196,7 +196,7 @@
     <Compile Include="WebPage\article.aspx.designer.cs">
       <DependentUpon>article.aspx</DependentUpon>
     </Compile>
-<<<<<<< HEAD
+
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="WebPage\article.aspx.cs">
       <DependentUpon>article.aspx</DependentUpon>
@@ -221,10 +221,11 @@
     </Compile>
     <Compile Include="WebPage\chose.aspx.cs">
       <DependentUpon>chose.aspx</DependentUpon>
-=======
+    </Compile>
+
     <Compile Include="WebPage\Article2.aspx.cs">
       <DependentUpon>Article2.aspx</DependentUpon>
->>>>>>> 8121cb08ff19d42cc620e1f56476230e59b053ec
+
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="WebPage\Article2.aspx.designer.cs">
