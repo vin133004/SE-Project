@@ -46,17 +46,17 @@ namespace Project_Tpage.Class
         {
             //將在頁面內設計好的事件在此註冊。
 
-            if (p is Login)// Login State
+            if (p is Login)             // Login State
             {
                 (p as Login).DoLogin += LoginState_Login;
                 (p as Login).ToRegister += LoginState_ToRegister;
             }
-            else if (p is Register)// Register State
+            else if (p is Register)     // Register State
             {
                 (p as Register).DoRegister += RegisterState_Register;
                 (p as Register).ToBack += RegisterState_ToBack;
             }
-            else if (p is Home)    //  Home State
+            else if (p is Home)         //  Home State
             {
                 (p as Home).ToBoard += HomeState_ToBoard;
                 (p as Home).ToCreateBoard += HomeState_ToCreateBoard;
@@ -65,9 +65,38 @@ namespace Project_Tpage.Class
                 (p as Home).DoCard += HomeState_DoCard;
                 (p as Home).DoStyle += HomeState_DoStyle;
             }
-
+            else if (p is Board)        //  Board State
+            {
+                //(p as Board).ToArticle += BoardState_ToArticle;
+                //(p as Board).ToEditor += BoardState_ToEditor;
+                //(p as Board).ToBack += BoardState_ToBack;
+                //(p as Board).DoFollow += BoardState_DoFollow;
+            }
+            else if (p is CreateBoard)  //  Create Board State
+            {
+                //(p as CreateBoard).DoCreate += CreateBoardState_DoCreate;
+                //(p as CreateBoard).DoInvite += CreateBoardState_DoInvite;
+                //(p as CreateBoard).ToHome += CreateBoardState_ToHome;
+            }
+            else if (p is Article)      //  Article State
+            {
+                //(p as Article).DoMessage += ArticleState_DoMessage;
+                //(p as Article).DoLike += ArticleState_DoLike;
+                //(p as Article).ToBack += ArticleState_ToBack;
+                //(p as Article).ToHome += ArticleState_ToHome;
+            }
+            else if (p is Editor)       //  Editor State
+            {
+                //(p as Editor).ToBack += EditorState_ToBack;
+                //(p as Editor).DoCreate += EditorState_DoCreate;
+            }
+            else if (p is AD)           //  AD State
+            {
+                //(p as AD).ToHome += EditorState_ToHome;
+                //(p as AD).DoBuy += EditorState_DoBuy;
+            }
         }
-
+        //  Login State
         public void LoginState_Login(ViewEventArgs e, out DAT opt)
         {
             //取得帳號與密碼
@@ -112,14 +141,14 @@ namespace Project_Tpage.Class
                 model.State = StateEnum.Login;
             }
         }
-
         public void LoginState_ToRegister(ViewEventArgs e, out DAT opt)
         {
             opt = model.RequestPageData(StateEnum.Login, e.data);
 
             e.page.Response.Redirect("Register.aspx");
         }
-
+        
+        //  Register State
         public void RegisterState_Register(ViewEventArgs e, out DAT opt)
         {
             //建構新的使用者資訊
@@ -165,7 +194,6 @@ namespace Project_Tpage.Class
                 model.State = StateEnum.Register;
             }
         }
-
         public void RegisterState_ToBack(ViewEventArgs e, out DAT opt)
         {
             opt = model.RequestPageData(StateEnum.Login, e.data);
@@ -173,6 +201,7 @@ namespace Project_Tpage.Class
             e.page.Response.Redirect("Login.aspx");
         }
 
+        //  Home State
         public void HomeState_ToBoard(ViewEventArgs e, out DAT opt) {
             opt = model.RequestPageData(StateEnum.Board, e.data);
             e.page.Response.Redirect("Board.aspx");
@@ -181,18 +210,20 @@ namespace Project_Tpage.Class
         {
             // 待修正資料
             opt = model.RequestPageData(StateEnum.Board, e.data);
+            //opt = model.RequestPageData(StateEnum.CreateBoard, e.data);
+            e.page.Response.Redirect("CreateBoard.aspx");
         }
         public void HomeState_ToAD(ViewEventArgs e, out DAT opt)
         {
             // 待修正資料
             opt = model.RequestPageData(StateEnum.Board, e.data);
+            //opt = model.RequestPageData(StateEnum.AD, e.data);
             e.page.Response.Redirect("AD.aspx");
         }
         public void HomeState_DoSearch(ViewEventArgs e, out DAT opt)
         {
             // 待修正資料
             opt = model.RequestPageData(StateEnum.Board, e.data);
-            e.page.Response.Redirect("Board.aspx");
         } 
         public void HomeState_DoCard(ViewEventArgs e, out DAT opt)
         {
@@ -203,6 +234,103 @@ namespace Project_Tpage.Class
         {
             // 待修正資料
             opt = model.RequestPageData(StateEnum.Board, e.data);
+        }
+
+        //  Board State
+        public void BoardState_ToArticle(ViewEventArgs e, out DAT opt)
+        {
+            // 待修正資料
+            opt = model.RequestPageData(StateEnum.Article, e.data);
+            e.page.Response.Redirect("Article.aspx");
+        }
+        public void BoardState_ToEditor(ViewEventArgs e, out DAT opt)
+        {
+            // 待修正資料
+            opt = model.RequestPageData(StateEnum.EditArticle, e.data);
+            //opt = model.RequestPageData(StateEnum.Editor, e.data);
+            e.page.Response.Redirect("Editor.aspx");
+        }
+        public void BoardState_ToBack(ViewEventArgs e, out DAT opt)
+        {
+            // 待修正資料
+            opt = model.RequestPageData(StateEnum.Home, e.data);
+            e.page.Response.Redirect("Home.aspx");
+        }
+        public void BoardState_DoFollow(ViewEventArgs e, out DAT opt)
+        {
+            // 待修正資料
+            opt = model.RequestPageData(StateEnum.Board, e.data);
+        }
+
+        //  Create Board State
+        public void CreateBoardState_DoCreate(ViewEventArgs e, out DAT opt)
+        {
+            // 待修正資料
+            opt = model.RequestPageData(StateEnum.Home, e.data);
+            e.page.Response.Redirect("Home.aspx");
+        }
+        public void CreateBoardState_DoInvite(ViewEventArgs e, out DAT opt)
+        {
+            // 待修正資料
+            opt = model.RequestPageData(StateEnum.Home, e.data);
+            //opt = model.RequestPageData(StateEnum.CreateBoard, e.data);
+        }
+        public void CreateBoardState_ToHome(ViewEventArgs e, out DAT opt)
+        {
+            // 待修正資料
+            opt = model.RequestPageData(StateEnum.Home, e.data);
+            e.page.Response.Redirect("Home.aspx");
+        }
+
+        //  Article State
+        public void ArticleState_DoMessage(ViewEventArgs e, out DAT opt)
+        {
+            // 待修正資料
+            opt = model.RequestPageData(StateEnum.Article, e.data);   
+        }
+        public void ArticleState_DoLike(ViewEventArgs e, out DAT opt)
+        {
+            // 待修正資料
+            opt = model.RequestPageData(StateEnum.Article, e.data);
+        }
+        public void ArticleState_ToBack(ViewEventArgs e, out DAT opt)
+        {
+            // 待修正資料
+            opt = model.RequestPageData(StateEnum.Board, e.data);
+            e.page.Response.Redirect("Board.aspx");
+        }
+        public void ArticleState_ToHome(ViewEventArgs e, out DAT opt)
+        {
+            // 待修正資料
+            opt = model.RequestPageData(StateEnum.Home, e.data);
+            e.page.Response.Redirect("Home.aspx");
+        }
+
+        //  Editor State
+        public void EditorState_DoCreate(ViewEventArgs e, out DAT opt)
+        {
+            // 待修正資料
+            opt = model.RequestPageData(StateEnum.Board, e.data);
+            e.page.Response.Redirect("Board.aspx");
+        }
+        public void EditorState_ToBack(ViewEventArgs e, out DAT opt)
+        {
+            // 待修正資料
+            opt = model.RequestPageData(StateEnum.Board, e.data);
+            e.page.Response.Redirect("Board.aspx");
+        }
+
+        // AD State
+        public void ADState_DoBuy(ViewEventArgs e, out DAT opt)
+        {
+            // 待修正資料
+            opt = model.RequestPageData(StateEnum.Home, e.data);
+            e.page.Response.Redirect("Home.aspx");
+        }
+        public void ADState_ToHome(ViewEventArgs e, out DAT opt)
+        {
+            // 待修正資料
+            opt = model.RequestPageData(StateEnum.Home, e.data);
             e.page.Response.Redirect("Home.aspx");
         }
 
