@@ -92,7 +92,7 @@ namespace Project_Tpage.WebPage
 
         protected void yes_Click(object sender, EventArgs e)
         {
-           // Panel1.Visible = true;
+         
         }
     }
 }
