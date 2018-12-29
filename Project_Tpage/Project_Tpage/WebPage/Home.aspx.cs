@@ -80,7 +80,19 @@ namespace Project_Tpage.WebPage
         //  更改顯示樣式
         protected void StyleChanged(object sender, EventArgs e)
         {
+           int i= StyleList.SelectedIndex;
+            if (i == 0) {
+                color.Style.Add("background-color", "lightblue");
+            }
+            else
+            {
+                color.Style.Add("background-color", "dimgray");
+            }
+        }
 
+        protected void yes_Click(object sender, EventArgs e)
+        {
+           // Panel1.Visible = true;
         }
     }
 }
