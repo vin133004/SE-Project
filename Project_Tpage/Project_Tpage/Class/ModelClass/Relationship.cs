@@ -32,111 +32,6 @@ namespace Project_Tpage.Class
     }
 
     /// <summary>
-    /// 一個朋友圈的集合。
-    /// </summary>
-    public class FriendGroup : IRelationship
-    {
-        /// <summary>
-        /// 代表此朋友圈的中心。
-        /// </summary>
-        public string Owner { get; set; }
-        /// <summary>
-        /// 此群集的成員。以帳號識別碼儲存。
-        /// </summary>
-        public List<string> Members { get; set; }
-        /// <summary>
-        /// 儲存朋友名稱的集合。
-        /// </summary>
-        public List<string> MembersName { get; private set; }
-
-        public FriendGroup(string p_Owner)
-        {
-            Members = new List<string>();
-            MembersName = new List<string>();
-            Owner = p_Owner;
-        }
-
-        public FriendGroup()
-        {
-            Members = new List<string>();
-            MembersName = new List<string>();
-            Owner = null;
-        }
-
-        /// <summary>
-        /// 將一個使用者加入此朋友圈並更新朋友名字陣列。
-        /// </summary>
-        /// <param name="newmem">使用者識別碼。</param>
-        public void Member_Add(string newmem)
-        {
-            try
-            {
-                User temp = Model.DB.Get<User>(newmem);
-
-                Members.Add(newmem);
-                MembersName.Add(temp.Name);
-            }
-            catch (ModelException me)
-            {
-                throw me;
-            }
-            catch (Exception e)
-            {
-                throw new ModelException(
-                    ModelException.Error.FriendMemberOperationError,
-                    "FriendGroup類別－Member_Add(string)發生例外：" + e.Message,
-                    "");
-            }
-        }
-        /// <summary>
-        /// 將一個使用者移出此朋友圈並更新朋友名字陣列。
-        /// </summary>
-        /// <param name="remmem">使用者識別碼。</param>
-        public void Member_Remove(string remmem)
-        {
-            int indx = Members.IndexOf(remmem);
-            if (indx == -1) throw new ModelException(
-                    ModelException.Error.FriendMemberOperationError,
-                    "FriendGroup類別－Member_Remove(string)發生錯誤：無此成員： " + remmem,
-                    "");
-
-            Members.RemoveAt(indx);
-            MembersName.RemoveAt(indx);
-        }
-        /// <summary>
-        /// 將一列使用者識別碼設定為此朋友圈的成員，並更新朋友名字陣列。
-        /// </summary>
-        /// <param name="lismem">使用者識別碼。</param>
-        public void Member_SetAll(List<string> lismem)
-        {
-            Members = new List<string>(lismem);
-            MembersName = new List<string>(Members.Count);
-
-            try
-            {
-                for (int i = 0; i < Members.Count; i++)
-                {
-                    User temp = Model.DB.Get<User>(Members[i]);
-
-                    MembersName.Add(temp.Name);
-                }
-            }
-            catch (ModelException me)
-            {
-                throw me;
-            }
-            catch (Exception e)
-            {
-                throw new ModelException(
-                    ModelException.Error.FriendMemberOperationError,
-                    "FriendGroup類別－Member_Add(string)發生錯誤：" + e.Message,
-                    "");
-            }
-        }
-
-    }
-
-    /// <summary>
     /// 代表一個班級團體。
     /// </summary>
     public class ClassGroup : RelationshipGroup
@@ -509,6 +404,165 @@ namespace Project_Tpage.Class
 
             MemberRequestQueue = new List<string>();
             BoardRequestQueue = new List<string>();
+        }
+    }
+
+    /// <summary>
+    /// 一個朋友圈的集合。
+    /// </summary>
+    public class FriendGroup : IRelationship
+    {
+        /// <summary>
+        /// 代表此朋友圈的中心。
+        /// </summary>
+        public string Owner { get; set; }
+        /// <summary>
+        /// 此群集的成員。以帳號識別碼儲存。
+        /// </summary>
+        public List<string> Members { get; set; }
+        /// <summary>
+        /// 儲存朋友名稱的集合。
+        /// </summary>
+        public List<string> MembersName { get; private set; }
+
+        public FriendGroup(string p_Owner)
+        {
+            Members = new List<string>();
+            MembersName = new List<string>();
+            Owner = p_Owner;
+        }
+
+        public FriendGroup()
+        {
+            Members = new List<string>();
+            MembersName = new List<string>();
+            Owner = null;
+        }
+
+        /// <summary>
+        /// 將一個使用者加入此朋友圈並更新朋友名字陣列。
+        /// </summary>
+        /// <param name="newmem">使用者識別碼。</param>
+        public void Member_Add(string newmem)
+        {
+            try
+            {
+                User temp = Model.DB.Get<User>(newmem);
+
+                Members.Add(newmem);
+                MembersName.Add(temp.Name);
+            }
+            catch (ModelException me)
+            {
+                throw me;
+            }
+            catch (Exception e)
+            {
+                throw new ModelException(
+                    ModelException.Error.FriendMemberOperationError,
+                    "FriendGroup類別－Member_Add(string)發生例外：" + e.Message,
+                    "");
+            }
+        }
+        /// <summary>
+        /// 將一個使用者移出此朋友圈並更新朋友名字陣列。
+        /// </summary>
+        /// <param name="remmem">使用者識別碼。</param>
+        public void Member_Remove(string remmem)
+        {
+            int indx = Members.IndexOf(remmem);
+            if (indx == -1) throw new ModelException(
+                    ModelException.Error.FriendMemberOperationError,
+                    "FriendGroup類別－Member_Remove(string)發生錯誤：無此成員： " + remmem,
+                    "");
+
+            Members.RemoveAt(indx);
+            MembersName.RemoveAt(indx);
+        }
+        /// <summary>
+        /// 將一列使用者識別碼設定為此朋友圈的成員，並更新朋友名字陣列。
+        /// </summary>
+        /// <param name="lismem">使用者識別碼。</param>
+        public void Member_SetAll(List<string> lismem)
+        {
+            Members = new List<string>(lismem);
+            MembersName = new List<string>(Members.Count);
+
+            try
+            {
+                for (int i = 0; i < Members.Count; i++)
+                {
+                    User temp = Model.DB.Get<User>(Members[i]);
+
+                    MembersName.Add(temp.Name);
+                }
+            }
+            catch (ModelException me)
+            {
+                throw me;
+            }
+            catch (Exception e)
+            {
+                throw new ModelException(
+                    ModelException.Error.FriendMemberOperationError,
+                    "FriendGroup類別－Member_Add(string)發生錯誤：" + e.Message,
+                    "");
+            }
+        }
+
+    }
+
+
+    public class Board
+    {
+        public string Name { get; set; }
+
+        public string BID { get; set; }
+
+        public bool IsPublic { get; }
+        public string PrivateMaster { get; }
+
+        public List<string> Admin { get; set; }
+
+
+
+
+        public static Board NewPublic(string master = "")
+        {
+            Board rtn = master == "" ? new Board() : new Board(master);
+            rtn.Name = "看板名稱";
+            rtn.BID = null;
+            rtn.Admin = new List<string>();
+            if (!rtn.IsPublic) rtn.Admin.Add(rtn.PrivateMaster);
+
+            return rtn;          
+        }
+
+        public static Board Inst(DataRow dr)
+        {
+            Board rtn = Model.DB.AnlType<bool>(dr["IsPublic"]) ?
+                new Board() :
+                new Board(Model.DB.AnlType<string>(dr["PrivateMaster"])) ;
+
+            rtn.BID = Model.DB.AnlType<string>(dr["BID"]);
+            rtn.Name = Model.DB.AnlType<string>(dr["Name"]);
+            rtn.Admin = Model.DB.AnlType<List<string>>(dr["Admin"]);
+
+            return rtn;
+        }
+
+        private Board(string master = "")
+        {
+            if (master == "")
+            {
+                IsPublic = true;
+                PrivateMaster = null;
+            }
+            else
+            {
+                IsPublic = false;
+                PrivateMaster = master;
+            }
         }
     }
 }

@@ -18,10 +18,6 @@ namespace Project_Tpage.Class
         /// </summary>
         public string AID { get; set; }
         /// <summary>
-        /// 屬於哪個班級或家族。
-        /// </summary>
-        public string OfGroup { get; set; }
-        /// <summary>
         /// 屬於哪個看板。
         /// </summary>
         public string OfBoard { get; set; }
@@ -56,7 +52,6 @@ namespace Project_Tpage.Class
             get
             {
                 Article rtn = new Article();
-                rtn.OfGroup = "";
                 rtn.OfBoard = "";
                 rtn.Date = new DateTime(DateTime.Now.Ticks);
                 rtn.ReleaseUser = null;
@@ -76,10 +71,9 @@ namespace Project_Tpage.Class
         /// 建構式。
         /// </summary>
         /// <param name="p_ReleaseUser">發文使用者帳號識別碼。</param>
-        public Article(string p_ReleaseUser, string p_OfGroup, string p_OfBoard)
+        public Article(string p_ReleaseUser, string p_OfBoard)
         {
             AID = null;
-            OfGroup = p_OfGroup;
             OfBoard = p_OfBoard;
 
 
@@ -99,15 +93,14 @@ namespace Project_Tpage.Class
         {
             try
             {
-                AID = (string)Model.DB.AnlType<string>(dr["AID"]);
-                Title = (string)Model.DB.AnlType<string>(dr["Title"]);
-                Content = (string)Model.DB.AnlType<string>(dr["Content"]);
-                ReleaseUser = (string)Model.DB.AnlType<string>(dr["ReleaseUser"]);
-                Date = (DateTime)Model.DB.AnlType<DateTime>(dr["ReleaseDate"]);
-                OfGroup = (string)Model.DB.AnlType<string>(dr["OfGroup"]);
-                OfBoard = (string)Model.DB.AnlType<string>(dr["OfBoard"]);
-                LikeCount = (int)Model.DB.AnlType<int>(dr["LikeCount"]);
-                LastComputeTbitLikeCount = (int)Model.DB.AnlType<int>(dr["TbitLikeCount"]);
+                AID = Model.DB.AnlType<string>(dr["AID"]);
+                Title = Model.DB.AnlType<string>(dr["Title"]);
+                Content = Model.DB.AnlType<string>(dr["Content"]);
+                ReleaseUser = Model.DB.AnlType<string>(dr["ReleaseUser"]);
+                Date = Model.DB.AnlType<DateTime>(dr["ReleaseDate"]);
+                OfBoard = Model.DB.AnlType<string>(dr["OfBoard"]);
+                LikeCount = Model.DB.AnlType<int>(dr["LikeCount"]);
+                LastComputeTbitLikeCount = Model.DB.AnlType<int>(dr["TbitLikeCount"]);
             }
             catch (Exception e)
             {

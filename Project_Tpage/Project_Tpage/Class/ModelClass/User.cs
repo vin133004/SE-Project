@@ -170,12 +170,15 @@ namespace Project_Tpage.Class
         /// </summary>
         public UserPrivacy Userprivacy { get; set; }
 
+        public int Viewstyle { get; set; }
+
         public static UserSetting New
         {
             get
             {
                 UserSetting rtn = new UserSetting();
                 rtn.Userprivacy = UserPrivacy.Public;
+                rtn.Viewstyle = 0;
                 return rtn;
             }
         }
@@ -184,6 +187,7 @@ namespace Project_Tpage.Class
         {
             UserSetting rtn = new UserSetting();
             rtn.Userprivacy = us.Userprivacy;
+            rtn.Viewstyle = us.Viewstyle;
             return rtn;
         }
 
@@ -238,6 +242,10 @@ namespace Project_Tpage.Class
             }
         }
 
+        public Dictionary<string, string> FollowBoardQueue { get; set; }
+
+        public List<string> FollowBoard { get; set; }
+
 
         /// <summary>
         /// 外部使用者要求申請加此使用者為朋友所叫用的方法。將要求的使用者加入要求佇列。
@@ -276,6 +284,20 @@ namespace Project_Tpage.Class
             usr.Friends.Member_Add(Userinfo.UID);
             Model.DB.Set<User>(usr);
         }
+
+        public void BoardFollow_Add(string sender, string board)
+        {
+            if (FollowBoardQueue.Where(x => x.Key == sender && x.Value == board).Count() > 0) return;
+
+            FollowBoardQueue.Add(sender, board);
+            Model.DB.Set<User>(this);
+        }
+
+        public void BoardFollow_AllowAdd(string sender, string board)
+        {
+            //if(FollowBoardQueue.re)
+        }
+
 
         /// <summary>
         /// 嘗試結算台科幣，若距上次結算日少於30天，則不進行結算，高於30天則進行結算。
@@ -377,13 +399,15 @@ namespace Project_Tpage.Class
             Usersetting = UserSetting.New;
             Userinfo = UserInfo.New;
 
-            Usersetting.Userprivacy = UserPrivacy.Public;
             Userinfo.UID = null;
             
             Friends = new FriendGroup();
             FriendRequestQueue = new List<User>();
 
             Groups = new List<RelationshipGroup>();
+
+            FollowBoard = new List<string>();
+            FollowBoardQueue = new Dictionary<string, string>();
 
             TbitCoin = 0;
             LastComputeTbit = new DateTime(DateTime.Now.Ticks);
@@ -404,6 +428,7 @@ namespace Project_Tpage.Class
                 Userinfo.ClassName = Model.DB.AnlType<string>(dr["ClassName"]);
                 Userinfo.Realname = Model.DB.AnlType<string>(dr["Realname"]);
                 Usersetting.Userprivacy = Model.DB.AnlType<UserPrivacy>(dr["UserPrivacy"]);
+                Usersetting.Viewstyle = Model.DB.AnlType<int>(dr["Viewstyle"]);
 
                 Userinfo.Nickname = Model.DB.AnlType<string>(dr["Nickname"]);
                 Userinfo.Gender = Model.DB.AnlType<Gender>(dr["Gender"]);
@@ -415,10 +440,12 @@ namespace Project_Tpage.Class
 
 
                 FriendRequestQueue = Model.DB.AnlType<List<User>>(dr["FriendRequest"]);
-                    
-
                 Friends.Member_SetAll(Model.DB.AnlType<List<string>>(dr["Friend"]));
-                
+
+                FollowBoard = Model.DB.AnlType<List<string>>(dr["FollowBoard"]);
+                FollowBoardQueue = Model.DB.AnlType<Dictionary<string, string>>(dr["FollowBoardQueue"]);
+
+
                 List<string> ClassGroupLs = Model.DB.AnlType<List<string>>(dr["ClassGroup"]);
                 List<string> FamilyGroupLs = Model.DB.AnlType<List<string>>(dr["FamilyGroup"]);
 
