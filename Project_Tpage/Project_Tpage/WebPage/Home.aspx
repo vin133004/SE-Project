@@ -11,9 +11,9 @@
     <form id="form1" runat="server">
         <center>
             <asp:Label ID="Title" runat="server" Height="75" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="XX-Large" Text="我的首頁" /><br/>   
-            <asp:TextBox ID="searchText" runat="server" Height="35" Width="800" />
-            <asp:Button ID="btnSearch" runat="server" Height="40" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Text="查詢" OnClick="btnSearch_Click" /><br/>
-            
+            <asp:TextBox ID="searchText" runat="server"  Font-Names="微軟正黑體" Height="35" Width="400" Font-Size="Large" Font-Bold="true" />
+            <asp:Button ID="btnSearch" runat="server" Height="40" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Text="查詢" OnClick="btnSearch_Click" />
+             <asp:Label ID="searchresult" Font-Bold="true" Font-Names="微軟正黑體" runat="server" Height="35" Width="100" Font-Size="Large" Text="查無此人" Visible="true" /><br/>
             <asp:ListBox ID="ListOfBoard" runat="server" Font-Size="X-Large" AutoPostBack="true" Width="500" Rows="10" OnSelectedIndexChanged="SelectBoard">
                 <asp:ListItem>aaa</asp:ListItem>
                 <asp:ListItem>bbb</asp:ListItem>
@@ -36,13 +36,14 @@
             <asp:Button ID="btnNew" runat="server"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Width="150" Height="75" BorderStyle="None" Text="申請新版" OnClick="btnNew_Click"/>
             <asp:Label ID="blank1" runat="server" Width="100" Height="20" Text="" />
             <asp:Button ID="btnCard" runat="server"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Width="150" Height="75" BorderStyle="None" Text="抽卡" OnClick="btnCard_Click"/>
-            <asp:Label ID="cardInfo" runat="server" Width="200" Height="50" Font-Names="微軟正黑體" Font-Size="X-Large" Text="" />
-            <asp:Button ID="btnAD" runat="server"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Width="150" Height="75" BorderStyle="None" Text="購買廣告" OnClick="btnAD_Click"/>           
+            <asp:Label ID="cardInfo" runat="server" Width="200" Height="50" Font-Names="微軟正黑體" Font-Size="X-Large" Text="dfds" />
+            <asp:Button ID="btnAD" runat="server"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Width="150" Height="75" BorderStyle="None" Text="購買廣告" OnClick="btnAD_Click" />           
             <asp:Label ID="blank2" runat="server" Width="10" Height="20" Text="" />
             <asp:Label ID="StyleInfo" runat="server" Width="90" Height="20" Text="顯示模式" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="Larger" />
             <asp:DropDownList ID="StyleList" runat="server"  AutoPostBack="true" Font-Names="微軟正黑體" Font-Size="Large" OnSelectedIndexChanged="StyleChanged">
-                <asp:ListItem Value="0">日間模式</asp:ListItem>
-                <asp:ListItem Value="1" >夜間模式</asp:ListItem>
+                <asp:ListItem >日間模式</asp:ListItem>
+                <asp:ListItem >夜間模式</asp:ListItem>
+                 <asp:ListItem  >模式</asp:ListItem>
             </asp:DropDownList>
              <div style="height:0%; margin-left:80%; margin-right:0%; width:20%;">
             <asp:Panel ID="Panel0" runat="server" HorizontalAlign="Center"  BackColor="#EFEFEF">
