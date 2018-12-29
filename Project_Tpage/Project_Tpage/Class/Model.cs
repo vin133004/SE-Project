@@ -204,18 +204,6 @@ namespace Project_Tpage.Class
         /// </summary>
         Home,
         /// <summary>
-        /// 代表使用者頁面。
-        /// </summary>
-        UserPage,
-        /// <summary>
-        /// 代表班級首頁或家族首頁。
-        /// </summary>
-        Group,
-        /// <summary>
-        /// 代表設定頁面。
-        /// </summary>
-        Setting,
-        /// <summary>
         /// 代表瀏覽文章頁面。
         /// </summary>
         Article,
@@ -228,10 +216,13 @@ namespace Project_Tpage.Class
         /// </summary>
         EditArticle,
         /// <summary>
-        /// 代表瀏覽文章列表頁面。
+        /// 代表新增看板頁面。
         /// </summary>
-        ArticleList
-
+        CreateBoard,
+        /// <summary>
+        /// 代表瀏覽廣告頁面。
+        /// </summary>
+        AD
     }
 
     /// <summary>
@@ -682,7 +673,7 @@ namespace Project_Tpage.Class
                     if (ipt.Keys.Contains("AdvertiseBlocks"))
                         opt["Advertise"] = GetAdForBlocks(ipt["AdvertiseBlocks"] as List<int>);
                 }
-                else if (ToState == StateEnum.UserPage)
+                /*else if (ToState == StateEnum.UserPage)
                 {
                     opt["Content"] = GetUserPageContent((string)ipt["UserUID"]);
                     opt["User"] = DB.Get<User>(ipt["UID"] as string);
@@ -699,7 +690,7 @@ namespace Project_Tpage.Class
 
                     if (ipt.Keys.Contains("AdvertiseBlocks"))
                         opt["Advertise"] = GetAdForBlocks(ipt["AdvertiseBlocks"] as List<int>);
-                }
+                }*/
                 else if (ToState == StateEnum.Board)
                 {
                     bool isClass = (bool)ipt["GroupType"];
@@ -724,11 +715,11 @@ namespace Project_Tpage.Class
                 {
                     opt["Content"] = DB.Get<Article>((string)ipt["AID"]);
                 }
-                else if (ToState == StateEnum.Setting)
+                /*else if (ToState == StateEnum.Setting)
                 {
                     opt["Userinfo"] = user.Userinfo;
                     opt["Usersetting"] = user.Usersetting;
-                }
+                }*/
                 else if (ToState == StateEnum.Login)
                 {
 
@@ -737,7 +728,7 @@ namespace Project_Tpage.Class
                 {
 
                 }
-
+                State = ToState;
                 return opt;
             }
             catch (KeyNotFoundException)

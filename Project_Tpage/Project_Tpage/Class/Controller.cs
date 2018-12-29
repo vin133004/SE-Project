@@ -78,7 +78,7 @@ namespace Project_Tpage.Class
                 //(p as CreateBoard).DoInvite += CreateBoardState_DoInvite;
                 //(p as CreateBoard).ToHome += CreateBoardState_ToHome;
             }
-            else if (p is Article)      //  Article State
+            else if (p is WebPage.Article)      //  Article State
             {
                 //(p as Article).DoMessage += ArticleState_DoMessage;
                 //(p as Article).DoLike += ArticleState_DoLike;
@@ -127,8 +127,6 @@ namespace Project_Tpage.Class
             {
                 opt = model.RequestPageData(StateEnum.Home, e.data);
 
-                model.State = StateEnum.Home;
-
                 //頁面切換至HomePage
                 //page.Response.Redirect("");
             }
@@ -137,15 +135,11 @@ namespace Project_Tpage.Class
                 opt = model.RequestPageData(StateEnum.Login, e.data);
 
                 opt["failinfo"] = failinfo;
-
-                model.State = StateEnum.Login;
             }
         }
         public void LoginState_ToRegister(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.Login, e.data);
-
-            e.page.Response.Redirect("Register.aspx");
+            opt = model.RequestPageData(StateEnum.Register, e.data);
         }
         
         //  Register State
@@ -180,553 +174,159 @@ namespace Project_Tpage.Class
             if (failinfo == "")
             {
                 opt = model.RequestPageData(StateEnum.Login, e.data);
-
-                model.State = StateEnum.Login;
-
-                e.page.Response.Redirect("Login.aspx");
             }
             else
             {
                 opt = model.RequestPageData(StateEnum.Register, e.data);
 
                 opt["failinfo"] = failinfo;
-
-                model.State = StateEnum.Register;
             }
         }
         public void RegisterState_ToBack(ViewEventArgs e, out DAT opt)
         {
             opt = model.RequestPageData(StateEnum.Login, e.data);
-
-            e.page.Response.Redirect("Login.aspx");
         }
 
         //  Home State
         public void HomeState_ToBoard(ViewEventArgs e, out DAT opt) {
             opt = model.RequestPageData(StateEnum.Board, e.data);
-            e.page.Response.Redirect("Board.aspx");
         }
         public void HomeState_ToCreateBoard(ViewEventArgs e, out DAT opt)
         {
-            // 待修正資料
-            opt = model.RequestPageData(StateEnum.Board, e.data);
-            //opt = model.RequestPageData(StateEnum.CreateBoard, e.data);
-            e.page.Response.Redirect("CreateBoard.aspx");
+            opt = model.RequestPageData(StateEnum.CreateBoard, e.data);
         }
         public void HomeState_ToAD(ViewEventArgs e, out DAT opt)
         {
-            // 待修正資料
-            opt = model.RequestPageData(StateEnum.Board, e.data);
-            //opt = model.RequestPageData(StateEnum.AD, e.data);
-            e.page.Response.Redirect("AD.aspx");
+            opt = model.RequestPageData(StateEnum.AD, e.data);
         }
         public void HomeState_DoSearch(ViewEventArgs e, out DAT opt)
         {
-            // 待修正資料
             opt = model.RequestPageData(StateEnum.Board, e.data);
         } 
         public void HomeState_DoCard(ViewEventArgs e, out DAT opt)
         {
-            // 待修正資料
-            opt = model.RequestPageData(StateEnum.Board, e.data);
+            opt = model.RequestPageData(StateEnum.Home, e.data);
         }
         public void HomeState_DoStyle(ViewEventArgs e, out DAT opt)
         {
-            // 待修正資料
-            opt = model.RequestPageData(StateEnum.Board, e.data);
+            opt = model.RequestPageData(StateEnum.Home, e.data);
         }
 
         //  Board State
         public void BoardState_ToArticle(ViewEventArgs e, out DAT opt)
         {
-            // 待修正資料
             opt = model.RequestPageData(StateEnum.Article, e.data);
-            e.page.Response.Redirect("Article.aspx");
         }
         public void BoardState_ToEditor(ViewEventArgs e, out DAT opt)
         {
-            // 待修正資料
             opt = model.RequestPageData(StateEnum.EditArticle, e.data);
-            //opt = model.RequestPageData(StateEnum.Editor, e.data);
-            e.page.Response.Redirect("Editor.aspx");
         }
         public void BoardState_ToBack(ViewEventArgs e, out DAT opt)
         {
-            // 待修正資料
             opt = model.RequestPageData(StateEnum.Home, e.data);
-            e.page.Response.Redirect("Home.aspx");
         }
         public void BoardState_DoFollow(ViewEventArgs e, out DAT opt)
         {
-            // 待修正資料
             opt = model.RequestPageData(StateEnum.Board, e.data);
         }
 
         //  Create Board State
         public void CreateBoardState_DoCreate(ViewEventArgs e, out DAT opt)
         {
-            // 待修正資料
             opt = model.RequestPageData(StateEnum.Home, e.data);
-            e.page.Response.Redirect("Home.aspx");
         }
         public void CreateBoardState_DoInvite(ViewEventArgs e, out DAT opt)
         {
-            // 待修正資料
-            opt = model.RequestPageData(StateEnum.Home, e.data);
-            //opt = model.RequestPageData(StateEnum.CreateBoard, e.data);
+            opt = model.RequestPageData(StateEnum.CreateBoard, e.data);
         }
         public void CreateBoardState_ToHome(ViewEventArgs e, out DAT opt)
         {
-            // 待修正資料
             opt = model.RequestPageData(StateEnum.Home, e.data);
-            e.page.Response.Redirect("Home.aspx");
         }
 
         //  Article State
         public void ArticleState_DoMessage(ViewEventArgs e, out DAT opt)
         {
-            // 待修正資料
-            opt = model.RequestPageData(StateEnum.Article, e.data);   
+            AMessage message = e.data["Message"] as AMessage;
+            //設定錯誤資訊。
+            string failinfo = "";
+            try
+            {
+                //嘗試留言
+                model.ReleaseAMessage(message.Content, message.OfArticle);
+               
+                opt = model.RequestPageData(StateEnum.Article, e.data);
+                model.State = StateEnum.Board;
+            }
+            catch (ModelException me)
+            {
+                failinfo = me.userMessage == "" ? "留言失敗" : me.userMessage;
+                opt = model.RequestPageData(StateEnum.Article, e.data);
+                opt["failinfo"] = failinfo;
+
+            }
+            catch (Exception)
+            {
+                failinfo = "留言失敗";
+                opt = model.RequestPageData(StateEnum.Article, e.data);
+                opt["failinfo"] = failinfo;
+            }
         }
         public void ArticleState_DoLike(ViewEventArgs e, out DAT opt)
         {
-            // 待修正資料
             opt = model.RequestPageData(StateEnum.Article, e.data);
         }
         public void ArticleState_ToBack(ViewEventArgs e, out DAT opt)
         {
-            // 待修正資料
             opt = model.RequestPageData(StateEnum.Board, e.data);
-            e.page.Response.Redirect("Board.aspx");
         }
         public void ArticleState_ToHome(ViewEventArgs e, out DAT opt)
         {
-            // 待修正資料
             opt = model.RequestPageData(StateEnum.Home, e.data);
-            e.page.Response.Redirect("Home.aspx");
         }
 
         //  Editor State
         public void EditorState_DoCreate(ViewEventArgs e, out DAT opt)
         {
-            // 待修正資料
-            opt = model.RequestPageData(StateEnum.Board, e.data);
-            e.page.Response.Redirect("Board.aspx");
+            Article article = e.data["Article"] as Article;
+            //設定錯誤資訊。
+            string failinfo = "";
+            try
+            {
+                //嘗試發文
+                model.ReleaseArticle(article.Title, article.Content, article.OfGroup, article.OfBoard);
+                opt = model.RequestPageData(StateEnum.Board, e.data);
+                model.State = StateEnum.Board;
+            }
+            catch (ModelException me)
+            {
+                failinfo = me.userMessage == "" ? "文章發佈失敗" : me.userMessage;
+                opt = model.RequestPageData(StateEnum.EditArticle, e.data);
+                opt["failinfo"] = failinfo;
+
+            }
+            catch (Exception)
+            {
+                failinfo = "文章發佈失敗";
+                opt = model.RequestPageData(StateEnum.EditArticle, e.data);
+                opt["failinfo"] = failinfo;
+            }
         }
         public void EditorState_ToBack(ViewEventArgs e, out DAT opt)
         {
-            // 待修正資料
             opt = model.RequestPageData(StateEnum.Board, e.data);
-            e.page.Response.Redirect("Board.aspx");
         }
 
         // AD State
         public void ADState_DoBuy(ViewEventArgs e, out DAT opt)
         {
-            // 待修正資料
             opt = model.RequestPageData(StateEnum.Home, e.data);
-            e.page.Response.Redirect("Home.aspx");
         }
         public void ADState_ToHome(ViewEventArgs e, out DAT opt)
         {
-            // 待修正資料
             opt = model.RequestPageData(StateEnum.Home, e.data);
-            e.page.Response.Redirect("Home.aspx");
         }
 
-        public void ToRegister()
-        {
-            if (model.State == StateEnum.Login || model.State == StateEnum.Register)
-                model.State = StateEnum.Register;
-        }
-
-        public void ToLogin()
-        {
-            if (model.State == StateEnum.Login || model.State == StateEnum.Register)
-                model.State = StateEnum.Login;
-        }
-
-        public void ToHome()
-        {
-            if (model.State != StateEnum.Register)
-                model.State = StateEnum.Home;
-        }
-
-        public void ToUserPage()
-        {
-            if (model.State == StateEnum.Home)
-                model.State = StateEnum.UserPage;
-        }
-
-        public void ToGroup()
-        {
-            if (model.State == StateEnum.Home)
-                model.State = StateEnum.Group;
-        }
-
-        public void ToUserSetting()
-        {
-            if (model.State == StateEnum.Home)
-                model.State = StateEnum.Setting;
-        }
-
-        public void ToArticle()
-        {
-            if (model.State == StateEnum.Home || model.State == StateEnum.UserPage || model.State == StateEnum.Board)
-                model.State = StateEnum.Article;
-        }
-
-        public void ToBoard()
-        {
-            if (model.State == StateEnum.Group)
-                model.State = StateEnum.Board;
-        }
-
-        public void ToEdit()
-        {
-            if (model.State == StateEnum.Board)
-                model.State = StateEnum.EditArticle;
-        }
-
-        public void Register(UserInfo p_uif)
-        {
-            if (model.State != StateEnum.Register)
-                return;
-            try
-            {
-                model.Register(p_uif);
-                ToLogin();
-            }
-            catch
-            {
-                ToRegister();
-            }
-        }
-
-        public void Login(string p_ID, string p_Password)
-        {
-            if (model.State != StateEnum.Login)
-                return;
-            try
-            {
-                model.Login(p_ID, p_Password);
-                ToHome();
-            }
-            catch
-            {
-                ToLogin();
-            }
-        }
-
-        public void SetUserSetting(UserInfo p_uif, UserSetting p_ust)
-        {
-            if (model.State != StateEnum.Setting)
-                return;
-            try
-            {
-                model.SetUserSetting(p_uif, p_ust);
-                ToUserSetting();
-            }
-            catch
-            {
-                ToUserSetting();
-            }
-        }
-
-        public void CreateClass(string p_ClassName, string p_GroupName)
-        {
-            if (model.State != StateEnum.Board)
-                return;
-            try
-            {
-                model.CreateClass(p_ClassName, p_GroupName);
-                ToGroup();
-            }
-            catch
-            {
-                ToGroup();
-            }
-        }
-
-        public void CreateFamily(string p_GroupName)
-        {
-            if (model.State != StateEnum.Board)
-                return;
-            try
-            {
-                model.CreateFamily(p_GroupName);
-                ToGroup();
-            }
-            catch
-            {
-                ToGroup();
-            }
-        }
-
-        public void ReleaseArticle(string p_Title, string p_Content, string p_OfGroup, string p_OfBoard)
-        {
-            if (model.State != StateEnum.EditArticle)
-                return;
-            try
-            {
-                model.ReleaseArticle(p_Title, p_Content, p_OfGroup, p_OfBoard);
-                ToGroup();
-            }
-            catch
-            {
-                ToEdit();
-            }
-        }
-
-        public void ReleaseAMessage(string p_Message, string p_OfArticle)
-        {
-            if (model.State != StateEnum.Article)
-                return;
-            try
-            {
-                model.ReleaseAMessage(p_Message, p_OfArticle);
-                ToArticle();
-            }
-            catch
-            {
-                ToArticle();
-            }
-        }
-        /*
-        public List<Article> GetArticlesFromGroup(string p_Group)
-        {
-            List<Article> Articles;
-            if (model.State != StateEnum.Group)
-                return null;
-            try
-            {
-                //Articles = model.GetArticlesFromGroup(p_Group);
-                ToBoard();
-                return Articles;
-            }
-            catch
-            {
-                ToGroup();
-                return null;
-            }
-        }
-
-        public List<Article> GetArticlesFromBoard(string p_Group, string p_Board)
-        {
-            List<Article> Articles;
-            if (model.State != StateEnum.Group)
-                return null;
-            try
-            {
-                //Articles = model.GetArticlesFromBoard(p_Group, p_Board);
-                ToBoard();
-                return Articles;
-            }
-            catch
-            {
-                ToGroup();
-                return null;
-            }
-        }
-
-        public List<object> GetDynamicPageContent()
-        {
-            List<object> rtn;
-            if (model.State != StateEnum.Home)
-                return null;
-            try
-            {
-                //rtn = model.GetDynamicPageContent();
-                ToHome();
-                return rtn;
-            }
-            catch
-            {
-                ToHome();
-                return null;
-            }
-        }
-
-        public List<object> GetUserPageContent(string uid)
-        {
-            List<object> rtn;
-            if (model.State != StateEnum.Home)
-                return null;
-            try
-            {
-                //rtn = model.GetUserPageContent(uid);
-                ToUserPage();
-                return rtn;
-            }
-            catch
-            {
-                ToHome();
-                return null;
-            }
-        }
-        */
-
-
-
-        public void GetUserInput(ViewOp op)
-        {
-            int clsf = ((int)op) / 100;
-            /*
-            #region Login State Operation
-            if (clsf == 1)
-            {
-                //取得使用者登入行為
-                if (op == ViewOp.Login_login)
-                {
-                    //取得帳號與密碼
-                    string ID = PageData.In["ID"] as string;
-                    string Password = PageData.In["Password"] as string;
-
-                    //設定錯誤資訊。
-                    string failinfo = "";
-                    try
-                    {
-                        //嘗試登入
-                        model.Login(ID, Password);
-                    }
-                    catch (ModelException me)
-                    {
-                        //登入失敗則說明錯誤資訊。
-                        if (me.ErrorNumber == ModelException.Error.LoginFailed)
-                            failinfo = me.userMessage == "" ? "登入失敗" : me.userMessage;
-                    }
-                    catch (Exception)
-                    {
-                        failinfo = "登入失敗";
-                    }
-
-                    //若無錯誤資訊，則為成功登入，切換至Home state
-                    if (failinfo == "")
-                    {
-                        model.RequestPageData(StateEnum.Home);
-
-                        model.State = StateEnum.Home;
-                    }
-                    else//否則為登入失敗，重回Login state
-                    {
-                        model.RequestPageData(StateEnum.Login, delegate ()
-                        {
-                            //將錯誤資訊存入PageData.Out
-                            PageData.Out["failinfo"] = failinfo;
-                        });
-
-
-                        model.State = StateEnum.Login;
-                    }
-                }
-                else if (op == ViewOp.Login_toregister) //取得使用者前往註冊行為
-                {
-                    model.State = StateEnum.Register;
-                }
-            }
-            #endregion
-            #region Register State Operation
-            else if (clsf == 2)
-            {
-                //取得使用者註冊行為
-                if (op == ViewOp.Register_register)
-                {
-                    //建構新的使用者資訊
-                    UserInfo uif = UserInfo.New;
-
-                    //設定欄位
-                    uif.ID = PageData.In["ID"] as string;
-                    uif.Password = PageData.In["Password"] as string;
-                    uif.Email = PageData.In["Email"] as string;
-                    uif.StudentID = PageData.In["StudentNum"] as string;
-
-                    //設定錯誤資訊。
-                    string failinfo = "";
-                    try
-                    {
-                        //嘗試註冊新的使用者。
-                        model.Register(uif);
-                    }
-                    catch (ModelException me)
-                    {
-                        //註冊失敗則說明錯誤資訊。
-                        if (me.ErrorNumber == ModelException.Error.InvalidUserInformation)
-                            failinfo = me.userMessage;
-                        else
-                            failinfo = "註冊失敗。";
-                    }
-                    catch (Exception)
-                    {
-                        failinfo = "註冊失敗。";
-                    }
-
-
-                    if (failinfo == "")
-                    {
-                        model.RequestPageData(StateEnum.Login);
-
-                        model.State = StateEnum.Login;
-                    }
-                    else
-                    {
-                        model.RequestPageData(StateEnum.Register, delegate ()
-                            {
-                                //將錯誤資訊存入PageData.Out
-                                PageData.Out["failinfo"] = failinfo;
-                            });
-
-                        model.State = StateEnum.Register;
-                    }
-                }
-                else if (op == ViewOp.Register_back) //取得使用者返回登入頁面行為
-                {
-                    model.State = StateEnum.Login;
-                }
-            }
-            #endregion
-            #region Home State Operation
-            else*/
-            if (clsf == 3)
-            {
-
-            }
-            #region Group State Operation
-            else if (clsf == 4)
-            {
-
-            }
-            #endregion
-            #region Board State Operation
-            else if (clsf == 5)
-            {
-
-            }
-            #endregion
-            #region Article State Operation
-            else if (clsf == 6)
-            {
-
-            }
-            #endregion
-            #region UserPage State Operation
-            else if (clsf == 7)
-            {
-
-            }
-            #endregion
-            #region EditArticle State Operation
-            else if (clsf == 8)
-            {
-
-            }
-            #endregion
-            #region Usersetting State Operation
-            else if (clsf == 9)
-            {
-
-            }
-            #endregion
-        }
     }
 
     /// <summary>

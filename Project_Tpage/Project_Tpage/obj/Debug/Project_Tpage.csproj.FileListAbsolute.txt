@@ -517,3 +517,5 @@ C:\Users\MY\Desktop\SE-project\Project_Tpage\Project_Tpage\bin\zh-Hant\Microsoft
 C:\Users\MY\Desktop\SE-project\Project_Tpage\Project_Tpage\obj\Debug\Project_Tpage.csprojResolveAssemblyReference.cache
 C:\Users\MY\Desktop\SE-project\Project_Tpage\Project_Tpage\obj\Debug\Project_Tpage.dll
 C:\Users\MY\Desktop\SE-project\Project_Tpage\Project_Tpage\obj\Debug\Project_Tpage.pdb
+C:\Users\B10515025\Desktop\軟體工程\Project\SE-project\Project_Tpage\Project_Tpage\bin\Google.Protobuf.dll
+C:\Users\B10515025\Desktop\軟體工程\Project\SE-project\Project_Tpage\Project_Tpage\bin\MySql.Data.xml
