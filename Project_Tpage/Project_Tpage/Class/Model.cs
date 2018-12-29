@@ -72,32 +72,40 @@ namespace Project_Tpage.Class
             /// 團體未找到。
             /// </summary>
             GIDnotFound =                   1105,
-
-            //(錯誤代號:1200)資料庫資料解析錯誤(資料格式錯誤)
             /// <summary>
-            /// 日期資料解析錯誤。
+            /// 看板未找到。
+            /// </summary>
+            BIDnotFound =                   1106,
+
+            //(錯誤代號:1200)資料庫資料反解析錯誤(資料格式錯誤)
+            /// <summary>
+            /// 日期資料反解析錯誤。
             /// </summary>
             AnlTypeErrDatetime =            1201,
             /// <summary>
-            /// 字串陣列資料解析錯誤。
+            /// 字串陣列資料反解析錯誤。
             /// </summary>
             AnlTypeErrListOfString =        1202,
             /// <summary>
-            /// 看板版主對陣列資料解析錯誤。
+            /// 看板版主對陣列資料反解析錯誤。
             /// </summary>
             AnlTypeErrListOfBoardAdmin =    1203,
             /// <summary>
-            /// 圖片資料解析錯誤。
+            /// 圖片資料反解析錯誤。
             /// </summary>
             AnlTypeErrImage =               1204,
             /// <summary>
-            /// 尺寸資料解析錯誤。
+            /// 尺寸資料反解析錯誤。
             /// </summary>
             AnlTypeErrSize =                1205,
             /// <summary>
+            /// 雙字串陣列反解析錯誤。
+            /// </summary>
+            AnlTypeErrDictionary =          1206,
+            /// <summary>
             /// 反解析型別不支援。
             /// </summary>
-            AnlTypeErr =                    1206,
+            AnlTypeErr =                    1207,
 
             //(錯誤代號:1300)將資料列寫入物件執行個體錯誤
             /// <summary>
@@ -279,28 +287,30 @@ namespace Project_Tpage.Class
         /// </summary>
         /// <param name="p_ID">帳號。</param>
         /// <param name="p_Password">密碼。</param>
-        public void Login(string p_ID, string p_Password)
+        public User Login(string p_ID, string p_Password)
         {
             try
             {
-                user = DB.Get<User>(DB.UserID_UIDconvert(p_ID));
-                if (user == null)
+                User usr = DB.Get<User>(DB.UserID_UIDconvert(p_ID));
+                if (usr == null)
                     throw new ModelException(
                         ModelException.Error.LoginFailed,
                         "Model類別－Login()發生例外：登入失敗：未知錯誤。",
                         "發生未知錯誤，登入失敗。");
-                else if (!user.Userinfo.Password.Equals(p_Password))
+                else if (!usr.Userinfo.Password.Equals(p_Password))
                 {
-                    user = null;
                     throw new ModelException(
                         ModelException.Error.LoginFailed,
                         "Model類別－Login()發生例外：登入失敗：密碼錯誤。",
                         "密碼錯誤。");
                 }
+                else
+                {
+                    return usr;
+                }
             }
             catch (ModelException me)
             {
-                user = null;
                 if (me.ErrorNumber == ModelException.Error.UIDnotFound)
                     throw new ModelException(
                         ModelException.Error.LoginFailed,
@@ -314,7 +324,6 @@ namespace Project_Tpage.Class
             }
             catch (Exception e)
             {
-                user = null;
                 throw new ModelException(
                     ModelException.Error.LoginFailed,
                     "Model類別－Login()發生例外：登入失敗：\r\n" + e.Message,
@@ -401,13 +410,13 @@ namespace Project_Tpage.Class
         /// <summary>
         /// 使用者發布文章。
         /// </summary>
+        /// <param name="p_User">發文者識別碼。</param>
+        /// <param name="p_Board">發布至看板。</param>
         /// <param name="p_Title">文章標題。</param>
         /// <param name="p_Content">文章內容。</param>
-        /// <param name="p_OfGroup">文章所屬的團體。</param>
-        /// <param name="p_OfBoard">文章所屬的看板。</param>
-        public void ReleaseArticle(string p_Title, string p_Content, string p_OfGroup, string p_OfBoard)
+        public void ReleaseArticle(string p_User, string p_Board, string p_Title, string p_Content)
         {
-            Article atc = new Article(user.Userinfo.UID, p_OfGroup, p_OfBoard);
+            Article atc = new Article(p_User, p_Board);
             atc.Content = p_Content;
             atc.Title = p_Title;
 
@@ -952,6 +961,10 @@ namespace Project_Tpage.Class
         /// 資料庫－廣告資料表名稱。
         /// </summary>
         public string DB_AdvertiseData_TableName { get; set; }
+        /// <summary>
+        /// 資料庫－看板資料表名稱。
+        /// </summary>
+        public string DB_BoardData_TableName { get; set; }
 
 
         /// <summary>
@@ -1018,6 +1031,15 @@ namespace Project_Tpage.Class
         public string Type(int p_int)
         {
             return "" + p_int;
+        }
+        /// <summary>
+        /// 將指定型別資料解析為SQL字串的表示方式。
+        /// </summary>
+        /// <param name="p_int">布林格式。</param>
+        /// <returns></returns>
+        public string Type(bool p_bol)
+        {
+            return "" + (p_bol ? 1 : 0);
         }
         /// <summary>
         /// 將指定型別資料解析為SQL字串的表示方式。
@@ -1101,6 +1123,15 @@ namespace Project_Tpage.Class
             return Type(ls.Select(x => x.Userinfo.UID).ToList());
         }
         /// <summary>
+        /// 將指定型別資料解析為SQL字串的表示方式。
+        /// </summary>
+        /// <param name="ls">雙字串陣列格式。</param>
+        /// <returns></returns>
+        public string Type(Dictionary<string, string> ls)
+        {
+            return Type(ls.Select(x => x.Key + "@" + x.Value).ToList());
+        }
+        /// <summary>
         /// 將User的帳號與帳號識別碼進行轉換。
         /// </summary>
         /// <param name="ipt">輸入</param>
@@ -1171,6 +1202,29 @@ namespace Project_Tpage.Class
             {
                 return ((List<string>)AnlType<List<string>>(obj)).Select(x => Model.DB.Get<User>(x)).ToList();
             }
+            else if (typeof(T).Equals(typeof(List<Dictionary<string, string>>)))
+            {
+                List<string> ls = AnlType<List<string>>(obj);
+                Dictionary<string, string> rtn = new Dictionary<string, string>(ls.Count);
+
+                try
+                {
+                    foreach (string s in ls)
+                    {
+                        string[] temp = s.Split('@');
+                        rtn.Add(temp[0], temp[1]);
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw new ModelException(
+                        ModelException.Error.AnlTypeErrDictionary,
+                        "SqlServ類別－AnlType<Dictionary<string, string>>發生例外：" +
+                        "雙字串陣列資料格式錯誤無法解析。\r\n" + e.Message, "");
+                }
+
+                return rtn;
+            }
             else if(typeof(T).Equals(typeof(List<BoardAdminPair>)))
             {
                 if (obj is DBNull || obj == null || (string)obj == "") return new List<BoardAdminPair>();
@@ -1223,6 +1277,12 @@ namespace Project_Tpage.Class
                 if (obj is DBNull || obj == null) return -1;
 
                 return (int)obj;
+            }
+            else if (typeof(T).Equals(typeof(bool)))
+            {
+                if (obj is DBNull || obj == null) return false;
+
+                return (int)obj == 1 ? true : false;
             }
             else if (typeof(T).Equals(typeof(Gender)))
             {
@@ -1388,6 +1448,25 @@ namespace Project_Tpage.Class
                     return rtn;
                 }
             }
+            else if (typeof(T).Equals(typeof(Board)))
+            {
+                //從資料庫查詢此使用者。未找到則擲回例外(包含錯誤訊息(無此帳號、密碼錯誤))。
+                DataTable dt = GetSqlData(string.Format("SELECT * FROM {0} WHERE BID = {1}"
+                    , DB_BoardData_TableName, Iden));
+
+                if (dt.Rows.Count <= 0)
+                {
+                    throw new ModelException(
+                        ModelException.Error.BIDnotFound,
+                        "無此帳號。BID = " + Iden,
+                        "無此帳號");
+                }
+                else
+                {
+                    Board rtn = Board.Inst(dt.Rows[0]);
+                    return rtn;
+                }
+            }
             else
             {
                 throw new ModelException(
@@ -1438,7 +1517,9 @@ namespace Project_Tpage.Class
                     FamilyGroup = {14}, 
                     TbitCoin = {15},
                     FriendRequest = {16},
-                    LastComputeTbit = {17} 
+                    LastComputeTbit = {17},
+                    FollowBoard = {18},
+                    FollowBoardQueue = {19} 
                     WHERE UID = {1}"
                             , Type(usr.Userinfo.ID)
                             , Type(usr.Userinfo.UID)
@@ -1457,7 +1538,9 @@ namespace Project_Tpage.Class
                             , Type(usr.Groups.Where(x => x is FamilyGroup).Select(x => x.GID).ToList())
                             , Type(usr.TbitCoin)
                             , Type(usr.FriendRequestQueue)
-                            , Type(usr.LastComputeTbit)));
+                            , Type(usr.LastComputeTbit)
+                            , Type(usr.FollowBoard)
+                            , Type(usr.FollowBoardQueue)));
                     }
                     else//否則為新增帳號資料的更新。
                     {
@@ -1470,9 +1553,9 @@ namespace Project_Tpage.Class
 
                         ExeSqlCommand(string.Format(@"INSERT INTO " + DB_UserData_TableName + @" 
         (ID, UID, Password, Email, StudentNum, ClassName, RealName, NickName, Picture, Gender, Birthday, UserPrivacy, Friend
-		, ClassGroup, FamilyGroup, TbitCoin, FriendRequest, LastComputeTbit) 
+		, ClassGroup, FamilyGroup, TbitCoin, FriendRequest, LastComputeTbit, FollowBoard, FollowBoardQueue) 
                     VALUES 
-        ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17})"
+        ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17}, {18}, {19})"
                             , Type(usr.Userinfo.ID)
                             , Type(usr.Userinfo.UID)
                             , Type(usr.Userinfo.Password)
@@ -1490,7 +1573,9 @@ namespace Project_Tpage.Class
                             , Type(usr.Groups.Where(x => x is FamilyGroup).Select(x => x.GID).ToList())
                             , Type(usr.TbitCoin)
                             , Type(usr.FriendRequestQueue)
-                            , Type(usr.LastComputeTbit)));
+                            , Type(usr.LastComputeTbit)
+                            , Type(usr.FollowBoard)
+                            , Type(usr.FollowBoardQueue)));
                     }
                 }
                 catch (Exception e)
@@ -1517,9 +1602,8 @@ namespace Project_Tpage.Class
                     ReleaseUser = {3}, 
                     ReleaseDate = {4}, 
                     LikeCount = {5}, 
-                    OfGroup = {6}, 
-                    OfBoard = {7}, 
-                    TbitLikeCount = {8} 
+                    OfBoard = {6}, 
+                    TbitLikeCount = {7} 
                     WHERE AID = {0}"
                             , Type(p_art.AID)
                             , Type(p_art.Title, true)
@@ -1527,7 +1611,6 @@ namespace Project_Tpage.Class
                             , Type(p_art.ReleaseUser)
                             , Type(p_art.Date)
                             , Type(p_art.LikeCount)
-                            , Type(p_art.OfGroup)
                             , Type(p_art.OfBoard, true)
                             , Type(p_art.LastComputeTbitLikeCount)));
                     }
@@ -1541,16 +1624,15 @@ namespace Project_Tpage.Class
                             , DB_ArticleData_TableName, (int.Parse(nextaid) + 1).ToString().PadLeft(10, '0'), nextaid));
 
                         ExeSqlCommand(string.Format(@"INSERT INTO " + DB_ArticleData_TableName + @" 
-                    (AID, Title, Content, ReleaseUser, ReleaseDate, LikeCount, OfGroup, OfBoard, TbitLikeCount)
+                    (AID, Title, Content, ReleaseUser, ReleaseDate, LikeCount, OfBoard, TbitLikeCount)
                     VALUES 
-                    ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8})"
+                    ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7})"
                             , Type(p_art.AID)
                             , Type(p_art.Title, true)
                             , Type(p_art.Content, true)
                             , Type(p_art.ReleaseUser)
                             , Type(p_art.Date)
                             , Type(p_art.LikeCount)
-                            , Type(p_art.OfGroup)
                             , Type(p_art.OfBoard, true)
                             , Type(p_art.LastComputeTbitLikeCount)));
                     }
@@ -1793,6 +1875,55 @@ namespace Project_Tpage.Class
                         "發生未知錯誤－儲存失敗");
                 }
             }
+            else if (typeof(T).Equals(typeof(Board)))
+            {
+                try
+                {
+                    Board brd = (Board)obj;
+
+                    if (brd.BID != null)
+                    {
+                        ExeSqlCommand(string.Format(@"UPDATE " + DB_BoardData_TableName + @"
+                    SET BID = {0}, 
+                    Name = {1}, 
+                    IsPublic = {2}, 
+                    Admin = {3},
+                    PrivateMaster = {4} 
+                    WHERE BID = {0}"
+                            , Type(brd.BID)
+                            , Type(brd.Name, true)
+                            , Type(brd.IsPublic)
+                            , Type(brd.Admin)
+                            , Type(brd.PrivateMaster)));
+                    }
+                    else//否則為新增帳號資料的更新。
+                    {
+                        string nextuid = (string)GetSqlData(@"SELECT MAX(BID) FROM " + DB_BoardData_TableName).Rows[0][0];
+
+                        brd.BID = nextuid;
+
+                        ExeSqlCommand(string.Format("UPDATE {0} SET BID = '{1}' WHERE BID = '{2}'"
+                            , DB_BoardData_TableName, (int.Parse(nextuid) + 1).ToString().PadLeft(10, '0'), nextuid));
+
+                        ExeSqlCommand(string.Format(@"INSERT INTO " + DB_BoardData_TableName + @" 
+                        (BID, Name, IsPublic, Admin, PrivateMaster) 
+                        VALUES 
+                        ({0}, {1}, {2}, {3}, {4})"
+                            , Type(brd.BID)
+                            , Type(brd.Name)
+                            , Type(brd.IsPublic)
+                            , Type(brd.Admin)
+                            , Type(brd.PrivateMaster)));
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw new ModelException(
+                        ModelException.Error.DbSetSqlOperationFail,
+                        "SqlServ類別－Set<T>發生錯誤：Board設定物件欄位錯誤。\r\n" + e.Message,
+                        "發生未知錯誤－儲存失敗");
+                }
+            }
             else
             {
                 throw new ModelException(
@@ -1994,6 +2125,37 @@ namespace Project_Tpage.Class
                             "發生未知錯誤－刪除失敗");
                 }
             }
+            else if (typeof(T).Equals(typeof(Board)))
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(Iden))
+                        throw new Exception("1");
+                    if (IsExist(DB_ClassGroupData_TableName, "GID", Iden))
+                        throw new Exception("2");
+
+                    ExeSqlCommand(string.Format("DELETE FROM {0} WHERE BID = {1}",
+                        DB_BoardData_TableName, Type(Iden)));
+                }
+                catch (Exception e)
+                {
+                    if (e.Message == "1")
+                        throw new ModelException(
+                            ModelException.Error.DbRemoveFailure,
+                            "SqlServ類別－Remove<T>發生例外：未知的看板。",
+                            "");
+                    else if (e.Message == "2")
+                        throw new ModelException(
+                            ModelException.Error.DbRemoveFailure,
+                            "SqlServ類別－Remove<T>發生例外：無此看板。",
+                            "無此班級－刪除失敗");
+                    else
+                        throw new ModelException(
+                            ModelException.Error.DbRemoveFailure,
+                            "SqlServ類別－Remove<T>發生例外：\r\n" + e.Message,
+                            "發生未知錯誤－刪除失敗");
+                }
+            }
             else
             {
                 throw new ModelException(
@@ -2008,6 +2170,7 @@ namespace Project_Tpage.Class
             DB_Conn = p_DBconn;
 
             DB_UserData_TableName = "UserData";
+            DB_BoardData_TableName = "BoardData";
             DB_ArticleData_TableName = "ArticleData";
             DB_AMessageData_TableName = "AMessageData";
             DB_AdvertiseData_TableName = "AdvertiseData";
