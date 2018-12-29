@@ -13,5 +13,25 @@ namespace Project_Tpage.WebPage
         {
 
         }
+
+        protected void btnPo_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        protected void btnBack_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        protected void btnInvite_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        protected void btnNoInvite_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

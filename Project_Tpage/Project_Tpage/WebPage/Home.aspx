@@ -73,14 +73,9 @@
                 <asp:Button runat="server" ID="Button5" Text="接受" Font-Names="微軟正黑體" Font-Size="12" Font-Bold="true" OnClick="yes_Click" />
                 <asp:Button runat="server" ID="Button6" Text="拒絕" Font-Names="微軟正黑體" Font-Size="12" Font-Bold="true" />
 			</asp:Panel>
-                </div>
-       
-           
-            <br /> 
-            
-            <asp:TextBox ID="boardText" runat="server" Height="35" Width="500" Visible="false" />
-            <asp:Button ID="btnBoard" runat="server" Height="40" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Text="申請" OnClick="btnBoard_Click" Visible="false" />
-            <asp:Label ID="boardInfo" runat="server" Width="100" Height="20" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Text="" />
+                </div>        
+            <br />  
+            <asp:TextBox ID="boardText" runat="server" Height="35" Width="500" Visible="false" />     
         </center>
     </form>
 </body>

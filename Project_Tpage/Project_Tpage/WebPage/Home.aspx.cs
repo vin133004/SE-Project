@@ -12,15 +12,15 @@ namespace Project_Tpage.WebPage
     {
         //  進去看板頁面
         public event ViewEventHandler ToBoard;
+        
+        //  進去申請看板頁面
+        public event ViewEventHandler ToCreateBoard;
 
         //  進去廣告頁面
         public event ViewEventHandler ToAD;
 
         //  查詢看板
         public event ViewEventHandler DoSearch;
-
-        //  申請看板
-        public event ViewEventHandler DoCreateBoard;
 
         //  抽卡
         public event ViewEventHandler DoCard;
@@ -47,8 +47,7 @@ namespace Project_Tpage.WebPage
         //  開/關申請選項
         protected void btnNew_Click(object sender, EventArgs e)
         {
-            boardText.Visible = !boardText.Visible;
-            btnBoard.Visible = !btnBoard.Visible;
+
         }
 
         //  抽卡,回傳資訊顯示於cardInfo

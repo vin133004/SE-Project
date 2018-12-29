@@ -59,9 +59,9 @@ namespace Project_Tpage.Class
             else if (p is Home)    //  Home State
             {
                 (p as Home).ToBoard += HomeState_ToBoard;
+                (p as Home).ToCreateBoard += HomeState_ToCreateBoard;
                 (p as Home).ToAD += HomeState_ToAD;
                 (p as Home).DoSearch += HomeState_DoSearch;
-                (p as Home).DoCreateBoard += HomeState_DoCreateBoard;
                 (p as Home).DoCard += HomeState_DoCard;
                 (p as Home).DoStyle += HomeState_DoStyle;
             }
@@ -177,6 +177,11 @@ namespace Project_Tpage.Class
             opt = model.RequestPageData(StateEnum.Board, e.data);
             e.page.Response.Redirect("Board.aspx");
         }
+        public void HomeState_ToCreateBoard(ViewEventArgs e, out DAT opt)
+        {
+            // 待修正資料
+            opt = model.RequestPageData(StateEnum.Board, e.data);
+        }
         public void HomeState_ToAD(ViewEventArgs e, out DAT opt)
         {
             // 待修正資料
@@ -188,12 +193,7 @@ namespace Project_Tpage.Class
             // 待修正資料
             opt = model.RequestPageData(StateEnum.Board, e.data);
             e.page.Response.Redirect("Board.aspx");
-        }
-        public void HomeState_DoCreateBoard(ViewEventArgs e, out DAT opt)
-        {
-            // 待修正資料
-            opt = model.RequestPageData(StateEnum.Board, e.data);
-        }
+        } 
         public void HomeState_DoCard(ViewEventArgs e, out DAT opt)
         {
             // 待修正資料
