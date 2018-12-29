@@ -170,12 +170,15 @@ namespace Project_Tpage.Class
         /// </summary>
         public UserPrivacy Userprivacy { get; set; }
 
+        public int Viewstyle { get; set; }
+
         public static UserSetting New
         {
             get
             {
                 UserSetting rtn = new UserSetting();
                 rtn.Userprivacy = UserPrivacy.Public;
+                rtn.Viewstyle = 0;
                 return rtn;
             }
         }
@@ -184,6 +187,7 @@ namespace Project_Tpage.Class
         {
             UserSetting rtn = new UserSetting();
             rtn.Userprivacy = us.Userprivacy;
+            rtn.Viewstyle = us.Viewstyle;
             return rtn;
         }
 
@@ -395,7 +399,6 @@ namespace Project_Tpage.Class
             Usersetting = UserSetting.New;
             Userinfo = UserInfo.New;
 
-            Usersetting.Userprivacy = UserPrivacy.Public;
             Userinfo.UID = null;
             
             Friends = new FriendGroup();
@@ -425,6 +428,7 @@ namespace Project_Tpage.Class
                 Userinfo.ClassName = Model.DB.AnlType<string>(dr["ClassName"]);
                 Userinfo.Realname = Model.DB.AnlType<string>(dr["Realname"]);
                 Usersetting.Userprivacy = Model.DB.AnlType<UserPrivacy>(dr["UserPrivacy"]);
+                Usersetting.Viewstyle = Model.DB.AnlType<int>(dr["Viewstyle"]);
 
                 Userinfo.Nickname = Model.DB.AnlType<string>(dr["Nickname"]);
                 Userinfo.Gender = Model.DB.AnlType<Gender>(dr["Gender"]);

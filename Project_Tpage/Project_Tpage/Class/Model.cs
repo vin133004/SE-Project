@@ -1519,7 +1519,8 @@ namespace Project_Tpage.Class
                     FriendRequest = {16},
                     LastComputeTbit = {17},
                     FollowBoard = {18},
-                    FollowBoardQueue = {19} 
+                    FollowBoardQueue = {19},
+                    Viewstyle = {20} 
                     WHERE UID = {1}"
                             , Type(usr.Userinfo.ID)
                             , Type(usr.Userinfo.UID)
@@ -1540,7 +1541,8 @@ namespace Project_Tpage.Class
                             , Type(usr.FriendRequestQueue)
                             , Type(usr.LastComputeTbit)
                             , Type(usr.FollowBoard)
-                            , Type(usr.FollowBoardQueue)));
+                            , Type(usr.FollowBoardQueue)
+                            , Type(usr.Usersetting.Viewstyle)));
                     }
                     else//否則為新增帳號資料的更新。
                     {
@@ -1553,9 +1555,9 @@ namespace Project_Tpage.Class
 
                         ExeSqlCommand(string.Format(@"INSERT INTO " + DB_UserData_TableName + @" 
         (ID, UID, Password, Email, StudentNum, ClassName, RealName, NickName, Picture, Gender, Birthday, UserPrivacy, Friend
-		, ClassGroup, FamilyGroup, TbitCoin, FriendRequest, LastComputeTbit, FollowBoard, FollowBoardQueue) 
+		, ClassGroup, FamilyGroup, TbitCoin, FriendRequest, LastComputeTbit, FollowBoard, FollowBoardQueue, Viewstyle) 
                     VALUES 
-        ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17}, {18}, {19})"
+        ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17}, {18}, {19}, {20})"
                             , Type(usr.Userinfo.ID)
                             , Type(usr.Userinfo.UID)
                             , Type(usr.Userinfo.Password)
@@ -1575,7 +1577,8 @@ namespace Project_Tpage.Class
                             , Type(usr.FriendRequestQueue)
                             , Type(usr.LastComputeTbit)
                             , Type(usr.FollowBoard)
-                            , Type(usr.FollowBoardQueue)));
+                            , Type(usr.FollowBoardQueue)
+                            , Type(usr.Usersetting.Viewstyle)));
                     }
                 }
                 catch (Exception e)
