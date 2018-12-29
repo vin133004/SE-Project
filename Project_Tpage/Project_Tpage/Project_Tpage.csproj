@@ -109,6 +109,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="WebPage\AD.aspx" />
+    <Content Include="WebPage\Article.aspx" />
     <Content Include="WebPage\Board.aspx" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
@@ -127,7 +128,9 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="WebPage\CreateBoard.aspx" />
+    <Content Include="WebPage\Editor.aspx" />
     <Content Include="WebPage\Home.aspx" />
+    <Content Include="WebPage\Login.aspx" />
     <Content Include="WebPage\Register.aspx" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -182,6 +185,13 @@
     <Compile Include="WebPage\AD.aspx.designer.cs">
       <DependentUpon>AD.aspx</DependentUpon>
     </Compile>
+    <Compile Include="WebPage\Article.aspx.cs">
+      <DependentUpon>Article.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WebPage\Article.aspx.designer.cs">
+      <DependentUpon>Article.aspx</DependentUpon>
+    </Compile>
     <Compile Include="WebPage\Board.aspx.cs">
       <DependentUpon>Board.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -221,12 +231,26 @@
     <Compile Include="WebPage\CreateBoard.aspx.designer.cs">
       <DependentUpon>CreateBoard.aspx</DependentUpon>
     </Compile>
+    <Compile Include="WebPage\Editor.aspx.cs">
+      <DependentUpon>Editor.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WebPage\Editor.aspx.designer.cs">
+      <DependentUpon>Editor.aspx</DependentUpon>
+    </Compile>
     <Compile Include="WebPage\Home.aspx.cs">
       <DependentUpon>Home.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="WebPage\Home.aspx.designer.cs">
       <DependentUpon>Home.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="WebPage\Login.aspx.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WebPage\Login.aspx.designer.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
     </Compile>
     <Compile Include="WebPage\Register.aspx.cs">
       <DependentUpon>Register.aspx</DependentUpon>
