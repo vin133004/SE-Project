@@ -141,7 +141,7 @@ namespace Project_Tpage.Class
         {
             opt = model.RequestPageData(StateEnum.Register, e.data);
         }
-        
+
         //  Register State
         public void RegisterState_Register(ViewEventArgs e, out DAT opt)
         {
@@ -188,7 +188,8 @@ namespace Project_Tpage.Class
         }
 
         //  Home State
-        public void HomeState_ToBoard(ViewEventArgs e, out DAT opt) {
+        public void HomeState_ToBoard(ViewEventArgs e, out DAT opt)
+        {
             opt = model.RequestPageData(StateEnum.Board, e.data);
         }
         public void HomeState_ToCreateBoard(ViewEventArgs e, out DAT opt)
@@ -202,7 +203,7 @@ namespace Project_Tpage.Class
         public void HomeState_DoSearch(ViewEventArgs e, out DAT opt)
         {
             opt = model.RequestPageData(StateEnum.Board, e.data);
-        } 
+        }
         public void HomeState_DoCard(ViewEventArgs e, out DAT opt)
         {
             opt = model.RequestPageData(StateEnum.Home, e.data);
@@ -254,7 +255,7 @@ namespace Project_Tpage.Class
             {
                 //嘗試留言
                 model.ReleaseAMessage(message.Content, message.OfArticle);
-               
+
                 opt = model.RequestPageData(StateEnum.Article, e.data);
                 model.State = StateEnum.Board;
             }
@@ -294,7 +295,7 @@ namespace Project_Tpage.Class
             try
             {
                 //嘗試發文
-                model.ReleaseArticle(article.Title, article.Content, article.OfGroup, article.OfBoard);
+                model.ReleaseArticle(article.ReleaseUser, article.OfBoard, article.Title, article.Content);
                 opt = model.RequestPageData(StateEnum.Board, e.data);
                 model.State = StateEnum.Board;
             }

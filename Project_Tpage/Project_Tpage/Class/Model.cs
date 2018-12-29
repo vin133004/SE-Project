@@ -724,7 +724,7 @@ namespace Project_Tpage.Class
                 {
                     opt["Content"] = DB.Get<Article>((string)ipt["AID"]);
                 }
-                /*else if (ToState == StateEnum.Setting)
+               /* else if (ToState == StateEnum.Setting)
                 {
                     opt["Userinfo"] = user.Userinfo;
                     opt["Usersetting"] = user.Usersetting;
@@ -737,7 +737,7 @@ namespace Project_Tpage.Class
                 {
 
                 }
-                State = ToState;
+
                 return opt;
             }
             catch (KeyNotFoundException)
