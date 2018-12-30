@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Project_Tpage.Class;
+
 namespace Project_Tpage.WebPage
 {
     public partial class Login : System.Web.UI.Page
@@ -38,7 +39,6 @@ namespace Project_Tpage.WebPage
         public void btn1_Click(object sender, EventArgs e)
         {
             //當使用者按下登入按鈕，引發登入事件。
-
 
             //設定輸入參數資料
             DAT dat = new DAT();

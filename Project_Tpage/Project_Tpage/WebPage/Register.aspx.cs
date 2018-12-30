@@ -46,6 +46,7 @@ namespace Project_Tpage.WebPage
             dat["Password"] = tbx2.Text;
             dat["Email"] = tbx3.Text;
             dat["StudentID"] = tbx4.Text;
+            
 
             //引發事件，取得輸出結果在optDAT裡。
             DoRegister(new ViewEventArgs(dat, this), out optDAT);

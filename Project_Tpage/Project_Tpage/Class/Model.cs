@@ -8,6 +8,8 @@ using System.Data.Odbc;
 using System.Drawing;
 using MySql.Data.MySqlClient;
 using System.Collections;
+using System.Security.Cryptography;
+using System.Text;
 
 
 namespace Project_Tpage.Class
@@ -270,6 +272,10 @@ namespace Project_Tpage.Class
             User.ValidUserInfo(p_uif);
 
             User temp = new User();
+            SHA256 sha256 = new SHA256CryptoServiceProvider();
+            byte[] source = Encoding.Default.GetBytes(p_uif.Password);
+            byte[] crypto = sha256.ComputeHash(source);
+            p_uif.Password = Convert.ToBase64String(crypto);
             temp.Userinfo = p_uif;
             temp.Userinfo.UID = null;
             DB.Set<User>(temp);
@@ -281,6 +287,11 @@ namespace Project_Tpage.Class
         /// <param name="p_Password">密碼。</param>
         public User Login(string p_ID, string p_Password)
         {
+            SHA256 sha256 = new SHA256CryptoServiceProvider();
+            byte[] source = Encoding.Default.GetBytes(p_Password);
+            byte[] crypto = sha256.ComputeHash(source);
+            p_Password = Convert.ToBase64String(crypto);
+
             try
             {
                 User usr = DB.Get<User>(DB.UserID_UIDconvert(p_ID));
@@ -1331,7 +1342,7 @@ namespace Project_Tpage.Class
             {
                 if (obj is DBNull || obj == null) return 0;
 
-                return (byte)obj;
+                return (byte)(sbyte)obj;
             }
             else if (typeof(T).Equals(typeof(bool)))
             {
@@ -1343,13 +1354,13 @@ namespace Project_Tpage.Class
             {
                 if (obj is DBNull || obj == null) return Gender.Null;
 
-                return (Gender)(byte)obj;
+                return (Gender)(sbyte)obj;
             }
             else if (typeof(T).Equals(typeof(UserPrivacy)))
             {
                 if (obj is DBNull || obj == null) return UserPrivacy.Public;
 
-                return (UserPrivacy)(byte)obj;
+                return (UserPrivacy)(sbyte)obj;
             }
             else if (typeof(T).Equals(typeof(string)))
             {
@@ -1361,7 +1372,7 @@ namespace Project_Tpage.Class
             {
                 if (obj is DBNull || obj == null) return StateEnum.Home;
 
-                return (StateEnum)(byte)obj;
+                return (StateEnum)(sbyte)obj;
             }
             else if (typeof(T).Equals(typeof(Size)))
             {
@@ -2294,7 +2305,8 @@ namespace Project_Tpage.Class
             {
                 MySqlCommand ism = new MySqlCommand(@"SELECT COUNT(" + FiledName + ") FROM " + TableName + " WHERE " + FiledName
                     + " = '" + FiledValue + "'", icn);
-                rtn = ism.ExecuteScalar() == null;
+                int count = int.Parse(ism.ExecuteScalar().ToString());
+                rtn = count > 0 ? true : false;
                 CloseSqlConn(icn);
             }
             return rtn;

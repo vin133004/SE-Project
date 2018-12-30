@@ -2,7 +2,7 @@
 <script runat="server">      
     protected override void OnPreLoad(EventArgs e)
     {
-        Response.Redirect("WebPage/login.aspx");
+        Response.Redirect("WebPage/Login.aspx");
         base.OnPreLoad(e);
     }
 </script>

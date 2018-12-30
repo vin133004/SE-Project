@@ -374,11 +374,11 @@ namespace Project_Tpage.Class
         }
 
         // Setting State
-        public void SsttingState_ToBack(ViewEventArgs e, out DAT opt)
+        public void SettingState_ToBack(ViewEventArgs e, out DAT opt)
         {
             opt = model.RequestPageData(StateEnum.Home, e.data);
         }
-        public void SsttingState_DoChange(ViewEventArgs e, out DAT opt)
+        public void SettingState_DoChange(ViewEventArgs e, out DAT opt)
         {
             opt = model.RequestPageData(StateEnum.Home, e.data);
         }
