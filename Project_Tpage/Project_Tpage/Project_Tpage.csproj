@@ -108,6 +108,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="default.aspx" />
     <Content Include="WebPage\AD.aspx" />
     <Content Include="WebPage\Article.aspx" />
     <Content Include="WebPage\Board.aspx" />
@@ -132,6 +133,7 @@
     <Content Include="WebPage\Home.aspx" />
     <Content Include="WebPage\Login.aspx" />
     <Content Include="WebPage\Register.aspx" />
+    <None Include="Properties\PublishProfiles\SE2018 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -178,6 +180,13 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="default.aspx.cs">
+      <DependentUpon>default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="default.aspx.designer.cs">
+      <DependentUpon>default.aspx</DependentUpon>
+    </Compile>
     <Compile Include="WebPage\AD.aspx.cs">
       <DependentUpon>AD.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -289,7 +298,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>64878</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:64878/</IISUrl>
+          <IISUrl>http://localhost:64800/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

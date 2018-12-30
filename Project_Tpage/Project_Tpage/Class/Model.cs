@@ -856,7 +856,7 @@ namespace Project_Tpage.Class
         {
             State = StateEnum.Login;
             user = null;
-            DB = new SqlServ_MSSql(databaseConn);
+            DB = new SqlServ_MySql(databaseConn);
         }
     }
 
@@ -1601,12 +1601,14 @@ namespace Project_Tpage.Class
                     }
                     else//否則為新增帳號資料的更新。
                     {
-                        string nextuid = (string)GetSqlData(@"SELECT MAX(UID) FROM " + DB_UserData_TableName).Rows[0][0];
+                        string nextuid = GetSqlData(@"SELECT MAX(UID) FROM " + DB_UserData_TableName).Rows[0][0].ToString();
 
-                        usr.Userinfo.UID = nextuid;
+                        if (nextuid == "")
+                            nextuid = "0";
+                        usr.Userinfo.UID = (int.Parse(nextuid) + 1).ToString().PadLeft(10, '0');
 
-                        ExeSqlCommand(string.Format("UPDATE {0} SET UID = '{1}' WHERE UID = '{2}'"
-                            , DB_UserData_TableName, (int.Parse(nextuid) + 1).ToString().PadLeft(10, '0'), nextuid));
+                        /*ExeSqlCommand(string.Format("UPDATE {0} SET UID = '{1}' WHERE UID = '{2}'"
+                            , DB_UserData_TableName, (int.Parse(nextuid) + 1).ToString().PadLeft(10, '0'), nextuid));*/
 
                         ExeSqlCommand(string.Format(@"INSERT INTO " + DB_UserData_TableName + @" 
         (ID, UID, Password, Email, StudentNum, ClassName, RealName, NickName, Picture, Gender, Birthday, UserPrivacy, Friend
@@ -1673,12 +1675,14 @@ namespace Project_Tpage.Class
                     }
                     else//否則為新增帳號資料的更新。
                     {
-                        string nextaid = (string)GetSqlData("SELECT MAX(AID) FROM " + DB_ArticleData_TableName).Rows[0][0];
+                        string nextaid = GetSqlData("SELECT MAX(AID) FROM " + DB_ArticleData_TableName).Rows[0][0].ToString();
 
-                        p_art.AID = nextaid;
+                        if (nextaid == "")
+                            nextaid = "0";
+                        p_art.AID = (int.Parse(nextaid) + 1).ToString().PadLeft(10, '0');
 
-                        ExeSqlCommand(string.Format("UPDATE {0} SET AID = '{1}' WHERE AID = '{2}'"
-                            , DB_ArticleData_TableName, (int.Parse(nextaid) + 1).ToString().PadLeft(10, '0'), nextaid));
+                        /*ExeSqlCommand(string.Format("UPDATE {0} SET AID = '{1}' WHERE AID = '{2}'"
+                            , DB_ArticleData_TableName, (int.Parse(nextaid) + 1).ToString().PadLeft(10, '0'), nextaid));*/
 
                         ExeSqlCommand(string.Format(@"INSERT INTO " + DB_ArticleData_TableName + @" 
                     (AID, Title, Content, ReleaseUser, ReleaseDate, LikeCount, OfBoard, TbitLikeCount)
@@ -1730,12 +1734,14 @@ namespace Project_Tpage.Class
                     }
                     else//否則為新增帳號資料的更新。
                     {
-                        string nextmid = (string)GetSqlData("SELECT MAX(MID) FROM " + DB_AMessageData_TableName).Rows[0][0];
+                        string nextmid = GetSqlData("SELECT MAX(MID) FROM " + DB_AMessageData_TableName).Rows[0][0].ToString();
 
-                        p_ame.MID = nextmid;
+                        if (nextmid == "")
+                            nextmid = "0";
+                        p_ame.MID = (int.Parse(nextmid) + 1).ToString().PadLeft(10, '0');
 
-                        ExeSqlCommand(string.Format("UPDATE {0} SET MID = '{1}' WHERE MID = '{2}'"
-                            , DB_AMessageData_TableName, (int.Parse(nextmid) + 1).ToString().PadLeft(10, '0'), nextmid));
+                        /*ExeSqlCommand(string.Format("UPDATE {0} SET MID = '{1}' WHERE MID = '{2}'"
+                            , DB_AMessageData_TableName, (int.Parse(nextmid) + 1).ToString().PadLeft(10, '0'), nextmid));*/
 
 
                         ExeSqlCommand(string.Format(@"INSERT INTO " + DB_AMessageData_TableName + @" 
@@ -1908,12 +1914,14 @@ namespace Project_Tpage.Class
                     }
                     else//否則為新增帳號資料的更新。
                     {
-                        string nextdid = (string)GetSqlData("SELECT MAX(DID) FROM " + DB_AdvertiseData_TableName).Rows[0][0];
+                        string nextdid = GetSqlData("SELECT MAX(DID) FROM " + DB_AdvertiseData_TableName).Rows[0][0].ToString() ;
+                        if (nextdid == "")
+                            nextdid = "0";
 
-                        p_ad.DID = nextdid;
+                        p_ad.DID = (int.Parse(nextdid) + 1).ToString().PadLeft(10, '0');
 
-                        ExeSqlCommand(string.Format("UPDATE {0} SET DID = '{1}' WHERE DID = '{2}'"
-                            , DB_AdvertiseData_TableName, (int.Parse(nextdid) + 1).ToString().PadLeft(10, '0'), nextdid));
+                        /*ExeSqlCommand(string.Format("UPDATE {0} SET DID = '{1}' WHERE DID = '{2}'"
+                            , DB_AdvertiseData_TableName, (int.Parse(nextdid) + 1).ToString().PadLeft(10, '0'), nextdid));*/
 
                         ExeSqlCommand(string.Format(@"INSERT INTO " + DB_AdvertiseData_TableName + @" 
                             (DID, Body, Location, Size, Deadline)
@@ -1957,12 +1965,14 @@ namespace Project_Tpage.Class
                     }
                     else//否則為新增帳號資料的更新。
                     {
-                        string nextuid = (string)GetSqlData(@"SELECT MAX(BID) FROM " + DB_BoardData_TableName).Rows[0][0];
+                        string nextuid = GetSqlData(@"SELECT MAX(BID) FROM " + DB_BoardData_TableName).Rows[0][0].ToString();
+                        if (nextuid == "")
+                            nextuid = "0";
 
-                        brd.BID = nextuid;
+                        brd.BID = (int.Parse(nextuid) + 1).ToString().PadLeft(10, '0');
 
-                        ExeSqlCommand(string.Format("UPDATE {0} SET BID = '{1}' WHERE BID = '{2}'"
-                            , DB_BoardData_TableName, (int.Parse(nextuid) + 1).ToString().PadLeft(10, '0'), nextuid));
+                        /*ExeSqlCommand(string.Format("UPDATE {0} SET BID = '{1}' WHERE BID = '{2}'"
+                            , DB_BoardData_TableName, (int.Parse(nextuid) + 1).ToString().PadLeft(10, '0'), nextuid));*/
 
                         ExeSqlCommand(string.Format(@"INSERT INTO " + DB_BoardData_TableName + @" 
                         (BID, Name, IsPublic, Admin, PrivateMaster) 
@@ -2282,8 +2292,8 @@ namespace Project_Tpage.Class
             bool rtn = false;
             using (MySqlConnection icn = OpenSqlConn(DB_Conn))
             {
-                MySqlCommand ism = new MySqlCommand(@"SELECT TOP 1 1 FROM " + TableName + " WHERE " + FiledName
-                    + " = " + FiledValue, icn);
+                MySqlCommand ism = new MySqlCommand(@"SELECT COUNT(" + FiledName + ") FROM " + TableName + " WHERE " + FiledName
+                    + " = '" + FiledValue + "'", icn);
                 rtn = ism.ExecuteScalar() == null;
                 CloseSqlConn(icn);
             }

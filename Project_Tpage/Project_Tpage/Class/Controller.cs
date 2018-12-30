@@ -28,7 +28,7 @@ namespace Project_Tpage.Class
 
         public static void Initial(StateEnum state)
         {
-            model = new Model("");
+            model = new Model("server=lab2.w-net.ga;port=3306;user id=se2018;password=NTUST_2018Fall_SE;database=se2018;charset=utf8");
             view = new View();
             controller = new Controller();
 
