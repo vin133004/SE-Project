@@ -197,6 +197,7 @@ namespace Project_Tpage.Class
         public void HomeState_ToBoard(ViewEventArgs e, out DAT opt)
         {
             opt = model.RequestPageData(StateEnum.Board, e.data);
+            opt["Content"] = model.GetArticlesOfBoard(e.data["Board"] as string);
         }
         public void HomeState_ToCreateBoard(ViewEventArgs e, out DAT opt)
         {
