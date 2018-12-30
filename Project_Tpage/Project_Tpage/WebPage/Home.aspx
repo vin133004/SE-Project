@@ -14,7 +14,8 @@
             <asp:TextBox ID="searchText" runat="server"  Font-Names="微軟正黑體" Height="35" Width="400" Font-Size="Large" Font-Bold="true" />
             <asp:Button ID="btnSearch" runat="server" Height="40" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Text="查詢" OnClick="btnSearch_Click" />
              <asp:Label ID="searchresult" Font-Bold="true" Font-Names="微軟正黑體" runat="server" Height="35" Width="100" Font-Size="Large" Text="查無此人" Visible="true" /><br/>
-            <asp:ListBox ID="ListOfBoard" runat="server" Font-Size="X-Large" AutoPostBack="true" Width="500" Rows="10" OnSelectedIndexChanged="SelectBoard">
+            <asp:Button ID="btnBoard" runat="server" Width="75" Height="75" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Text="進入" OnClick="btnboard_Click" />
+            <asp:ListBox ID="ListOfBoard" runat="server" Font-Size="X-Large" AutoPostBack="false" Width="500" Rows="10" OnSelectedIndexChanged="SelectBoard">
                 <asp:ListItem Value="aaaa">aaa</asp:ListItem>
                 <asp:ListItem >bbb</asp:ListItem>
                 <asp:ListItem>ccc</asp:ListItem>
@@ -32,7 +33,7 @@
             <asp:Image ID="AD" runat="server" Height="270" Width="500" ImageUrl="./pictures/2p3o0003noq07q391981.jpg" />
             
             <br />
-
+            <asp:Button ID="btnSet" runat="server"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Width="150" Height="75" BorderStyle="None" Text="設定" OnClick="btnset_Click"/>
             <asp:Button ID="btnNew" runat="server"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Width="150" Height="75" BorderStyle="None" Text="申請新版" OnClick="btnNew_Click"/>
             <asp:Label ID="blank1" runat="server" Width="100" Height="20" Text="" />
             <asp:Button ID="btnCard" runat="server"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Width="150" Height="75" BorderStyle="None" Text="抽卡" OnClick="btnCard_Click"/>
@@ -46,33 +47,33 @@
                  <asp:ListItem  >模式</asp:ListItem>
             </asp:DropDownList>
              <div style="height:0%; margin-left:80%; margin-right:0%; width:20%;">
-            <asp:Panel ID="Panel0" runat="server" HorizontalAlign="Center"  BackColor="#EFEFEF">
+            <asp:Panel ID="Panel0" runat="server" HorizontalAlign="Center"  BackColor="#EFEFEF" Visible="true">
 				<asp:Label runat="server" ID="lblTitle" Text="邀請來自:" Font-Names="微軟正黑體" Font-Size="25" Font-Bold="true" ForeColor="#0000EF"></asp:Label>
                 <asp:Label runat="server" ID="who" Text="XXX" Font-Names="微軟正黑體" Font-Size="25" Font-Bold="true" ForeColor="#ff0000"></asp:Label>
                 <br />
                 <asp:Button runat="server" ID="yes" Text="接受" Font-Names="微軟正黑體" Font-Size="12" Font-Bold="true" OnClick="yes_Click" />
-                <asp:Button runat="server" ID="no" Text="拒絕" Font-Names="微軟正黑體" Font-Size="12" Font-Bold="true" />
+                <asp:Button runat="server" ID="no" Text="拒絕" Font-Names="微軟正黑體" Font-Size="12" Font-Bold="true" OnClick="no_Click" />
 			</asp:Panel>
                <asp:Panel ID="Panel1" runat="server" HorizontalAlign="Center"  BackColor="#EFEFEF" Visible="false">
 				<asp:Label runat="server" ID="Label1" Text="邀請來自:" Font-Names="微軟正黑體" Font-Size="25" Font-Bold="true" ForeColor="#0000EF"></asp:Label>
                 <asp:Label runat="server" ID="Label2" Text="XXX" Font-Names="微軟正黑體" Font-Size="25" Font-Bold="true" ForeColor="#ff0000"></asp:Label>
                 <br />
-                <asp:Button runat="server" ID="Button1" Text="接受" Font-Names="微軟正黑體" Font-Size="12" Font-Bold="true" OnClick="yes_Click" />
-                <asp:Button runat="server" ID="Button2" Text="拒絕" Font-Names="微軟正黑體" Font-Size="12" Font-Bold="true" />
+                <asp:Button runat="server" ID="Button1" Text="接受" Font-Names="微軟正黑體" Font-Size="12" Font-Bold="true" OnClick="yes1_Click" />
+                <asp:Button runat="server" ID="Button2" Text="拒絕" Font-Names="微軟正黑體" Font-Size="12" Font-Bold="true" OnClick="no1_Click" />
 			</asp:Panel>
                  <asp:Panel ID="Panel2" runat="server" HorizontalAlign="Center"  BackColor="#EFEFEF" Visible="false">
 				<asp:Label runat="server" ID="Label3" Text="邀請來自:" Font-Names="微軟正黑體" Font-Size="25" Font-Bold="true" ForeColor="#0000EF"></asp:Label>
                 <asp:Label runat="server" ID="Label4" Text="XXX" Font-Names="微軟正黑體" Font-Size="25" Font-Bold="true" ForeColor="#ff0000"></asp:Label>
                 <br />
-                <asp:Button runat="server" ID="Button3" Text="接受" Font-Names="微軟正黑體" Font-Size="12" Font-Bold="true" OnClick="yes_Click" />
-                <asp:Button runat="server" ID="Button4" Text="拒絕" Font-Names="微軟正黑體" Font-Size="12" Font-Bold="true" />
+                <asp:Button runat="server" ID="Button3" Text="接受" Font-Names="微軟正黑體" Font-Size="12" Font-Bold="true" OnClick="yes2_Click" />
+                <asp:Button runat="server" ID="Button4" Text="拒絕" Font-Names="微軟正黑體" Font-Size="12" Font-Bold="true" OnClick="no2_Click" />
 			</asp:Panel>
                  <asp:Panel ID="Panel3" runat="server" HorizontalAlign="Center"  BackColor="#EFEFEF" Visible="false">
 				<asp:Label runat="server" ID="Label5" Text="邀請來自:" Font-Names="微軟正黑體" Font-Size="25" Font-Bold="true" ForeColor="#0000EF"></asp:Label>
                 <asp:Label runat="server" ID="Label6" Text="XXX" Font-Names="微軟正黑體" Font-Size="25" Font-Bold="true" ForeColor="#ff0000"></asp:Label>
                 <br />
-                <asp:Button runat="server" ID="Button5" Text="接受" Font-Names="微軟正黑體" Font-Size="12" Font-Bold="true" OnClick="yes_Click" />
-                <asp:Button runat="server" ID="Button6" Text="拒絕" Font-Names="微軟正黑體" Font-Size="12" Font-Bold="true" />
+                <asp:Button runat="server" ID="Button5" Text="接受" Font-Names="微軟正黑體" Font-Size="12" Font-Bold="true" OnClick="yes3_Click" />
+                <asp:Button runat="server" ID="Button6" Text="拒絕" Font-Names="微軟正黑體" Font-Size="12" Font-Bold="true" OnClick="no3_Click"/>
 			</asp:Panel>
                 </div>        
             <br />  

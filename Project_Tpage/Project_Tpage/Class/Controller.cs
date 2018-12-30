@@ -64,6 +64,8 @@ namespace Project_Tpage.Class
                 (p as Home).DoSearch += HomeState_DoSearch;
                 (p as Home).DoCard += HomeState_DoCard;
                 (p as Home).DoStyle += HomeState_DoStyle;
+                (p as Home).DoStyle += HomeState_Doinvite;
+                (p as Home).DoStyle += HomeState_ToSetBoard;
             }
             else if (p is WebPage.Board)        //  Board State
             {
@@ -219,9 +221,16 @@ namespace Project_Tpage.Class
         {
             opt = model.RequestPageData(StateEnum.Home, e.data);
         }
-
-        //  Board State
-        public void BoardState_ToArticle(ViewEventArgs e, out DAT opt)
+        public void HomeState_ToSetBoard(ViewEventArgs e, out DAT opt)
+        {
+            opt = model.RequestPageData(StateEnum.Home, e.data);
+       }
+        public void HomeState_Doinvite(ViewEventArgs e, out DAT opt)
+        {
+            opt = model.RequestPageData(StateEnum.Home, e.data);
+        }
+//  Board State
+public void BoardState_ToArticle(ViewEventArgs e, out DAT opt)
         {
             opt = model.RequestPageData(StateEnum.Article, e.data);
         }

@@ -11,9 +11,9 @@
     <form id="form1" runat="server">
         <center>
             <asp:Label ID="Title" runat="server" Width="650" Height="75" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="XX-Large" Text="看板名稱" />
-            <asp:ImageButton ID="Follow" runat="server" Height="30"  ImageUrl="./pictures/UnFollow.jpg" /><br/>
-
-            <asp:ListBox ID="ListOfArticle" runat="server" Font-Size="X-Large" AutoPostBack="true" Width="700" Rows="10"  OnSelectedIndexChanged="SelectArticle" >
+            <asp:ImageButton ID="Follow" runat="server" Height="30"  ImageUrl="./pictures/UnFollow.jpg" OnClick="follow_click" /><br/>
+            <asp:Button ID="btnarticle" runat="server"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="XX-Large" Width="75" Height="75" BorderStyle="None" Text="進入" OnClick="btnarticle_Click"/>
+            <asp:ListBox ID="ListOfArticle" runat="server" Font-Size="X-Large" AutoPostBack="false" Width="700" Rows="10"  OnSelectedIndexChanged="SelectArticle" >
                 <asp:ListItem>aaa</asp:ListItem>
                 <asp:ListItem>bbb</asp:ListItem>
                 <asp:ListItem>ccc</asp:ListItem>

@@ -32,50 +32,122 @@ namespace Project_Tpage.WebPage
         /// </summary>
         public DAT optDAT;
 
+        private User user;
+        private Class.Board board;
         // 資料庫在這邊給資料。顯示於listbox
         protected void Page_Load(object sender, EventArgs e)
         {
+            //在登入頁面，未初始化Controller的情況，初始化Controller
+            if (!Controller.IsConstrut)
+                Controller.Initial(StateEnum.Login);
+
+
+            //讓Controller內的function訂閱這個頁面上的事件。
+            //Do this in each Page_Load()
+            Controller.controller.SubsribeEvent(this);
+
+            ListOfArticle.Items.Clear();
+            board=Controller.CrossPageDAT["Board"] as Class.Board;
+            user = Controller.CrossPageDAT["User"] as User;
+            
+            Title.Text=board.Name;
+            List<Class.Article> list;
+            list = new List<Class.Article>();
+            list.Clear();
+            list=Controller.model.GetArticlesOfBoard(board.BID);   
+            foreach (Class.Article element in list)
+            {
+                ListOfArticle.Items.Add(new ListItem(element.Title, element.AID));
+            }
+
+            btnarticle.Style.Add("position", "absolute");
+            btnarticle.Style.Add("top", "220px");
+            btnarticle.Style.Add("left", "15%");
+
+
 
         }
-
+       
         // 選擇要看文章
         protected void SelectArticle(object sender, EventArgs e)
         {
-
+           //不做事
         }
 
-        // 返回看板
+        // 返回首頁
         protected void btnBack_Click(object sender, EventArgs e)
         {
-
- 
+            ToBack(new ViewEventArgs(this),out optDAT);
+           
         }
-
+       
+        protected void follow_click(object sender, EventArgs e)
+        {
+            DAT dat = new DAT();
+            dat["ID"] = user.Name;
+            DoFollow(new ViewEventArgs(dat, this), out optDAT);
+        }
         // 發新文章
         protected void btnPo_Click(object sender, EventArgs e)
         {
-
+            ToEditor(new ViewEventArgs(this), out optDAT);
+            
         }
 
         //  刪除成員(版主or管理者) Info 回傳到 peopleInfo
         protected void btnDel_Click(object sender, EventArgs e)
         {
-
+            DAT dat = new DAT();
+            dat["ID"]=peopleText.Text;
+            DoDelPeople(new ViewEventArgs(dat,this),out optDAT);
+            peopleInfo.Text = optDAT[""] as string;
+           
         }
         //  邀請成為管理者(版主or管理者) Info 回傳到 peopleInfo
         protected void btnAdmin_Click(object sender, EventArgs e)
         {
-
+            DAT dat = new DAT();
+            dat["ID"] = peopleText.Text;
+            DoAdmin(new ViewEventArgs(dat, this), out optDAT);
+            peopleInfo.Text = optDAT[""] as string;
         }
         //  邀請加入(版主or管理者) Info 回傳到 peopleInfo
         protected void btnInvite_Click(object sender, EventArgs e)
         {
-
+            DAT dat = new DAT();
+            dat["ID"] = peopleText.Text;
+            DoInvite(new ViewEventArgs(dat, this), out optDAT);
+            peopleInfo.Text = optDAT[""] as string;
         }
         // 刪除看板(僅限版主)
         protected void btnDelBoard_Click(object sender, EventArgs e)
         {
-
+            bool can = false;
+            List<string> admin;
+            admin = new List<string>();
+            admin.Clear();
+            admin=board.Admin;
+            foreach(string element in admin)
+            {
+                if (element == user.Name)
+                {
+                    can = true;
+                    break;
+                }
+            }
+            if (can)
+            { DoDelBoard(new ViewEventArgs(this), out optDAT); }
+           
+        }
+        //進入文章
+        protected void btnarticle_Click(object sender, EventArgs e)
+        {
+            DAT dat = new DAT();
+            dat["Value"] = ListOfArticle.SelectedItem.Value;
+            
+            //引發事件，取得輸出結果在optDAT裡。
+            ToArticle(new ViewEventArgs(dat, this), out optDAT);
+           
         }
     }
 }
