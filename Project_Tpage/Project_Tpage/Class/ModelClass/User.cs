@@ -217,10 +217,6 @@ namespace Project_Tpage.Class
         /// </summary>
         public List<User> FriendRequestQueue { get; set; }
         /// <summary>
-        /// 使用者所在的團體。
-        /// </summary>
-        public List<RelationshipGroup> Groups { get; set; }
-        /// <summary>
         /// 台科幣的存量。
         /// </summary>
         public int TbitCoin { get; set; }
@@ -242,61 +238,12 @@ namespace Project_Tpage.Class
             }
         }
 
-        public Dictionary<string, string> FollowBoardQueue { get; set; }
+        public List<string> FollowBoardQueue { get; set; }
 
         public List<string> FollowBoard { get; set; }
 
+        public string MyBoard { get; set; }
 
-        /// <summary>
-        /// 外部使用者要求申請加此使用者為朋友所叫用的方法。將要求的使用者加入要求佇列。
-        /// </summary>
-        /// <param name="usr">要求的使用者。</param>
-        public void Friend_Add(User usr)
-        {
-            if (Friends.Members.Contains(usr.Userinfo.UID))
-                throw new ModelException(
-                    ModelException.Error.AddFriendFail,
-                    "User類別－Friend_Add()發生例外：該使用者已為朋友。",
-                    "你已經是他的朋友！");
-            else if(FriendRequestQueue.Contains(usr))
-                throw new ModelException(
-                    ModelException.Error.AddFriendFail,
-                    "User類別－Friend_Add()發生例外：使用者已存在於要求佇列。",
-                    "你已經申請加入朋友！");
-            else
-            {
-                FriendRequestQueue.Add(usr);
-                Model.DB.Set<User>(this);
-
-            }
-        }
-        /// <summary>
-        /// 此使用者允許將一位使用者加為好友。並移出要求佇列。
-        /// </summary>
-        /// <param name="usr">允許的使用者。</param>
-        public void Friend_AllowAdd(User usr)
-        {
-            if (FriendRequestQueue.Contains(usr)) FriendRequestQueue.Remove(usr);
-
-            Friends.Member_Add(usr.Userinfo.UID);
-            Model.DB.Set<User>(this);
-
-            usr.Friends.Member_Add(Userinfo.UID);
-            Model.DB.Set<User>(usr);
-        }
-
-        public void BoardFollow_Add(string sender, string board)
-        {
-            if (FollowBoardQueue.Where(x => x.Key == sender && x.Value == board).Count() > 0) return;
-
-            FollowBoardQueue.Add(sender, board);
-            Model.DB.Set<User>(this);
-        }
-
-        public void BoardFollow_AllowAdd(string sender, string board)
-        {
-            //if(FollowBoardQueue.re)
-        }
 
 
         /// <summary>
@@ -400,14 +347,14 @@ namespace Project_Tpage.Class
             Userinfo = UserInfo.New;
 
             Userinfo.UID = null;
+            MyBoard = null;
             
             Friends = new FriendGroup();
             FriendRequestQueue = new List<User>();
 
-            Groups = new List<RelationshipGroup>();
 
             FollowBoard = new List<string>();
-            FollowBoardQueue = new Dictionary<string, string>();
+            FollowBoardQueue = new List<string>();
 
             TbitCoin = 0;
             LastComputeTbit = new DateTime(DateTime.Now.Ticks);
@@ -428,7 +375,7 @@ namespace Project_Tpage.Class
                 Userinfo.ClassName = Model.DB.AnlType<string>(dr["ClassName"]);
                 Userinfo.Realname = Model.DB.AnlType<string>(dr["Realname"]);
                 Usersetting.Userprivacy = Model.DB.AnlType<UserPrivacy>(dr["UserPrivacy"]);
-                Usersetting.Viewstyle = Model.DB.AnlType<int>(dr["Viewstyle"]);
+                Usersetting.Viewstyle = Model.DB.AnlType<byte>(dr["Viewstyle"]);
 
                 Userinfo.Nickname = Model.DB.AnlType<string>(dr["Nickname"]);
                 Userinfo.Gender = Model.DB.AnlType<Gender>(dr["Gender"]);
@@ -443,22 +390,10 @@ namespace Project_Tpage.Class
                 Friends.Member_SetAll(Model.DB.AnlType<List<string>>(dr["Friend"]));
 
                 FollowBoard = Model.DB.AnlType<List<string>>(dr["FollowBoard"]);
-                FollowBoardQueue = Model.DB.AnlType<Dictionary<string, string>>(dr["FollowBoardQueue"]);
+                FollowBoardQueue = Model.DB.AnlType<List<string>>(dr["FollowBoardQueue"]);
 
+                MyBoard = Model.DB.AnlType<string>(dr["MyBoard"]);
 
-                List<string> ClassGroupLs = Model.DB.AnlType<List<string>>(dr["ClassGroup"]);
-                List<string> FamilyGroupLs = Model.DB.AnlType<List<string>>(dr["FamilyGroup"]);
-
-                if (ClassGroupLs == null && FamilyGroupLs == null)
-                    Groups = null;
-                else if (ClassGroupLs == null)
-                    Groups = FamilyGroupLs.Select(x => (RelationshipGroup)Model.DB.Get<FamilyGroup>(x)).ToList();
-                else if (FamilyGroupLs == null)
-                    Groups = ClassGroupLs.Select(x => (RelationshipGroup)Model.DB.Get<ClassGroup>(x)).ToList();
-                else
-                    Groups = Enumerable.Concat(
-                    ClassGroupLs.Select(x => (RelationshipGroup)Model.DB.Get<FamilyGroup>(x)),
-                    FamilyGroupLs.Select(x => (RelationshipGroup)Model.DB.Get<ClassGroup>(x))).ToList();
             }
             catch (Exception e)
             {

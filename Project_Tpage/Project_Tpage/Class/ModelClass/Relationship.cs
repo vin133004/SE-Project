@@ -9,28 +9,13 @@ using System.Data.SqlClient;
 namespace Project_Tpage.Class
 {
     /// <summary>
-    /// 代表一個看板版主的資訊，包含版主UID以及看板名稱。
-    /// </summary>
-    public class BoardAdminPair
-    {
-        public string Admin { get; }
-        public string Board { get; }
-
-        public static BoardAdminPair New(string s, string ss)
-        {
-            return new BoardAdminPair(s, ss);
-        }
-        public BoardAdminPair(string s, string ss) { Admin = s; Board = ss; }
-    }
-
-    /// <summary>
     /// 代表一個社交關係的群集。
     /// </summary>
     public interface IRelationship
     {
         List<string> Members { get; set; }
     }
-
+    /*
     /// <summary>
     /// 代表一個班級團體。
     /// </summary>
@@ -406,6 +391,8 @@ namespace Project_Tpage.Class
             BoardRequestQueue = new List<string>();
         }
     }
+    */
+
 
     /// <summary>
     /// 一個朋友圈的集合。
@@ -515,35 +502,35 @@ namespace Project_Tpage.Class
 
     public class Board
     {
-        public string Name { get; set; }
+        public string PrivateMaster { get; }
 
         public string BID { get; set; }
 
-        public bool IsPublic { get; }
-        public string PrivateMaster { get; }
+        public string Name { get; set; }
+
+        public bool IsPublic { get; set; }
 
         public List<string> Admin { get; set; }
 
 
 
 
-        public static Board NewPublic(string master = "")
+        public static Board New(string master)
         {
-            Board rtn = master == "" ? new Board() : new Board(master);
+            Board rtn = new Board(master);
             rtn.Name = "看板名稱";
+            rtn.IsPublic = true;
             rtn.BID = null;
             rtn.Admin = new List<string>();
-            if (!rtn.IsPublic) rtn.Admin.Add(rtn.PrivateMaster);
+            rtn.Admin.Add(rtn.PrivateMaster);
 
             return rtn;          
         }
 
         public static Board Inst(DataRow dr)
         {
-            Board rtn = Model.DB.AnlType<bool>(dr["IsPublic"]) ?
-                new Board() :
-                new Board(Model.DB.AnlType<string>(dr["PrivateMaster"])) ;
-
+            Board rtn = new Board(Model.DB.AnlType<string>(dr["PrivateMaster"]));
+            rtn.IsPublic = Model.DB.AnlType<bool>(dr["IsPublic"]);
             rtn.BID = Model.DB.AnlType<string>(dr["BID"]);
             rtn.Name = Model.DB.AnlType<string>(dr["Name"]);
             rtn.Admin = Model.DB.AnlType<List<string>>(dr["Admin"]);
@@ -551,18 +538,9 @@ namespace Project_Tpage.Class
             return rtn;
         }
 
-        private Board(string master = "")
+        private Board(string master)
         {
-            if (master == "")
-            {
-                IsPublic = true;
-                PrivateMaster = null;
-            }
-            else
-            {
-                IsPublic = false;
-                PrivateMaster = master;
-            }
+            PrivateMaster = master;
         }
     }
 }

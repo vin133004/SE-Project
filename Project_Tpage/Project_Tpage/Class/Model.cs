@@ -160,9 +160,9 @@ namespace Project_Tpage.Class
             /// </summary>
             LoginFailed =                   2006,
             /// <summary>
-            /// 申請看板失敗。
+            /// 邀請追隨看板失敗。
             /// </summary>
-            ApplyForBoardFail =             2007,
+            InviteFollowBaordFail =         2007,
 
 
             //(錯誤代號:3000)資料結構錯誤
@@ -253,6 +253,7 @@ namespace Project_Tpage.Class
 
 
 
+
         /// <summary>
         /// 註冊帳號。註冊成功時回傳空字串。否則回傳錯誤訊息。
         /// </summary>
@@ -335,70 +336,6 @@ namespace Project_Tpage.Class
             DB.Set<User>(user);
         }
         /// <summary>
-        /// 創立班級團體。
-        /// </summary>
-        /// <param name="p_ClassName">班級。</param>
-        /// <param name="p_GroupName">團體名稱。</param>
-        public void CreateClass(string p_ClassName, string p_GroupName)
-        {
-            if (DB.IsExist(DB.DB_ClassGroupData_TableName, "ClassName", p_ClassName))
-                throw new ModelException(
-                    ModelException.Error.CreateGroupFail,
-                    "Model類別－CreateClass()發生例外：此班級已存在。",
-                    "班級已存在");
-            else if (DB.IsExist(DB.DB_ClassGroupData_TableName, "GroupName", p_GroupName))
-                throw new ModelException(
-                    ModelException.Error.CreateGroupFail,
-                    "Model類別－CreateClass()發生例外：班級團體名稱已被使用。",
-                    "班級團體名稱已被使用");
-            else if (user.Userinfo.ClassName != p_ClassName)
-                throw new ModelException(
-                    ModelException.Error.CreateGroupFail,
-                    "Model類別－CreateClass()發生例外：不得創立非自己班級的班級團體。",
-                    "不得創立非自己班級的班級團體。");
-            else
-            {
-                ClassGroup cg = new ClassGroup();
-                cg.ClassName = p_ClassName;
-                cg.Groupname = p_GroupName;
-
-                cg.Members_AllowAdd(user.Userinfo.UID);
-                cg.Admin.Add(user.Userinfo.UID);
-
-                DB.Set<ClassGroup>(cg);
-
-                user.Groups.Add(cg);
-
-                DB.Set<User>(user);
-            }
-        }
-        /// <summary>
-        /// 創立家族團體。
-        /// </summary>
-        /// <param name="p_GroupName">團體名稱。</param>
-        public void CreateFamily(string p_GroupName)
-        {
-            if (DB.IsExist(DB.DB_FamilyGroupData_TableName, "GroupName", p_GroupName))
-                throw new ModelException(
-                    ModelException.Error.CreateGroupFail,
-                    "Model類別－CreateFamily()發生例外：家族團體名稱已被使用。",
-                    "家族團體名稱已被使用");
-            else
-            {
-                FamilyGroup fg = new FamilyGroup();
-                fg.Groupname = p_GroupName;
-
-                fg.Members_AllowAdd(user.Userinfo.UID);
-                fg.Admin.Add(user.Userinfo.UID);
-
-                DB.Set<FamilyGroup>(fg);
-
-                user.Groups.Add(fg);
-
-                DB.Set<User>(user);
-            }
-        }
-        /// <summary>
         /// 使用者發布文章。
         /// </summary>
         /// <param name="p_User">發文者識別碼。</param>
@@ -425,99 +362,313 @@ namespace Project_Tpage.Class
             DB.Set<AMessage>(ame);
         }
 
+
+
         /// <summary>
-        /// 判斷一個使用者是否為一個家族團體的管理者。
+        /// 使用者要求申請加另一使用者為朋友。將要求的使用者加入要求佇列。
         /// </summary>
-        /// <param name="Family_GID">家族團體識別碼。</param>
-        /// <param name="UID">使用者識別碼。</param>
-        /// <returns></returns>
-        public bool IsAdmin_Family(string Family_GID, string UID)
+        /// <param name="sender">發送邀請者。</param>
+        /// <param name="reciever">接受邀請者。</param>
+        public void Friend_Add(User sender, User reciever)
         {
-            return DB.Get<FamilyGroup>(Family_GID).Admin.Contains(UID);
+            if (reciever.Friends.Members.Contains(sender.Userinfo.UID))
+                throw new ModelException(
+                    ModelException.Error.AddFriendFail,
+                    "User類別－Friend_Add()發生例外：該使用者已為朋友。",
+                    "你已經是他的朋友！");
+            else if (reciever.FriendRequestQueue.Contains(sender))
+                throw new ModelException(
+                    ModelException.Error.AddFriendFail,
+                    "User類別－Friend_Add()發生例外：使用者已存在於要求佇列。",
+                    "你已經申請加入朋友！");
+            else
+            {
+                reciever.FriendRequestQueue.Add(sender);
+                DB.Set<User>(reciever);
+
+            }
         }
         /// <summary>
-        /// 判斷一個使用者是否為一個家族團體的成員。
+        /// 此使用者允許將一位使用者加為好友。並移出要求佇列。
         /// </summary>
-        /// <param name="Family_GID">家族團體識別碼。</param>
-        /// <param name="UID">使用者識別碼。</param>
-        /// <returns></returns>
-        public bool IsMember_Family(string Family_GID, string UID)
+        /// <param name="sneder">發送邀請者。</param>
+        /// <param name="reciever">接受邀請者。</param>
+        public void Friend_AllowAdd(User sender, User reciever)
         {
-            return DB.Get<FamilyGroup>(Family_GID).Members.Contains(UID);
+            if (reciever.FriendRequestQueue.Contains(sender)) reciever.FriendRequestQueue.Remove(sender);
+
+            if (!reciever.Friends.Members.Contains(sender.Userinfo.UID))
+            {
+                reciever.Friends.Member_Add(sender.Userinfo.UID);
+            }
+            DB.Set<User>(reciever);
+
+
+            if (!sender.Friends.Members.Contains(reciever.Userinfo.UID))
+            {
+                sender.Friends.Member_Add(reciever.Userinfo.UID);
+                DB.Set<User>(sender);
+            }
         }
         /// <summary>
-        /// 判斷一個使用者是否為一個家族團體看板的版主。
+        /// 邀請此使用者追隨指定看板。
         /// </summary>
-        /// <param name="Family_GID">家族團體識別碼。</param>
-        /// <param name="board">看板名稱。</param>
-        /// <param name="UID">使用者識別碼。</param>
-        /// <returns></returns>
-        public bool IsBoardAdmin_Family(string Family_GID, string board, string UID)
+        /// <param name="usr">邀請的使用者。</param>
+        /// <param name="sender">邀請者使用者識別碼。</param>
+        /// <param name="board">看板識別碼。</param>
+        public void BoardFollow_Add(User usr, string sender, string board)
         {
-            return DB.Get<FamilyGroup>(Family_GID).BoardAdmin.Where(x => x.Board == board && x.Admin == UID).Count() > 0;
+            if (usr.FollowBoard.Contains(board))
+                throw new ModelException(
+                    ModelException.Error.InviteFollowBaordFail,
+                    "User類別－BoardFollow_Add(string, string)發生例外：此使用者以追隨此看板。",
+                    "已追隨看板。");
+            else if (usr.FollowBoardQueue.Contains(sender + "@" + board))
+                throw new ModelException(
+                    ModelException.Error.InviteFollowBaordFail,
+                    "User類別－BoardFollow_Add(string, string)發生例外：已存在於要求佇列內。",
+                    "你已邀請追隨看板，等候接受。");
+            else
+            {
+                usr.FollowBoardQueue.Add(sender + "@" + board);
+                DB.Set<User>(usr);
+            }
         }
         /// <summary>
-        /// 判斷一個使用者是否為一個班級團體的管理者。
+        /// 使用者接受一個追隨看板的邀請。非此使用者勿叫用這個方法，使用BoardFollow_Add將邀請加入佇列。
         /// </summary>
-        /// <param name="Family_GID">班級團體識別碼。</param>
-        /// <param name="UID">使用者識別碼。</param>
-        /// <returns></returns>
-        public bool IsAdmin_Class(string Class_GID, string UID)
+        /// <param name="usr">受邀的使用者</param>
+        /// <param name="sender">邀請者使用者識別碼。</param>
+        /// <param name="board">看板識別碼。</param>
+        public void BoardFollow_AllowAdd(User usr, string sender, string board)
         {
-            return DB.Get<ClassGroup>(Class_GID).Admin.Contains(UID);
+            try
+            {
+                usr.FollowBoardQueue.RemoveAll(x => x.Split('@')[1] == board);
+            }
+            catch (IndexOutOfRangeException)
+            {
+                usr.FollowBoardQueue.RemoveAll(x => !x.Contains("@"));
+                usr.FollowBoardQueue.RemoveAll(x => x.Split('@')[1] == board);
+            }
+
+            if (!usr.FollowBoard.Contains(board))
+                usr.FollowBoard.Add(board);
+            DB.Set<User>(usr);
         }
         /// <summary>
-        /// 判斷一個使用者是否為一個班級團體的成員。
+        /// 一個使用者直接追隨一個看板。
         /// </summary>
-        /// <param name="Class_GID">班級團體識別碼。</param>
-        /// <param name="UID">使用者識別碼。</param>
-        /// <returns></returns>
-        public bool IsMember_Class(string Class_GID, string UID)
+        /// <param name="usr">目標使用者。</param>
+        /// <param name="p_BID">目標看板識別碼。</param>
+        public void BoardFollow_Follow(User usr, string p_BID)
         {
-            return DB.Get<ClassGroup>(Class_GID).Members.Contains(UID);
+            if (!usr.FollowBoard.Contains(p_BID))
+                usr.FollowBoard.Add(p_BID);
+            DB.Set<User>(usr);
         }
         /// <summary>
-        /// 判斷一個使用者是否為一個家族團體看板的版主。
+        /// 看板管理者將一個使用者從此看板中移除(撤銷他的追隨)。
         /// </summary>
-        /// <param name="Class_GID">班級團體識別碼。</param>
-        /// <param name="board">看板名稱。</param>
-        /// <param name="UID">使用者識別碼。</param>
-        /// <returns></returns>
-        public bool IsBoardAdmin_Class(string Class_GID, string board, string UID)
+        /// <param name="brd">目標看板。</param>
+        /// <param name="usr">要移除的使用者。</param>
+        public void RemoveAFollowedUser(Board brd, User usr)
         {
-            return DB.Get<ClassGroup>(Class_GID).BoardAdmin.Where(x => x.Board == board && x.Admin == UID).Count() > 0;
+            usr.FollowBoard.Remove(brd.BID);
+            DB.Set<User>(usr);
         }
         /// <summary>
-        /// 判斷一個團體是班級還是家族。非團體回傳0。班級團體回傳1。家族團體回傳2。
+        /// 將一名看板成員晉升為管理員。若傳入的使用者參數並非此看板成員，不會執行。
         /// </summary>
-        /// <param name="obj">判斷的物件。</param>
-        /// <returns></returns>
-        public int IsClassOrFamily(object obj)
+        /// <param name="brd">目標看板。</param>
+        /// <param name="uid">目標使用者識別碼。</param>
+        public void Admin_Add(Board brd, string uid)
         {
-            if (!(obj is RelationshipGroup)) return 0;
-            else if (obj is ClassGroup) return 1;
-            else return 2;
+            if (!IsMemberOfBaord(brd, uid) || brd.Admin.Contains(uid)) return;
+
+            brd.Admin.Add(uid);
+            DB.Set<Board>(brd);
+        }
+        /// <summary>
+        /// 將一名成員撤銷掉看板管理員。若傳入的使用者參數並非此團體成員，不會執行。
+        /// </summary>
+        /// <param name="brd">目標看板</param>
+        /// <param name="uid">目標使用者識別碼。</param>
+        public void Admin_Remove(Board brd, string uid)
+        {
+            int indx = brd.Admin.IndexOf(uid);
+            if (indx == -1) return;
+
+            brd.Admin.RemoveAt(indx);
+            DB.Set<Board>(brd);
+        }
+        /// <summary>
+        /// 新增一個看板。
+        /// </summary>
+        /// <param name="master">創建者使用者識別碼。</param>
+        /// <param name="name">看板名稱。</param>
+        public void Board_New(string master, string name)
+        {
+            Board brd = Board.New(master);
+            brd.Name = name;
+
+            DB.Set<Board>(brd);
+        }
+        /// <summary>
+        /// 將一個看板從資料庫中刪除。
+        /// </summary>
+        /// <param name="bid">看板識別碼。</param>
+        public void Board_Remove(string bid)
+        {
+            DB.Remove<Board>(bid);
+        }
+        /// <summary>
+        /// 修改一個看板的名稱或公開設定。
+        /// </summary>
+        /// <param name="p_BID_old">目標看板識別碼。</param>
+        /// <param name="newname">新的看板名稱。</param>
+        /// <param name="newIspublic">新的公開設定。</param>
+        public void Board_Modify(string p_BID_old, string newname, bool newIspublic)
+        {
+            Board brd = DB.Get<Board>(p_BID_old);
+            brd.Name = newname;
+            brd.IsPublic = newIspublic;
+            DB.Set<Board>(brd);
+        }
+
+
+        /// <summary>
+        /// 判斷一個使用者是否為目標看板的板主。(+2多載)
+        /// </summary>
+        /// <param name="p_BID">目標看板識別碼。</param>
+        /// <param name="p_UID">使用者識別碼。</param>
+        /// <returns></returns>
+        public bool IsBoardMaster(string p_BID, string p_UID)
+        {
+            return DB.Get<Board>(p_BID).PrivateMaster.Equals(p_UID);
+        }
+        /// <summary>
+        /// 判斷一個使用者是否為目標看板的板主。(+2多載)
+        /// </summary>
+        /// <param name="brd">目標看板。</param>
+        /// <param name="p_UID">使用者識別碼。</param>
+        /// <returns></returns>
+        public bool IsBoardMaster(Board brd, string p_UID)
+        {
+            return brd.PrivateMaster.Equals(p_UID);
+        }
+        /// <summary>
+        /// 判斷一個使用者是否為此看板的管理者。(+2多載)
+        /// </summary>
+        /// <param name="p_BID">看板識別碼。</param>
+        /// <param name="p_UID">使用者識別碼。</param>
+        /// <returns></returns>
+        public bool IsBoardAdmin(string p_BID, string p_UID)
+        {
+            return DB.Get<Board>(p_BID).Admin.Contains(p_UID);
+        }
+        /// <summary>
+        /// 判斷一個使用者是否為此看板的管理者。(+2多載)
+        /// </summary>
+        /// <param name="brd">看板物件。</param>
+        /// <param name="p_UID">使用者識別碼。</param>
+        /// <returns></returns>
+        public bool IsBoardAdmin(Board brd, string p_UID)
+        {
+            return brd.Admin.Contains(p_UID);
+        }
+        /// <summary>
+        /// 判斷一個使用者是否為看板的成員(使用者是否追隨此看板)。(+4多載)
+        /// </summary>
+        /// <param name="p_BID">看板識別碼。</param>
+        /// <param name="p_UID">使用者識別碼。</param>
+        /// <returns></returns>
+        public bool IsMemberOfBaord(string p_BID, string p_UID)
+        {
+            return DB.Get<User>(p_UID).FollowBoard.Contains(p_BID);
+        }
+        /// <summary>
+        /// 判斷一個使用者是否為看板的成員(使用者是否追隨此看板)。(+4多載)
+        /// </summary>
+        /// <param name="brd">看板物件。</param>
+        /// <param name="p_UID">使用者識別碼。</param>
+        /// <returns></returns>
+        public bool IsMemberOfBaord(Board brd, string p_UID)
+        {
+            return DB.Get<User>(p_UID).FollowBoard.Contains(brd.BID);
+        }
+        /// <summary>
+        /// 判斷一個使用者是否為看板的成員(使用者是否追隨此看板)。(+4多載)
+        /// </summary>
+        /// <param name="p_BID">看板識別碼。</param>
+        /// <param name="usr">使用者物件。</param>
+        /// <returns></returns>
+        public bool IsMemberOfBaord(string p_BID, User usr)
+        {
+            return usr.FollowBoard.Contains(p_BID);
+        }
+        /// <summary>
+        /// 判斷一個使用者是否為看板的成員(使用者是否追隨此看板)。(+4多載)
+        /// </summary>
+        /// <param name="brd">看板物件。</param>
+        /// <param name="usr">使用者物件。</param>
+        /// <returns></returns>
+        public bool IsMemberOfBaord(Board brd, User usr)
+        {
+            return usr.FollowBoard.Contains(brd.BID);
+        }
+        /// <summary>
+        /// 判斷一個使用者是否擁有此看板的觀看權。(+4多載)
+        /// </summary>
+        /// <param name="p_BID">看板識別碼。</param>
+        /// <param name="p_UID">使用者識別碼。</param>
+        /// <returns></returns>
+        public bool IsVisibleOnBoard(string p_BID, string p_UID)
+        {
+            return DB.Get<Board>(p_BID).IsPublic || DB.Get<User>(p_UID).FollowBoard.Contains(p_BID);
+        }
+        /// <summary>
+        /// 判斷一個使用者是否擁有此看板的觀看權。(+4多載)
+        /// </summary>
+        /// <param name="brd">看板物件。</param>
+        /// <param name="p_UID">使用者識別碼。</param>
+        /// <returns></returns>
+        public bool IsVisibleOnBoard(Board brd, string p_UID)
+        {
+            return brd.IsPublic || DB.Get<User>(p_UID).FollowBoard.Contains(brd.BID);
+        }
+        /// <summary>
+        /// 判斷一個使用者是否擁有此看板的觀看權。(+4多載)
+        /// </summary>
+        /// <param name="p_BID">看板識別碼。</param>
+        /// <param name="usr">使用者物件。</param>
+        /// <returns></returns>
+        public bool IsVisibleOnBoard(string p_BID, User usr)
+        {
+            return DB.Get<Board>(p_BID).IsPublic || usr.FollowBoard.Contains(p_BID);
+        }
+        /// <summary>
+        /// 判斷一個使用者是否擁有此看板的觀看權。(+4多載)
+        /// </summary>
+        /// <param name="brd">看板物件。</param>
+        /// <param name="usr">使用者物件。</param>
+        /// <returns></returns>
+        public bool IsVisibleOnBoard(Board brd, User usr)
+        {
+            return brd.IsPublic || usr.FollowBoard.Contains(brd.BID);
         }
 
         /// <summary>
-        /// 取得特定的團體的文章。
+        /// 取得特定看板的使用者。
         /// </summary>
-        /// <param name="p_Group">團體識別碼。</param>
+        /// <param name="p_BID">指定看板。</param>
         /// <returns></returns>
-        private List<Article> GetArticlesFromGroup(string p_Group)
+        public List<User> GetUserOfBoard(string p_BID)
         {
-            List<Article> rtn;
-            using (DataTable dt = DB.GetSqlData("SELECT * FROM " + DB.DB_ArticleData_TableName))
-            {
-                rtn = Enumerable.Cast<DataRow>(dt.Rows).Where(x => (string)x["OfGroup"] == p_Group)
-                    .Select(y => new Article(y)).ToList();
-            }
-            rtn.Sort(
-                delegate (Article a1, Article a2)
-                {
-                    return -DateTime.Compare(a1.Date, a2.Date);
-                });
-            return rtn;
+            return Enumerable.Cast<DataRow>
+                (DB.GetSqlData(string.Format("SELECT * FROM {0}", DB.DB_UserData_TableName)).Rows)
+                .Where(x => DB.AnlType<List<string>>(x["FollowBoard"]).Contains(p_BID))
+                .Select(x => new User(x)).ToList();
         }
         /// <summary>
         /// 取得特定看板的文章。
@@ -525,68 +676,29 @@ namespace Project_Tpage.Class
         /// <param name="p_Group">團體識別碼。</param>
         /// <param name="p_Board">看板名稱。</param>
         /// <returns></returns>
-        private List<Article> GetArticlesFromBoard(string p_Group, string p_Board)
+        public List<Article> GetArticlesOfBoard(string p_BID)
         {
-            List<Article> rtn;
-            using (DataTable dt = DB.GetSqlData("SELECT * FROM " + DB.DB_ArticleData_TableName))
-            {
-                rtn = Enumerable.Cast<DataRow>(dt.Rows).Where(x => (string)x["OfGroup"] == p_Group &&
-                (string)x["OfBoard"] == p_Board).Select(y => new Article(y)).ToList();
-            }
-            rtn.Sort(
-                delegate (Article a1, Article a2)
-                {
-                    return -DateTime.Compare(a1.Date, a2.Date);
-                });
-            return rtn;
+            return Enumerable.Cast<DataRow>
+                (DB.GetSqlData(string.Format("SELECT * FROM {0}", DB.DB_ArticleData_TableName)).Rows)
+                .Where(x => DB.AnlType<string>(x["OfBoard"]).Equals(p_BID))
+                .Select(x => new Article(x)).ToList();
         }
         /// <summary>
-        /// 取得目前使用者的動態頁面的內容，內容為該使用者的好友之發文與留言物件。
+        /// 取得指定使用者的使用者看板主要內容。
         /// </summary>
+        /// <param name="uid">指定使用者。</param>
         /// <returns></returns>
-        private List<object> GetDynamicPageContent()
+        public List<object> GetPersonalBoardContent(User usr)
         {
             List<Article> dr1;
-            using (DataTable dt = DB.GetSqlData("SELECT * FROM " + DB.DB_ArticleData_TableName))
-            {
-                dr1 = Enumerable.Cast<DataRow>(dt.Rows).Where(
-                    x => user.Friends.Members.Contains(x["ReleaseUser"])).Select(y => new Article(y)).ToList();
-            }
-            List<AMessage> dr2;
-            using (DataTable dt = DB.GetSqlData("SELECT * FROM " + DB.DB_AMessageData_TableName))
-            {
-                dr2 = Enumerable.Cast<DataRow>(dt.Rows).Where(
-                    x => user.Friends.Members.Contains(x["ReleaseUser"])).Select(y => new AMessage(y)).ToList();
-            }
-
-
-            List<object> rtn = dr1.Concat<object>(dr2).ToList();
-            rtn.Sort(
-                delegate (object dt1, object dt2)
-                {
-                    return -DateTime.Compare(
-                          dt1 is Article ? (dt1 as Article).Date : (dt1 as AMessage).Date
-                        , dt2 is Article ? (dt2 as Article).Date : (dt2 as AMessage).Date);
-                });
-
-            return rtn;
-        }
-        /// <summary>
-        /// 取得指定使用者的使用者頁面主要內容。
-        /// </summary>
-        /// <param name="uid">指定使用者識別碼。</param>
-        /// <returns></returns>
-        private List<object> GetUserPageContent(string uid)
-        {
-            List<Article> dr1;
-            using (DataTable dt = DB.GetSqlData(string.Format("SELECT * FROM " + DB.DB_ArticleData_TableName +
-                " WHERE ReleaseUser = '{0}'", uid)))
+            using (DataTable dt = DB.GetSqlData(string.Format("SELECT * FROM {0}" +
+                " WHERE ReleaseUser = '{1}'", DB.DB_ArticleData_TableName, usr.Userinfo.UID)))
             {
                 dr1 = Enumerable.Cast<DataRow>(dt.Rows).Select(y => new Article(y)).ToList();
             }
             List<AMessage> dr2;
-            using (DataTable dt = DB.GetSqlData(string.Format("SELECT * FROM " + DB.DB_AMessageData_TableName +
-                " WHERE ReleaseUser = '{0}'", uid)))
+            using (DataTable dt = DB.GetSqlData(string.Format("SELECT * FROM {0}" +
+                " WHERE ReleaseUser = '{1}'", DB.DB_AMessageData_TableName, usr.Userinfo.UID)))
             {
                 dr2 = Enumerable.Cast<DataRow>(dt.Rows).Select(y => new AMessage(y)).ToList();
             }
@@ -608,47 +720,25 @@ namespace Project_Tpage.Class
         /// </summary>
         /// <param name="blocks">指定廣告位置區塊。</param>
         /// <returns></returns>
-        private List<Advertise> GetAdForBlocks(List<int> blocks)
+        public List<Advertise> GetAdOfBlocks(List<int> blocks)
         {
             return Enumerable.Cast<DataRow>(
                 DB.GetSqlData(string.Format("SELECT * FROM {0}", DB.DB_AdvertiseData_TableName)).Rows)
                 .Where(x => blocks.Contains(DB.AnlType<int>(x["Location"])))
                 .Select(x => Advertise.Instance(x)).ToList();
         }
-
-
         /// <summary>
-        /// 根據團體名稱搜尋團體。
+        /// 根據看板名稱搜尋看板。
         /// </summary>
-        /// <param name="groupname">團體名稱。</param>
+        /// <param name="boardname">看板名稱。</param>
         /// <returns></returns>
-        private List<RelationshipGroup> GetGroupFromName(string groupname)
+        public List<Board> GetBoardFromName(string boardname)
         {
-            List<RelationshipGroup> rtn = new List<RelationshipGroup>();
-
-            List<string> temp1;
-            List<DataRow> temp;
-
-            temp = Enumerable.Cast<DataRow>(DB.GetSqlData(string.Format(
-            "SELECT GID, GroupName FROM {0}", DB.DB_ClassGroupData_TableName)).Rows).ToList();
-
-            temp1 = temp.Select(x => DB.AnlType<string>(x["GroupName"]).Contains(groupname)
-                ? DB.AnlType<string>(x["GID"]) : "").Where(x => x != "").ToList();
-
-            rtn.Concat(temp1.Select(x => (RelationshipGroup)DB.Get<ClassGroup>(x)));
-
-
-            temp = Enumerable.Cast<DataRow>(DB.GetSqlData(string.Format(
-            "SELECT GID, GroupName FROM {0}", DB.DB_FamilyGroupData_TableName)).Rows).ToList();
-
-            temp1 = temp.Select(x => DB.AnlType<string>(x["GroupName"]).Contains(groupname)
-                ? DB.AnlType<string>(x["GID"]) : "").Where(x => x != "").ToList();
-
-            rtn.Concat(temp1.Select(x => (RelationshipGroup)DB.Get<FamilyGroup>(x)));
-
-            return rtn;
+            return (from us in Enumerable.Cast<DataRow>(DB.GetSqlData(string.Format(
+                       "SELECT BID, Name FROM {0}", DB.DB_BoardData_TableName)).Rows)
+                    where DB.AnlType<string>(us["Name"]).Contains(boardname) 
+                    select DB.Get<Board>(DB.AnlType<string>(us["BID"]))).ToList();
         }
-
         /// <summary>
         /// 根據使用者名稱搜尋使用者。真實姓名或暱稱其中之一包含指定字串即回傳。
         /// </summary>
@@ -663,6 +753,8 @@ namespace Project_Tpage.Class
                     select DB.Get<User>(DB.AnlType<string>(us["UID"]))).ToList();
         }
 
+
+
         /// <summary>
         /// 在切換頁面時，向Model要求新的頁面資料。
         /// </summary>
@@ -676,59 +768,29 @@ namespace Project_Tpage.Class
             {
                 if (ToState == StateEnum.Home)
                 {
-                    opt["Content"] = GetDynamicPageContent();
-                    opt["User"] = user;
-
                     if (ipt.Keys.Contains("AdvertiseBlocks"))
-                        opt["Advertise"] = GetAdForBlocks(ipt["AdvertiseBlocks"] as List<int>);
+                        opt["Advertise"] = GetAdOfBlocks(ipt["AdvertiseBlocks"] as List<int>);
                 }
-                /*else if (ToState == StateEnum.UserPage)
-                {
-                    opt["Content"] = GetUserPageContent((string)ipt["UserUID"]);
-                    opt["User"] = DB.Get<User>(ipt["UID"] as string);
-
-                    if (ipt.Keys.Contains("AdvertiseBlocks"))
-                        opt["Advertise"] = GetAdForBlocks(ipt["AdvertiseBlocks"] as List<int>);
-                }
-                else if (ToState == StateEnum.Group)
-                {
-                    bool isClass = (bool)ipt["GroupType"];
-                    opt["Group"] = isClass ? (RelationshipGroup)DB.Get<ClassGroup>(ipt["GID"] as string)
-                        : DB.Get<FamilyGroup>(ipt["GID"] as string);
-                    opt["Content"] = GetArticlesFromGroup((string)ipt["GID"]);
-
-                    if (ipt.Keys.Contains("AdvertiseBlocks"))
-                        opt["Advertise"] = GetAdForBlocks(ipt["AdvertiseBlocks"] as List<int>);
-                }*/
                 else if (ToState == StateEnum.Board)
                 {
                     bool isClass = (bool)ipt["GroupType"];
 
-                    opt["Group"] = isClass ? (RelationshipGroup)DB.Get<ClassGroup>(ipt["GID"] as string)
-                        : DB.Get<FamilyGroup>(ipt["GID"] as string);
-                    opt["Content"] = GetArticlesFromBoard
-                        ((string)ipt["GID"], (string)ipt["Board"]);
                     opt["Board"] = ipt["Board"];
 
                     if (ipt.Keys.Contains("AdvertiseBlocks"))
-                        opt["Advertise"] = GetAdForBlocks(ipt["AdvertiseBlocks"] as List<int>);
+                        opt["Advertise"] = GetAdOfBlocks(ipt["AdvertiseBlocks"] as List<int>);
                 }
                 else if (ToState == StateEnum.Article)
                 {
                     opt["Content"] = DB.Get<Article>((string)ipt["AID"]);
 
                     if (ipt.Keys.Contains("AdvertiseBlocks"))
-                        opt["Advertise"] = GetAdForBlocks(ipt["AdvertiseBlocks"] as List<int>);
+                        opt["Advertise"] = GetAdOfBlocks(ipt["AdvertiseBlocks"] as List<int>);
                 }
                 else if (ToState == StateEnum.EditArticle)
                 {
                     opt["Content"] = DB.Get<Article>((string)ipt["AID"]);
                 }
-               /* else if (ToState == StateEnum.Setting)
-                {
-                    opt["Userinfo"] = user.Userinfo;
-                    opt["Usersetting"] = user.Usersetting;
-                }*/
                 else if (ToState == StateEnum.Login)
                 {
 
@@ -1075,18 +1137,6 @@ namespace Project_Tpage.Class
         /// <summary>
         /// 將指定型別資料解析為SQL字串的表示方式。
         /// </summary>
-        /// <param name="ls">看板版主資料對陣列格式。</param>
-        /// <returns></returns>
-        public string Type(List<BoardAdminPair> ls)
-        {
-            if (ls == null || ls.Count <= 0) return "''";
-
-            return string.Format("N'{0}'", string.Concat(ls.Select((x, indx) => 
-                    (indx == 0 ? "" : ",") + x.Admin + "@" + x.Board)));
-        }
-        /// <summary>
-        /// 將指定型別資料解析為SQL字串的表示方式。
-        /// </summary>
         /// <param name="se">狀態機狀態格式。</param>
         /// <returns></returns>
         public string Type(StateEnum se)
@@ -1193,7 +1243,7 @@ namespace Project_Tpage.Class
             {
                 return ((List<string>)AnlType<List<string>>(obj)).Select(x => Model.DB.Get<User>(x)).ToList();
             }
-            else if (typeof(T).Equals(typeof(List<Dictionary<string, string>>)))
+            else if (typeof(T).Equals(typeof(Dictionary<string, string>)))
             {
                 List<string> ls = AnlType<List<string>>(obj);
                 Dictionary<string, string> rtn = new Dictionary<string, string>(ls.Count);
@@ -1215,28 +1265,6 @@ namespace Project_Tpage.Class
                 }
 
                 return rtn;
-            }
-            else if(typeof(T).Equals(typeof(List<BoardAdminPair>)))
-            {
-                if (obj is DBNull || obj == null || (string)obj == "") return new List<BoardAdminPair>();
-
-                try
-                {
-                    Func<string, BoardAdminPair> f = delegate (string s)
-                    {
-                        string[] temp = s.Split('@');
-                        return new BoardAdminPair(temp[0], temp[1]);
-                    };
-
-                    return ((string)obj).Split(',').Select(x => f(x)).ToList();
-                }
-                catch (Exception e)
-                {
-                    throw new ModelException(
-                        ModelException.Error.AnlTypeErrListOfBoardAdmin,
-                        "SqlServ類別－AnlType<BoardAdminPair>發生例外：" +
-                        "看板版主資料對資料格式錯誤無法解析。\r\n" + e.Message, "");
-                }
             }
             else if (typeof(T).Equals(typeof(Image)))
             {
@@ -1268,6 +1296,12 @@ namespace Project_Tpage.Class
                 if (obj is DBNull || obj == null) return -1;
 
                 return (int)obj;
+            }
+            else if (typeof(T).Equals(typeof(byte)))
+            {
+                if (obj is DBNull || obj == null) return 0;
+
+                return (byte)obj;
             }
             else if (typeof(T).Equals(typeof(bool)))
             {
@@ -1392,6 +1426,7 @@ namespace Project_Tpage.Class
                 else
                     return new AMessage(dt.Rows[0]);
             }
+            /**
             else if (typeof(T).Equals(typeof(ClassGroup)))
             {
                 //從資料庫查詢此使用者。未找到則擲回例外(包含錯誤訊息(無此帳號、密碼錯誤))。
@@ -1420,6 +1455,7 @@ namespace Project_Tpage.Class
                 else
                     return new FamilyGroup(dt.Rows[0]);
             }
+            */
             else if (typeof(T).Equals(typeof(Advertise)))
             {
                 //從資料庫查詢此使用者。未找到則擲回例外(包含錯誤訊息(無此帳號、密碼錯誤))。
@@ -1504,14 +1540,13 @@ namespace Project_Tpage.Class
                     Birthday = {10},
                     UserPrivacy = {11}, 
                     Friend = {12}, 
-                    ClassGroup = {13}, 
-                    FamilyGroup = {14}, 
-                    TbitCoin = {15},
-                    FriendRequest = {16},
-                    LastComputeTbit = {17},
-                    FollowBoard = {18},
-                    FollowBoardQueue = {19},
-                    Viewstyle = {20} 
+                    TbitCoin = {13},
+                    FriendRequest = {14},
+                    LastComputeTbit = {15},
+                    FollowBoard = {16},
+                    FollowBoardQueue = {17},
+                    Viewstyle = {18},
+                    MyBoard = {19} 
                     WHERE UID = {1}"
                             , Type(usr.Userinfo.ID)
                             , Type(usr.Userinfo.UID)
@@ -1526,14 +1561,13 @@ namespace Project_Tpage.Class
                             , Type(usr.Userinfo.Birthday, true)
                             , Type(usr.Usersetting.Userprivacy)
                             , Type(usr.Friends.Members)
-                            , Type(usr.Groups.Where(x => x is ClassGroup).Select(x => x.GID).ToList())
-                            , Type(usr.Groups.Where(x => x is FamilyGroup).Select(x => x.GID).ToList())
                             , Type(usr.TbitCoin)
                             , Type(usr.FriendRequestQueue)
                             , Type(usr.LastComputeTbit)
                             , Type(usr.FollowBoard)
                             , Type(usr.FollowBoardQueue)
-                            , Type(usr.Usersetting.Viewstyle)));
+                            , Type(usr.Usersetting.Viewstyle)
+                            , Type(usr.MyBoard)));
                     }
                     else//否則為新增帳號資料的更新。
                     {
@@ -1546,9 +1580,9 @@ namespace Project_Tpage.Class
 
                         ExeSqlCommand(string.Format(@"INSERT INTO " + DB_UserData_TableName + @" 
         (ID, UID, Password, Email, StudentNum, ClassName, RealName, NickName, Picture, Gender, Birthday, UserPrivacy, Friend
-		, ClassGroup, FamilyGroup, TbitCoin, FriendRequest, LastComputeTbit, FollowBoard, FollowBoardQueue, Viewstyle) 
+		, TbitCoin, FriendRequest, LastComputeTbit, FollowBoard, FollowBoardQueue, Viewstyle, MyBoard) 
                     VALUES 
-        ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17}, {18}, {19}, {20})"
+        ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17}, {18}, {19})"
                             , Type(usr.Userinfo.ID)
                             , Type(usr.Userinfo.UID)
                             , Type(usr.Userinfo.Password)
@@ -1562,14 +1596,13 @@ namespace Project_Tpage.Class
                             , Type(usr.Userinfo.Birthday, true)
                             , Type(usr.Usersetting.Userprivacy)
                             , Type(usr.Friends.Members)
-                            , Type(usr.Groups.Where(x => x is ClassGroup).Select(x => x.GID).ToList())
-                            , Type(usr.Groups.Where(x => x is FamilyGroup).Select(x => x.GID).ToList())
                             , Type(usr.TbitCoin)
                             , Type(usr.FriendRequestQueue)
                             , Type(usr.LastComputeTbit)
                             , Type(usr.FollowBoard)
                             , Type(usr.FollowBoardQueue)
-                            , Type(usr.Usersetting.Viewstyle)));
+                            , Type(usr.Usersetting.Viewstyle)
+                            , Type(usr.MyBoard)));
                     }
                 }
                 catch (Exception e)
@@ -1696,6 +1729,7 @@ namespace Project_Tpage.Class
                         "發生未知錯誤－儲存失敗");
                 }
             }
+            /**
             else if (typeof(T).Equals(typeof(ClassGroup)))
             {
                 try
@@ -1819,6 +1853,7 @@ namespace Project_Tpage.Class
                         "發生未知錯誤－儲存失敗");
                 }
             }
+            */
             else if (typeof(T).Equals(typeof(Advertise)))
             {
                 try
@@ -2057,6 +2092,7 @@ namespace Project_Tpage.Class
                             "發生未知錯誤－刪除失敗");
                 }
             }
+            /**
             else if (typeof(T).Equals(typeof(ClassGroup)))
             {
                 try
@@ -2119,6 +2155,7 @@ namespace Project_Tpage.Class
                             "發生未知錯誤－刪除失敗");
                 }
             }
+            */
             else if (typeof(T).Equals(typeof(Board)))
             {
                 try
