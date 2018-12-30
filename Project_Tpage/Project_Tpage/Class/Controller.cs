@@ -103,6 +103,11 @@ namespace Project_Tpage.Class
                 (p as AD).ToHome += ADState_ToHome;
                 (p as AD).DoBuy += ADState_DoBuy;
             }
+            else if (p is Setting)      //  Setting State
+            {
+                (p as Setting).ToBack += SettingState_ToBack;
+                (p as Setting).DoChange += SettingState_DoChange;
+            }
         }
         //  Login State
         public void LoginState_Login(ViewEventArgs e, out DAT opt)
@@ -229,8 +234,8 @@ namespace Project_Tpage.Class
         {
             opt = model.RequestPageData(StateEnum.Home, e.data);
         }
-//  Board State
-public void BoardState_ToArticle(ViewEventArgs e, out DAT opt)
+        //  Board State
+        public void BoardState_ToArticle(ViewEventArgs e, out DAT opt)
         {
             opt = model.RequestPageData(StateEnum.Article, e.data);
         }
@@ -364,6 +369,16 @@ public void BoardState_ToArticle(ViewEventArgs e, out DAT opt)
             opt = model.RequestPageData(StateEnum.Home, e.data);
         }
         public void ADState_ToHome(ViewEventArgs e, out DAT opt)
+        {
+            opt = model.RequestPageData(StateEnum.Home, e.data);
+        }
+
+        // Setting State
+        public void SsttingState_ToBack(ViewEventArgs e, out DAT opt)
+        {
+            opt = model.RequestPageData(StateEnum.Home, e.data);
+        }
+        public void SsttingState_DoChange(ViewEventArgs e, out DAT opt)
         {
             opt = model.RequestPageData(StateEnum.Home, e.data);
         }

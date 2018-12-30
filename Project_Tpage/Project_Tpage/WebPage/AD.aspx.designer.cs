@@ -67,22 +67,13 @@ namespace Project_Tpage.WebPage {
         protected global::System.Web.UI.WebControls.Label upInfo;
         
         /// <summary>
-        /// flie 控制項。
+        /// FileTmp 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.FileUpload flie;
-        
-        /// <summary>
-        /// btnUp 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnUp;
+        protected global::System.Web.UI.WebControls.FileUpload FileTmp;
         
         /// <summary>
         /// costInfo 控制項。
@@ -119,5 +110,14 @@ namespace Project_Tpage.WebPage {
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnSend;
+        
+        /// <summary>
+        /// lblError 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblError;
     }
 }

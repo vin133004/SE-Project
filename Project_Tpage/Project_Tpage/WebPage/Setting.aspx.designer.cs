@@ -10,7 +10,7 @@
 namespace Project_Tpage.WebPage {
     
     
-    public partial class CreateBoard {
+    public partial class Setting {
         
         /// <summary>
         /// form1 控制項。
@@ -22,157 +22,166 @@ namespace Project_Tpage.WebPage {
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
         
         /// <summary>
-        /// nameLabel 控制項。
+        /// Accountlabel 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label nameLabel;
+        protected global::System.Web.UI.WebControls.Label Accountlabel;
         
         /// <summary>
-        /// boardName 控制項。
+        /// AccountText 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox boardName;
+        protected global::System.Web.UI.WebControls.Label AccountText;
         
         /// <summary>
-        /// blank1 控制項。
+        /// Secretlabel 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label blank1;
+        protected global::System.Web.UI.WebControls.Label Secretlabel;
         
         /// <summary>
-        /// infoLabel 控制項。
+        /// SecretText 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label infoLabel;
+        protected global::System.Web.UI.WebControls.TextBox SecretText;
         
         /// <summary>
-        /// blank2 控制項。
+        /// IDLabel 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label blank2;
+        protected global::System.Web.UI.WebControls.Label IDLabel;
         
         /// <summary>
-        /// boardInfo 控制項。
+        /// IDText 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RadioButtonList boardInfo;
+        protected global::System.Web.UI.WebControls.TextBox IDText;
         
         /// <summary>
-        /// blank3 控制項。
+        /// Maillabel 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label blank3;
+        protected global::System.Web.UI.WebControls.Label Maillabel;
         
         /// <summary>
-        /// Announce 控制項。
+        /// MailText 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Announce;
+        protected global::System.Web.UI.WebControls.TextBox MailText;
         
         /// <summary>
-        /// blank4 控制項。
+        /// Genderlabel 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label blank4;
+        protected global::System.Web.UI.WebControls.Label Genderlabel;
         
         /// <summary>
-        /// peopleName 控制項。
+        /// GenderList 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox peopleName;
+        protected global::System.Web.UI.WebControls.RadioButtonList GenderList;
         
         /// <summary>
-        /// btnInvite 控制項。
+        /// RealNameLabel 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnInvite;
+        protected global::System.Web.UI.WebControls.Label RealNameLabel;
         
         /// <summary>
-        /// btnNoInvite 控制項。
+        /// RealNameText 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnNoInvite;
+        protected global::System.Web.UI.WebControls.TextBox RealNameText;
         
         /// <summary>
-        /// inviteInfo 控制項。
+        /// NickNameLabel 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label inviteInfo;
+        protected global::System.Web.UI.WebControls.Label NickNameLabel;
         
         /// <summary>
-        /// blank5 控制項。
+        /// NickNameText 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label blank5;
+        protected global::System.Web.UI.WebControls.TextBox NickNameText;
         
         /// <summary>
-        /// listLabel 控制項。
+        /// coinlabel 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label listLabel;
+        protected global::System.Web.UI.WebControls.Label coinlabel;
         
         /// <summary>
-        /// inviteList 控制項。
+        /// coinText 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList inviteList;
+        protected global::System.Web.UI.WebControls.Label coinText;
         
         /// <summary>
-        /// blank6 控制項。
+        /// ViewStylelabel 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label blank6;
+        protected global::System.Web.UI.WebControls.Label ViewStylelabel;
+        
+        /// <summary>
+        /// ViewStyleList 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RadioButtonList ViewStyleList;
         
         /// <summary>
         /// btnBack 控制項。
@@ -184,22 +193,13 @@ namespace Project_Tpage.WebPage {
         protected global::System.Web.UI.WebControls.Button btnBack;
         
         /// <summary>
-        /// blank7 控制項。
+        /// btnSend 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label blank7;
-        
-        /// <summary>
-        /// btnPo 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnPo;
+        protected global::System.Web.UI.WebControls.Button btnSend;
         
         /// <summary>
         /// lblError 控制項。

@@ -26,8 +26,8 @@
 
             <br />
             <asp:Label ID="upInfo" runat="server" Text="上傳檔案" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" /><br/>
-            <asp:FileUpload ID="flie" runat="server" Width="300" Height="50" />
-            <asp:Button ID="btnUp" runat="server" Width="60" Height="20" Text="上傳" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="Small"/><br/>
+            <asp:FileUpload ID="FileTmp" runat="server" Width="300" Height="50" /><br />
+            
             <asp:Label ID="costInfo" runat="server" Text="付費方式" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" />
             <asp:RadioButtonList ID="btnList" runat="server" TextAlign="Right">
                 <asp:ListItem>5     分鐘/1$</asp:ListItem>
@@ -37,6 +37,7 @@
             </asp:RadioButtonList>
             <asp:Button ID="btnHome" runat="server" Height="40" Width="175" Text="返回首頁" BorderStyle="None" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" OnClick="btnHome_Click" />
             <asp:Button ID="btnSend" runat="server" Height="40" Width="175" Text="確認購買" BorderStyle="None" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" OnClick="btnSend_Click" />
+            <asp:Label ID="lblError" runat="server" Text="" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Visible="false" />
         </center>
     </form>
 </body>

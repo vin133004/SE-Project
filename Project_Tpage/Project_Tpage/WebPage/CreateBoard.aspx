@@ -24,14 +24,15 @@
         <asp:TextBox ID="peopleName" runat="server" Height="30" Width="300" Font-Bold="true" Font-Size="X-Large" Font-Names="微軟正黑體"/>
         <asp:Button ID="btnInvite" runat="server" Text="邀請" Font-Bold="true" Font-Size="X-Large" Font-Names="微軟正黑體" BorderStyle="None" OnClick="btnInvite_Click"/>
         <asp:Button ID="btnNoInvite" runat="server" Text="取消邀請" Font-Bold="true" Font-Size="X-Large" Font-Names="微軟正黑體" BorderStyle="None" OnClick="btnNoInvite_Click"/>
-        <asp:Label ID="blank5" runat="server" /><br />
-        <asp:Label ID="inviteInfo" runat="server" Text="" Font-Size="X-Large" Font-Bold="true" Font-Names="微軟正黑體" /><br />
+        <asp:Label ID="inviteInfo" runat="server" Text="" Font-Size="X-Large" Font-Bold="true" Font-Names="微軟正黑體" Visible="false" /><br />
+        <asp:Label ID="blank5" runat="server" /><br />  
         <asp:Label ID="listLabel" runat="server" Text="已邀請對象：" Font-Size="X-Large" Font-Bold="true" Font-Names="微軟正黑體" />
         <asp:DropDownList ID="inviteList" runat="server" Width="200" Font-Size="X-Large" Font-Bold="true" Font-Names="微軟正黑體" /><br />
         <asp:Label ID="blank6" runat="server" /><br />
         <asp:Button ID="btnBack" runat="server" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Width="120" Height="40" BorderStyle="None" Text="返回首頁" OnClick="btnBack_Click"/>
         <asp:Label ID="blank7" runat="server" Width="50" />
         <asp:Button ID="btnPo" runat="server" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Width="80" Height="40" BorderStyle="None" Text="申請" OnClick="btnPo_Click"/>
+        <asp:Label ID="lblError" runat="server" Text="" Font-Size="X-Large" Font-Bold="true" Font-Names="微軟正黑體" Visible="false" /><br />
     </form>
 </body>
 </html>

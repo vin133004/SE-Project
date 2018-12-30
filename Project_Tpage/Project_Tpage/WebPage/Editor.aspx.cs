@@ -19,26 +19,36 @@ namespace Project_Tpage.WebPage
         /// 每次事件後取得的輸出結果。
         /// </summary>
         public DAT optDAT;
-
+        private Class.Article article;
         protected void Page_Load(object sender, EventArgs e)
         {
+            //在登入頁面，未初始化Controller的情況，初始化Controller
+            if (!Controller.IsConstrut)
+                Response.Redirect("Login.aspx");
+            //讓Controller內的function訂閱這個頁面上的事件。
+            //Do this in each Page_Load()
+            Controller.controller.SubsribeEvent(this);
 
+            // 判定編輯還是新文章
+            if (Controller.CrossPageDAT["edit"] as string == "true") {
+                // 編輯文章 
+                article = Controller.CrossPageDAT["Content"] as Class.Article;
+                Tittle.Text = article.Title;
+                Content.Text = article.Content;
+            }
         }
         protected void Back_Click(object sender, EventArgs e)
         {
-
+            ToBack(new ViewEventArgs(this), out optDAT);
         }
-        protected void Setting_Click(object sender, EventArgs e)
-        {
 
-            // this.controller.;
-            // this.model.RequestPageData(controller.model.State);
-        }
         protected void Send_Click(object sender, EventArgs e)
         {
-            String content = Content.Text;
-            String tittle = Tittle.Text;
-
+            DAT dat = new DAT();
+            dat["Title"] = Tittle.Text;
+            // 欄位怕重複，Content被用於整個文章物件
+            dat["ArticleContent"] = Content.Text;
+            DoCreate(new ViewEventArgs(dat, this), out optDAT);
         }
     }
 }
