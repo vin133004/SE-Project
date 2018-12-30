@@ -15,8 +15,8 @@
             <asp:Button ID="btnSearch" runat="server" Height="40" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Text="查詢" OnClick="btnSearch_Click" />
              <asp:Label ID="searchresult" Font-Bold="true" Font-Names="微軟正黑體" runat="server" Height="35" Width="100" Font-Size="Large" Text="查無此人" Visible="true" /><br/>
             <asp:ListBox ID="ListOfBoard" runat="server" Font-Size="X-Large" AutoPostBack="true" Width="500" Rows="10" OnSelectedIndexChanged="SelectBoard">
-                <asp:ListItem>aaa</asp:ListItem>
-                <asp:ListItem>bbb</asp:ListItem>
+                <asp:ListItem Value="aaaa">aaa</asp:ListItem>
+                <asp:ListItem >bbb</asp:ListItem>
                 <asp:ListItem>ccc</asp:ListItem>
                 <asp:ListItem>ddd</asp:ListItem>
                 <asp:ListItem>eee</asp:ListItem>

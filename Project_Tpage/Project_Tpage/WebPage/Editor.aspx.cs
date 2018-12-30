@@ -10,6 +10,16 @@ namespace Project_Tpage.WebPage
 {
     public partial class Editor : System.Web.UI.Page
     {
+        // 返回/放棄修改
+        public event ViewEventHandler ToBack;
+        // PO文
+        public event ViewEventHandler DoCreate;
+
+        /// <summary>
+        /// 每次事件後取得的輸出結果。
+        /// </summary>
+        public DAT optDAT;
+
         protected void Page_Load(object sender, EventArgs e)
         {
 

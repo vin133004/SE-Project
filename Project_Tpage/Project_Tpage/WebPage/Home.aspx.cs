@@ -138,6 +138,7 @@ namespace Project_Tpage.WebPage
         {
             DAT dat = new DAT();
             dat["Board"] = ListOfBoard.SelectedItem.Text;
+            cardInfo.Text = ListOfBoard.SelectedValue.ToString();
         }
         
         //  開/關申請選項
@@ -170,6 +171,7 @@ namespace Project_Tpage.WebPage
         {
             DAT dat = new DAT();
             dat["Board"] = boardText.Text;
+            
         }
 
         //  更改顯示樣式

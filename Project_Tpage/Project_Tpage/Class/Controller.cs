@@ -65,35 +65,41 @@ namespace Project_Tpage.Class
                 (p as Home).DoCard += HomeState_DoCard;
                 (p as Home).DoStyle += HomeState_DoStyle;
             }
-            else if (p is Board)        //  Board State
+            else if (p is WebPage.Board)        //  Board State
             {
-                //(p as Board).ToArticle += BoardState_ToArticle;
-                //(p as Board).ToEditor += BoardState_ToEditor;
-                //(p as Board).ToBack += BoardState_ToBack;
-                //(p as Board).DoFollow += BoardState_DoFollow;
+                (p as WebPage.Board).ToArticle += BoardState_ToArticle;
+                (p as WebPage.Board).ToEditor += BoardState_ToEditor;
+                (p as WebPage.Board).ToBack += BoardState_ToBack;
+                (p as WebPage.Board).DoFollow += BoardState_DoFollow;
+                (p as WebPage.Board).DoInvite += BoardState_DoInvite;
+                (p as WebPage.Board).DoAdmin += BoardState_DoAdmin;
+                (p as WebPage.Board).DoDelPeople += BoardState_DoDelPeople;
+                (p as WebPage.Board).DoDelBoard += BoardState_DoDelBoard;
             }
             else if (p is CreateBoard)  //  Create Board State
             {
-                //(p as CreateBoard).DoCreate += CreateBoardState_DoCreate;
-                //(p as CreateBoard).DoInvite += CreateBoardState_DoInvite;
-                //(p as CreateBoard).ToHome += CreateBoardState_ToHome;
+                (p as CreateBoard).DoCreate += CreateBoardState_DoCreate;
+                (p as CreateBoard).DoInvite += CreateBoardState_DoInvite;
+                (p as CreateBoard).ToHome += CreateBoardState_ToHome;
             }
             else if (p is WebPage.Article)      //  Article State
             {
-                //(p as Article).DoMessage += ArticleState_DoMessage;
-                //(p as Article).DoLike += ArticleState_DoLike;
-                //(p as Article).ToBack += ArticleState_ToBack;
-                //(p as Article).ToHome += ArticleState_ToHome;
+                (p as WebPage.Article).DoMessage += ArticleState_DoMessage;
+                (p as WebPage.Article).DoLike += ArticleState_DoLike;
+                (p as WebPage.Article).DoDelArticle += ArticleState_DoDelArticle;
+                (p as WebPage.Article).ToEdit += ArticleState_ToEdit;
+                (p as WebPage.Article).ToBack += ArticleState_ToBack;
+                (p as WebPage.Article).ToHome += ArticleState_ToHome;
             }
             else if (p is Editor)       //  Editor State
             {
-                //(p as Editor).ToBack += EditorState_ToBack;
-                //(p as Editor).DoCreate += EditorState_DoCreate;
+                (p as Editor).ToBack += EditorState_ToBack;
+                (p as Editor).DoCreate += EditorState_DoCreate;
             }
             else if (p is AD)           //  AD State
             {
-                //(p as AD).ToHome += EditorState_ToHome;
-                //(p as AD).DoBuy += EditorState_DoBuy;
+                (p as AD).ToHome += ADState_ToHome;
+                (p as AD).DoBuy += ADState_DoBuy;
             }
         }
         //  Login State
@@ -230,6 +236,22 @@ namespace Project_Tpage.Class
         {
             opt = model.RequestPageData(StateEnum.Board, e.data);
         }
+        public void BoardState_DoInvite(ViewEventArgs e, out DAT opt)
+        {
+            opt = model.RequestPageData(StateEnum.Board, e.data);
+        }
+        public void BoardState_DoAdmin(ViewEventArgs e, out DAT opt)
+        {
+            opt = model.RequestPageData(StateEnum.Board, e.data);
+        }
+        public void BoardState_DoDelPeople(ViewEventArgs e, out DAT opt)
+        {
+            opt = model.RequestPageData(StateEnum.Board, e.data);
+        }
+        public void BoardState_DoDelBoard(ViewEventArgs e, out DAT opt)
+        {
+            opt = model.RequestPageData(StateEnum.Board, e.data);
+        }
 
         //  Create Board State
         public void CreateBoardState_DoCreate(ViewEventArgs e, out DAT opt)
@@ -276,6 +298,14 @@ namespace Project_Tpage.Class
         public void ArticleState_DoLike(ViewEventArgs e, out DAT opt)
         {
             opt = model.RequestPageData(StateEnum.Article, e.data);
+        }
+        public void ArticleState_DoDelArticle(ViewEventArgs e, out DAT opt)
+        {
+            opt = model.RequestPageData(StateEnum.Article, e.data);
+        }
+        public void ArticleState_ToEdit(ViewEventArgs e, out DAT opt)
+        {
+            opt = model.RequestPageData(StateEnum.Board, e.data);
         }
         public void ArticleState_ToBack(ViewEventArgs e, out DAT opt)
         {

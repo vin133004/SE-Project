@@ -25,7 +25,7 @@
              <br />
                 <asp:Button ID="Back" runat="server" Width="200" Height="60" Font-Size="Large" Font-Bold="true" Text="返回/放棄" Font-Names="微軟正黑體" OnClick="Back_Click"/>  
              <asp:Label ID="blank2" runat="server" Width="50" Height="20" Text="" />
-                <asp:Button ID="Send" runat="server" Width="200" Height="60" Font-Size="Large" Font-Bold="true" Text="送出" Font-Names="微軟正黑體"  OnClick="Send_Click"/>
+                <asp:Button ID="Send" runat="server" Width="200" Height="60" Font-Size="Large" Font-Bold="true" Text="發布" Font-Names="微軟正黑體"  OnClick="Send_Click"/>
 
           
         </div>
