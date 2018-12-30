@@ -1937,7 +1937,7 @@ namespace Project_Tpage.Class
                         ExeSqlCommand(string.Format(@"INSERT INTO " + DB_AdvertiseData_TableName + @" 
                             (DID, Body, Location, Size, Deadline)
                             VALUES 
-                            ({0}, {1}, {2}, {3}, {4})"
+                            ({0}, '{1}', {2}, {3}, {4})"
                             , Type(p_ad.DID)
                             , Type(p_ad.Body)
                             , Type(p_ad.Location)
@@ -2213,8 +2213,8 @@ namespace Project_Tpage.Class
                 {
                     if (string.IsNullOrEmpty(Iden))
                         throw new Exception("1");
-                    if (IsExist(DB_ClassGroupData_TableName, "GID", Iden))
-                        throw new Exception("2");
+                    /*if (IsExist(DB_ClassGroupData_TableName, "GID", Iden))
+                        throw new Exception("2");*/
 
                     ExeSqlCommand(string.Format("DELETE FROM {0} WHERE BID = {1}",
                         DB_BoardData_TableName, Type(Iden)));
@@ -2256,8 +2256,8 @@ namespace Project_Tpage.Class
             DB_ArticleData_TableName = "ArticleData";
             DB_AMessageData_TableName = "AMessageData";
             DB_AdvertiseData_TableName = "AdvertiseData";
-            DB_ClassGroupData_TableName = "ClassGroupData";
-            DB_FamilyGroupData_TableName = "FamilyGroupData";
+      /*      DB_ClassGroupData_TableName = "ClassGroupData";
+            DB_FamilyGroupData_TableName = "FamilyGroupData";*/
         }
     }
     
