@@ -752,6 +752,36 @@ namespace Project_Tpage.Class
                        DB.AnlType<string>(us["NickName"]).Contains(uname)
                     select DB.Get<User>(DB.AnlType<string>(us["UID"]))).ToList();
         }
+        /// <summary>
+        /// 購買廣告。若購買者沒有足夠的台科幣，不會執行。
+        /// </summary>
+        /// <param name="usr">購買的使用者。</param>
+        /// <param name="price">廣告價格。</param>
+        /// <param name="content">廣告的內容(圖片)。</param>
+        /// <param name="deadline">廣告的截止日期。</param>
+        public void BuyAD(User usr, int price, Image content, DateTime deadline)
+        {
+            if (usr.TbitCoin < price) return;
+
+            Advertise ad = Advertise.New;
+            ad.Body = new Bitmap(content);
+            ad.Deadline = new DateTime(deadline.Ticks);
+            ad.Size = content.Size;
+
+            usr.TbitCoin -= price;
+            DB.Set<User>(usr);
+
+            DB.Set<Advertise>(ad);
+        }
+        /// <summary>
+        /// 取得廣告。
+        /// </summary>
+        /// <param name="p_DID">目標廣告識別碼。</param>
+        /// <returns></returns>
+        public Advertise GetAD(string p_DID)
+        {
+            return DB.Get<Advertise>(p_DID);
+        }
 
 
 
