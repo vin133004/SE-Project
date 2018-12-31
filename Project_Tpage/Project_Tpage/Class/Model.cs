@@ -232,7 +232,11 @@ namespace Project_Tpage.Class
         /// <summary>
         /// 代表瀏覽廣告頁面。
         /// </summary>
-        AD
+        AD,
+        /// <summary>
+        /// 代表設定頁面。
+        /// </summary>
+        Setting
     }
 
     /// <summary>
@@ -908,131 +912,196 @@ namespace Project_Tpage.Class
         *          PageData.In["StudentID"] = studentid        (type: string)
         *          存放使用者註冊的學號。
         *          
-        *      Home_viewarticle || Group_viewarticle || Board_viewarticle || Userpage_viewarticle
-        *      
-        *          PageData.In["AID"] = a AID                  (type: string)
-        *          存放要瀏覽的文章之識別碼。
+        *      HomeState_ToBoard
         *          
-        *      Home_togroup || Board_togroup
-        *      
-        *          PageData.In["GID"] = a GID                  (type: string)
-        *          存放要前往的團體之識別碼。
+        *          dat["BID"] = a BID                          (type: string)
+        *          選擇看板識別碼
         *          
-        *          PageData.In["GroupType"] = bool             (type: bool)
-        *          存放要前往的團體是班級(true)或家族(false)。
+        *      HomeState_DoSearch
+        *      
+        *          dat["Search"]  = a Board.Name               (type: string)
+        *          搜尋看板名稱
+        *      
+        *      HomeState_DoYesInvite || HomeState_DoNoInvite     
+        *      
+        *          dat["BID"] = a BID                          (type: string)
+        *          接受/拒絕看板識別碼  
         *          
-        *      Home_touserpage
+        *      BoardState_ToArticle
         *      
-        *          PageData.In["UID"] = a UID                  (type: string)
-        *          存放要前往的使用者頁面所屬使用者之識別碼。
-        *      
-        *      Home_editarticle || Group_editarticle || Board_editarticle || Article_editarticle
-        *      
-        *          PageData.In["AID"] = a AID                  (type: string)
-        *          存放要編輯的文章之識別碼。若為發布文章，將此值設定為null。
-        *      
-        *      Group_toboard
-        *      
-        *          PageData.In["GID"] = a GID                  (type: string)
-        *          存放現在所在的團體之識別碼。
+        *          dat["AID"] = a AID                          (type: string)
+        *          選擇的文章識別碼
         *          
-        *          PageData.In["GroupType"] = bool             (type: bool)
-        *          存放現在所在的團體是班級(true)或家族(false)。
-        *                    
-        *          PageData.In["Board"] = board                (type: string)
-        *          存放要前往的看板名稱。
+        *      BoardState_DoInvite || BoardState_DoAdmin || BoardState_DoDelPeople
         *      
-        *      Editarticle_release
-        *                    
-        *          PageData.In["Article"] = an article         (type: Article)
-        *          存放要發布的文章物件。
+        *          dat["People"] = a ID                        (type: string)
+        *          邀請人ID
         *          
+        *      BoardState_DoDelBoard
+        *      
+        *          dat["BID"] = a BID                          (type: string)
+        *          刪除看板識別碼
         *          
-        *          
-        *      ****在需要放置廣告的頁面上，要設定PageData.In["AdvertiseBlocks"](type: List<int>)
-        *                                      定義：在此頁面上的廣告區塊代碼。
+        *      CreateBoardState_DoCreate
         * 
+        *          dat["BoardName"] = a strimg                 (type: string)
+        *          申請的看板名字
+        *          dat["Public"] = a bool                      (type: bool)
+        *          是否公開的參數
+        *          dat["PeopleList"] = a list                  (type: List<string>)
+        *          自動邀請對象清單
+        * 
+        *      CreateBoardState_DoInvite
+        *      
+        *          dat["People"] = a string                    (type: string)
+        *          查詢是否可以邀請此人(用ID)
+        *          
+        *      ArticleState_DoMessage
+        *      
+        *          dat["Message"] = a string                   (type: string)
+        *          留言內容
+        *          dat["AID"] = a AID                          (type: string)
+        *          留言所屬文章
+        *          
+        *      ArticleState_DoDelArticle    
+        *      
+        *          dat["AID"] = a AID                          (type: string)
+        *          刪除文章識別碼
+        *          dat["BID"] = a BID                          (type: string)
+        *          返回看板識別碼
+        *      
+        *     ArticleState_ToEdit
+        *     
+        *          dat["AID"] = a AID                          (type: string)
+        *          編輯文章識別碼
+        *          
+        *     ArticleState_ToBack    
+        *     
+        *          dat["BID"] = a BID                          (type: string)
+        *          返回看板識別碼
+        *       
+        *     EditorState_DoCreate   
+        *     
+        *          dat["Title"] = a Article.Tittle             (type: string)
+        *          文章標題
+        *          dat["Content"] = a Article.Content          (type: string)
+        *          文章內文
+        *          
+        *     ADState_DoBuy
+        *     
+        *          dat["Money"] = a int                        (type: int)
+        *          消費台科幣
+        *          dat["Minute"] = a int                       (type: int)
+        *          購買的時間
+        *          dat["Image"] = a Advertise.Image            (type: Image)
+        *          檔案
+        *          
+        *     SettingState_DoChange  
+        *     
+        *          dat["Password"] = a user.Userinfo.Password  (type: string)
+        *          dat["StudentID"] = a user.Userinfo.StudentID(type: string)
+        *          dat["Email"] = a user.Userinfo.Email        (type: string)
+        *          dat["Gender"] = a Gender                    (type: Gender)
+        *          dat["Realname"] = a user.Userinfo.Realname  (type: string)
+        *          dat["Nickname"] = a user.Userinfo.Nickname  (type: string)
+        *          dat["Viewstyle"] = a user.Usersetting.Viewstyle  (type: int)
+        *          皆為USER基本資料
         */
 
     /* PageData.Out(Model to View): View所要求的資料。
         * PageData.Out的內容根據不同的狀態要求而存放不同資料。
-        *                  
+        *      
+        *      預設每個輸出內容都有保留
+        *      CrossPageDAT["User"]                     (type: User)
+        *      使用者相關資訊提供抓取
         *          
         *      To "Login" || "Register" State
         *      
         *          無。
         *          
-        *      To "Home" State
+        *      Home State
         *      
-        *          PageData.Out["Content"] =  a list           (type: List<object>)
-        *          存放要顯示的文章與留言。其內的物件不是Article就是AMessage。
+        *       Loading
+        *       
+        *           CrossPageDAT["TEMP_ShowingImage"] = a image     (type: image)
+        *           廣告圖片
+        *           CrossPageDAT["FollowBoardQueueName"] = a list   (type: List<string>)
+        *           邀請你加入/要求你同意加入的看板名稱(需與user.FollowBoardQueue同樣順序)
+        *           CrossPageDAT["BoardListName"] = a list          (type: List<string>)
+        *           看板列表名稱(需與user.FollowBoard同樣順序)
+        *       
+        *       HomeState_DoCard  
+        *           
+        *           optDAT["Info"] = a string           (typeL string)
+        *           抽卡後的資料 e.x. 1.看板名稱 2.以抽過等...
+        *           
+        *     Board State
+        *     
+        *       Loading
+        *       
+        *           CrossPageDAT["Board"] = a Board     (type: Board)
+        *           看板物件
+        *           Controller.CrossPageDAT["ArticleList"] = a list (type: List<Article>)
+        *           文章列表
+        *           CrossPageDAT["LikeImage"] = a string(type: string)
+        *           判定現在是否追隨告知該顯示的圖片(路徑)
+        *           
+        *       BoardState_DoInvite || BoardState_DoAdmin || BoardState_DoDelPeople
+        *       
+        *           optDAT["Info"] = a string           (type: string)
+        *           執行動作後的訊息 e.x. 1.邀請成功 2.查無此人 3.已存在此成員
+        *           
+        *    Create Board State   
+        *    
+        *       CreateBoardState_DoCreate
+        *       
+        *           optDAT["failinfo"] = a string       (type: string)
+        *           創建失敗訊息
+        *           
+        *       CreateBoardState_DoInvite    
+        *       
+        *           以下兩種2選1傳送資料
+        *           前端利用keys.contain判斷，非此資料請勿包含
+        *           optDAT["failinfo"] = a string       (type: string)
+        *           邀請失敗訊息
+        *           optDAT["Info"] = a string           (type: string)
+        *           邀請成功訊息
+        *           
+        *    Article State
+        *    
+        *       Loading
+        *           
+        *           CrossPageDAT["Article"] = a Article (type: Article)
+        *           文章物件
+        *           CrossPageDAT["ReleaseUser"] = a string  (type: string)
+        *           文章發文者帳號(用article.releaseUser下去查找)
+        *           CrossPageDAT["AllMessage"] = a list (type: List<string>)
+        *           文章全部留言
+        *           CrossPageDAT["Admin"] = a key       (type: anything)
+        *           判斷是否為管理者or發文者(若是請包此key,用不到時請刪除)
+        *           
+        *       ArticleState_DoMessage
         *          
-        *          PageData.Out["User"] =   a object           (type: User)
-        *          存放現在使用者的資訊(包含好友與團體資訊User.Friends, User.Groups)
-        *          
-        *          PageData.Out["Advertise"] = a list          (type: List<Advertise>)
-        *          存放此頁面上要呈現的廣告
-        *          
-        *      To "UserPage" State
-        *      
-        *          PageData.Out["User"] = a object             (type: User)
-        *          存放此UserPage的所屬User物件。
-        *          
-        *          PageData.Out["Content"] = a list            (type: List<object>)
-        *          存放要顯示的文章與留言。其內的物件不是Article就是AMessage。
-        *          
-        *          PageData.Out["Advertise"] = a list          (type: List<Advertise>)
-        *          存放此頁面上要呈現的廣告
-        *          
-        *      To "ViewArticle" State
-        *          
-        *          PageData.Out["Content"] = a article         (type: Article)
-        *          存放此頁面上要顯示的文章物件。
-        *          
-        *          PageData.Out["Advertise"] = a list          (type: List<Advertise>)
-        *          存放此頁面上要呈現的廣告。
-        *          
-        *      To "Usersetting" State
-        *          
-        *          PageData.Out["Userinfo"] = a UserInfo       (type: UserInfo)
-        *          存放使用者的使用者資訊。
-        *          
-        *          PageData.Out["Usersetting"] = a UserSetting (type: UserPrivace)
-        *          存放使用者的使用者設定。
-        *          
-        *      To "Group" State
-        *      
-        *          PageData.Out["Group"] = a group             (type: RelationshipGroup)
-        *          存放現在頁面的所屬團體（包含看板資訊）。
-        *          
-        *          PageData.Out["Advertise"] = a list          (type: List<Advertise>)
-        *          存放此頁面上要呈現的廣告。
-        *                            
-        *          PageData.Out["Content"] = a list            (type: List<Article>)
-        *          存放要顯示的文章。
-        *          
-        *      To "Board" State
-        *      
-        *          PageData.Out["Group"] = a group             (type: RelationshipGroup)
-        *          存放現在頁面的所屬團體（包含看板資訊）。
-        *          
-        *          PageData.Out["Board"] = a string            (type: string)
-        *          存放現在頁面的所屬看板。
-        *          
-        *          PageData.Out["Advertise"] = a list          (type: List<Advertise>)
-        *          存放此頁面上要呈現的廣告。
-        *                            
-        *          PageData.Out["Content"] = a list            (type: List<Article>)
-        *          存放要顯示的文章。         *          存放要顯示的文章。
-        *          
-        *      To "EditArticle" State
-        *          
-        *          PageData.Out["Content"] = a article         (type: Article)
-        *          存放此頁面上要顯示的文章物件。
-        *          
-        * 
+        *           optDAT["failinfo"] = a string       (type: string)
+        *           留言失敗訊息
+        *           
+        *       ArticleState_DoLike 
+        *       
+        *           optDAT["LikeCount"] = a string      (type: string)
+        *           執行動作後讚數(不更動也得回傳)
+        *           
+        *     Editor State
+        *        
+        *       Loading  
+        *       
+        *           CrossPageDAT["Article"] = a Article (type: Article)
+        *           文章物件(需要編輯再包含此key，一般創新文章不用請移除)
+        *           
+        *    Setting State
+        *     
+        *       NO
         */
-    
+
 
     /// <summary>
     /// SQL Service類別提供SQL資料庫的服務。

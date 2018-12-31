@@ -50,10 +50,10 @@ namespace Project_Tpage.WebPage
             //讓Controller內的function訂閱這個頁面上的事件。
             //Do this in each Page_Load()
             Controller.controller.SubsribeEvent(this);
-
-            
+         
             user = Controller.CrossPageDAT["User"] as User;
 
+            ADimage.ImageUrl = "TakeShowingImage.aspx";
             // 邀請加入的看板名字
             List<string> boardQueuelistName = new List<string>();
             boardQueuelistName.Clear();
@@ -79,7 +79,7 @@ namespace Project_Tpage.WebPage
                 ListOfBoard.Items.Add(new ListItem(boardListName[count], element));//照順序排value 0~...
                 count++;
             }
-            
+
             color.Style.Add("background-color", "lightblue");
             Color a = Color.Black;
             String border = "white";
@@ -127,9 +127,9 @@ namespace Project_Tpage.WebPage
             ListOfBoard.Style.Add("top", "120px");
             ListOfBoard.Style.Add("left", "10%");
 
-            AD.Style.Add("position", "absolute");
-            AD.Style.Add("top", "120px");
-            AD.Style.Add("left", "55%");
+            ADimage.Style.Add("position", "absolute");
+            ADimage.Style.Add("top", "120px");
+            ADimage.Style.Add("left", "55%");
 
             btnNew.Style.Add("position", "absolute");
             btnNew.Style.Add("top", "450px");
@@ -274,9 +274,9 @@ namespace Project_Tpage.WebPage
                 ListOfBoard.Style.Add("top", "120px");
                 ListOfBoard.Style.Add("left", "10%");
 
-                AD.Style.Add("position", "absolute");
-                AD.Style.Add("top", "120px");
-                AD.Style.Add("left", "55%");
+                ADimage.Style.Add("position", "absolute");
+                ADimage.Style.Add("top", "120px");
+                ADimage.Style.Add("left", "55%");
 
                 btnNew.Style.Add("position", "absolute");
                 btnNew.Style.Add("top", "450px");
@@ -363,9 +363,9 @@ namespace Project_Tpage.WebPage
                 ListOfBoard.Style.Add("top", "120px");
                 ListOfBoard.Style.Add("left", "10%");
 
-                AD.Style.Add("position", "absolute");
-                AD.Style.Add("top", "120px");
-                AD.Style.Add("left", "55%");
+                ADimage.Style.Add("position", "absolute");
+                ADimage.Style.Add("top", "120px");
+                ADimage.Style.Add("left", "55%");
 
                 btnNew.Style.Add("position", "absolute");
                 btnNew.Style.Add("top", "450px");
@@ -453,9 +453,9 @@ namespace Project_Tpage.WebPage
                 ListOfBoard.Style.Add("top", "120px");
                 ListOfBoard.Style.Add("left", "35%");
 
-                AD.Style.Add("position", "absolute");
-                AD.Style.Add("top", "450px");
-                AD.Style.Add("left", "35%");
+                ADimage.Style.Add("position", "absolute");
+                ADimage.Style.Add("top", "450px");
+                ADimage.Style.Add("left", "35%");
 
                 btnNew.Style.Add("position", "absolute");
                 btnNew.Style.Add("top", "0px");
@@ -509,7 +509,6 @@ namespace Project_Tpage.WebPage
         protected void btnYes_Click(object sender, EventArgs e)
         {
             DAT dat = new DAT();
-            dat["UID"] = user.Userinfo.UID;
             dat["BID"] = user.FollowBoardQueue[inviteList.SelectedIndex];
             DoYesInvite(new ViewEventArgs(dat, this), out optDAT);
         }
@@ -517,7 +516,6 @@ namespace Project_Tpage.WebPage
         protected void btnNo_Click(object sender, EventArgs e)
         {
             DAT dat = new DAT();
-            dat["UID"] = user.Userinfo.UID;
             dat["BID"] = user.FollowBoardQueue[inviteList.SelectedIndex];
             DoNoInvite(new ViewEventArgs(dat, this), out optDAT);
         }

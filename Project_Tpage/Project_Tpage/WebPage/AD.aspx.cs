@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Project_Tpage.Class;
-
+using System.Drawing;
 namespace Project_Tpage.WebPage
 {
     public partial class AD : System.Web.UI.Page
@@ -44,37 +44,57 @@ namespace Project_Tpage.WebPage
 
         protected void btnSend_Click(object sender, EventArgs e)
         {
+
+
             if (FileTmp.HasFile && btnList.SelectedIndex != -1)
             {
-                // 存檔
-                string path = Server.MapPath("\\WebPage\\pictures\\");
-                path += FileTmp.FileName;
-                FileTmp.SaveAs(path);
-
-                DAT dat = new DAT();
-                // 購買方案
-                if (btnList.SelectedIndex == 0) {
-                    dat["Money"] = 1;
-                    dat["Minute"] = 5;
+                String fileExtension = System.IO.Path.GetExtension(FileTmp.FileName).ToLower();
+                String[] restrictExtension = { ".gif", ".jpg", ".bmp", ".png" };
+                bool isPicture = false;
+                for (int i = 0; i < 4; i++) {
+                    if (restrictExtension[i] == fileExtension)
+                        isPicture = true;
                 }
-                else if (btnList.SelectedIndex == 1) {
-                    dat["Money"] = 2;
-                    dat["Minute"] = 15;
-                }
-                else if (btnList.SelectedIndex == 2) {
-                    dat["Money"] = 3;
-                    dat["Minute"] = 30;
-                }
-                else {
-                    dat["Money"] = 5;
-                    dat["Minute"] = 60;
-                }
-                dat["Path"] = path;
-                DoBuy(new ViewEventArgs(dat, this), out optDAT);
-                // 購買失敗 e.x. 餘額不足
-                if (optDAT.Keys.Contains("failinfo")) {
+                if (!isPicture)
+                {
                     lblError.Visible = true;
-                    lblError.Text = optDAT["failinfo"] as string;
+                    lblError.Text = "格式錯誤";
+                }
+                else
+                {
+                    // 存檔
+                    System.Drawing.Image image = System.Drawing.Image.FromStream(FileTmp.FileContent);
+
+                    DAT dat = new DAT();
+                    // 購買方案
+                    if (btnList.SelectedIndex == 0)
+                    {
+                        dat["Money"] = 1;
+                        dat["Minute"] = 5;
+                    }
+                    else if (btnList.SelectedIndex == 1)
+                    {
+                        dat["Money"] = 2;
+                        dat["Minute"] = 15;
+                    }
+                    else if (btnList.SelectedIndex == 2)
+                    {
+                        dat["Money"] = 3;
+                        dat["Minute"] = 30;
+                    }
+                    else
+                    {
+                        dat["Money"] = 5;
+                        dat["Minute"] = 60;
+                    }
+                    dat["Image"] = image;
+                    DoBuy(new ViewEventArgs(dat, this), out optDAT);
+                    // 購買失敗 e.x. 餘額不足
+                    if (optDAT.Keys.Contains("failinfo"))
+                    {
+                        lblError.Visible = true;
+                        lblError.Text = optDAT["failinfo"] as string;
+                    }
                 }
             }
             else if (btnList.SelectedIndex == -1)

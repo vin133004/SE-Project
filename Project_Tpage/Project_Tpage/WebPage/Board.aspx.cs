@@ -47,15 +47,15 @@ namespace Project_Tpage.WebPage
             ListOfArticle.Items.Clear();
             board = Controller.CrossPageDAT["Board"] as Class.Board;
             user = Controller.CrossPageDAT["User"] as User;
-            
+            Follow.ImageUrl = Controller.CrossPageDAT["LikeImage"] as string;
             Title.Text = board.Name;
 
-            List<Class.Article> list;
-            list = new List<Class.Article>();
             // 清除上次累積的其他看板
-            list.Clear();
             ListOfArticle.Items.Clear();
-            list = Controller.model.GetArticlesOfBoard(board.BID); 
+
+            List<Class.Article> list = new List<Class.Article>();
+            list.Clear();
+            list = Controller.CrossPageDAT["ArticleList"] as List<Class.Article>; 
             
             foreach (Class.Article element in list)
             {
@@ -64,8 +64,7 @@ namespace Project_Tpage.WebPage
             
             bool isAdmin = false;
             bool isMaster = false;
-            List<string> admin;
-            admin = new List<string>();
+            List<string> admin = new List<string>();
             admin.Clear();
             admin = board.Admin;
 
@@ -112,9 +111,7 @@ namespace Project_Tpage.WebPage
        
         protected void follow_click(object sender, EventArgs e)
         {
-            DAT dat = new DAT();
-            dat["UID"] = user.Userinfo.UID;
-            DoFollow(new ViewEventArgs(dat, this), out optDAT);
+            DoFollow(new ViewEventArgs(this), out optDAT);
         }
 
         //  發新文章

@@ -30,8 +30,7 @@
                 <asp:ListItem>kkk</asp:ListItem>
                 <asp:ListItem>lll</asp:ListItem>
             </asp:ListBox>
-            
-            <asp:Image ID="AD" runat="server" Height="270" Width="500" ImageUrl="./pictures/2p3o0003noq07q391981.jpg" />
+            <asp:Image ID="ADimage" runat="server" Height="270" Width="500" ImageUrl="./pictures/2p3o0003noq07q391981.jpg" />
             
             <br />
             

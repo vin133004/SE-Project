@@ -30,7 +30,7 @@ namespace Project_Tpage.WebPage
             Controller.controller.SubsribeEvent(this);
 
             // 判定編輯還是新文章
-            if (Controller.CrossPageDAT["Edit"] as string == "true") {
+            if (Controller.CrossPageDAT.Keys.Contains("Article")) {
                 // 編輯文章 
                 article = Controller.CrossPageDAT["Article"] as Class.Article;
                 Tittle.Text = article.Title;

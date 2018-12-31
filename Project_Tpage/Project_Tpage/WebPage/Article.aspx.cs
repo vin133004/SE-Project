@@ -49,20 +49,27 @@ namespace Project_Tpage.WebPage
 
             user = Controller.CrossPageDAT["User"] as Class.User;
             article = Controller.CrossPageDAT["Article"] as Class.Article;
-           
+            
             Content.Text = article.Content;
             Title.Text = article.Title;
             ReleaseUser.Text = Controller.CrossPageDAT["ReleaseUser"] as string;
             ReleaseTime.Text = article.Date.Year.ToString() + "/" 
                 + article.Date.Month.ToString() + "/"
                 + article.Date.Day.ToString();
-            // 缺少留言的資訊
+
+            List<string> messageAll = new List<string>();
+            messageAll.Clear();
+            messageAll = Controller.CrossPageDAT["AllMessage"] as List<string>;
             allMessage.Items.Clear();
+            foreach (string item in messageAll)
+            {
+                allMessage.Items.Add(item);
+            }
+
             numLike.Text = "x" + article.LikeCount.ToString();
 
-            // 宥騰的MVC概念
-            bool admin = Controller.model.IsBoardAdmin(article.OfBoard, user.Userinfo.UID);
-            if (admin) {
+
+            if (Controller.CrossPageDAT.Keys.Contains("Admin")) {
                 btnDel.Enabled = true;
                 if(article.ReleaseUser == user.Userinfo.UID)
                     btnEdit.Enabled = true;
@@ -84,7 +91,6 @@ namespace Project_Tpage.WebPage
             string message = user.Userinfo.ID + "：" + Message.Text;
             dat["Message"] = message;
             dat["AID"] = article.AID;
-            dat["UID"] = user.Userinfo.UID;
 
             DoMessage(new ViewEventArgs(dat, this), out optDAT);
             Message.Text = "";
@@ -98,13 +104,8 @@ namespace Project_Tpage.WebPage
         //  傳送點讚事件
         protected void btnLike_Click(object sender, ImageClickEventArgs e)
         {
-            DAT dat = new DAT();
-            dat["UID"] = user.Userinfo.UID;
-            DoLike(new ViewEventArgs(dat,this), out optDAT);
-            if (!optDAT.Keys.Contains("failinfo")) {
-                btnLike.ImageUrl = optDAT["imageurl"] as string;
-                numLike.Text = "x" + optDAT["LikeCount"] as string;
-            }
+            DoLike(new ViewEventArgs(this), out optDAT);
+            numLike.Text = "x" + optDAT["LikeCount"] as string;
         }
         //  返回首頁
         protected void btnHome_Click(object sender, EventArgs e)
