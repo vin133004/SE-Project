@@ -134,6 +134,7 @@
     <Content Include="WebPage\Login.aspx" />
     <Content Include="WebPage\Register.aspx" />
     <Content Include="WebPage\Setting.aspx" />
+    <Content Include="WebPage\TakeShowingImage.aspx" />
     <None Include="Properties\PublishProfiles\SE2018 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -275,6 +276,13 @@
     </Compile>
     <Compile Include="WebPage\Setting.aspx.designer.cs">
       <DependentUpon>Setting.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="WebPage\TakeShowingImage.aspx.cs">
+      <DependentUpon>TakeShowingImage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WebPage\TakeShowingImage.aspx.designer.cs">
+      <DependentUpon>TakeShowingImage.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
