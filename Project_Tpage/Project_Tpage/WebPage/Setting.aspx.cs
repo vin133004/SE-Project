@@ -54,14 +54,13 @@ namespace Project_Tpage.WebPage
             }
             else {
                 DAT dat = new DAT();
-                user.Userinfo.Password = SecretText.Text;
-                user.Userinfo.StudentID = IDText.Text;
-                user.Userinfo.Email = MailText.Text;
-                user.Userinfo.Gender = (GenderList.SelectedIndex == 0 ? Gender.Null : (GenderList.SelectedIndex == 1 ? Gender.Male : (GenderList.SelectedIndex == 2 ? Gender.Female : Gender.Thirdgender)));
-                user.Userinfo.Realname = RealNameText.Text;
-                user.Userinfo.Nickname = NickNameText.Text;
-                user.Usersetting.Viewstyle = ViewStyleList.SelectedIndex;
-                dat["User"] = user;
+                dat["Password"] = SecretText.Text;
+                dat["StudentID"] = IDText.Text;
+                dat["Email"] = MailText.Text;
+                dat["Gender"] = (GenderList.SelectedIndex == 0 ? Gender.Null : (GenderList.SelectedIndex == 1 ? Gender.Male : (GenderList.SelectedIndex == 2 ? Gender.Female : Gender.Thirdgender)));
+                dat["Realname"] = RealNameText.Text;
+                dat["Nickname"] = NickNameText.Text;
+                dat["Viewstyle"] = ViewStyleList.SelectedIndex;
                 DoChange(new ViewEventArgs(dat, this), out optDAT);
             }
         }

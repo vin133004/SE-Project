@@ -16,7 +16,7 @@ namespace Project_Tpage.WebPage
         //  進去申請看板頁面
         public event ViewEventHandler ToCreateBoard;
 
-        //進入設定
+        //  進入設定
         public event ViewEventHandler ToSetBoard;
 
         //  進去廣告頁面
@@ -31,76 +31,55 @@ namespace Project_Tpage.WebPage
         //  更改樣式
         public event ViewEventHandler DoStyle;
 
-        //接受邀請
-        public event ViewEventHandler Doinvite;
+        //  接受邀請
+        public event ViewEventHandler DoYesInvite;
+
+        //  拒絕邀請
+        public event ViewEventHandler DoNoInvite;
 
         //  事件的輸出結果
         public DAT optDAT;
 
         private User user;
 
-        private int invite = 0;
         //  初始化
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!Controller.IsConstrut)
                 Controller.Initial(StateEnum.Login);
-
-
             //讓Controller內的function訂閱這個頁面上的事件。
             //Do this in each Page_Load()
             Controller.controller.SubsribeEvent(this);
 
-            invite = 0;
-            user = Controller.CrossPageDAT["User"] as User;
-            List<string> boardinvite;
-            boardinvite = new List<string>();
-            boardinvite.Clear();
-            boardinvite = user.FollowBoardQueue;
             
-            foreach (string element in boardinvite)
-            {
-               
-                if (invite < 4)
-                {
-                    if (invite == 0)
-                    {
-                        Panel0.Visible = true;
-                        who.Text = element;
-                    }
-                    else if(invite == 1)
-                    {
-                       
-                        Panel1.Visible = true;
-                        Label2.Text = element;
-                    }
-                    else if (invite == 2)
-                    {
-                       
-                        Panel2.Visible = true;
-                        Label4.Text = element;
-                    }
-                    else if (invite == 3)
-                    {
-                        
-                        Panel3.Visible = true;
-                        Label6.Text = element;
-                    }
-                    invite++;
-                }
-            }
-            List<string> boardlist;
-             boardlist = new List<string>();
-             boardlist.Clear();
-             boardlist = user.FollowBoard;
-             int count = 0;
-             string ctt = count.ToString();
-             foreach (string element in boardlist)
-             {
-                 ListOfBoard.Items.Add(new ListItem(element, ctt));//照順序排value 0~...
-                 count++;
-             }
+            user = Controller.CrossPageDAT["User"] as User;
 
+            // 邀請加入的看板名字
+            List<string> boardQueuelistName = new List<string>();
+            boardQueuelistName.Clear();
+            boardQueuelistName = Controller.CrossPageDAT["FollowBoardQueueName"] as List<string>;
+
+            int count = 0;
+            foreach (string BID in user.FollowBoardQueue) {
+                inviteList.Items.Add(new ListItem(boardQueuelistName[count], BID));
+                count++;
+            }
+
+            ListOfBoard.Items.Clear();
+            List<string> boardListValue = new List<string>();
+            boardListValue.Clear();
+            boardListValue = user.FollowBoard;
+
+            List<string> boardListName = new List<string>();
+            boardListName.Clear();
+            boardListName = Controller.CrossPageDAT["BoardListName"] as List<string>;
+            count = 0;
+            foreach (string element in boardListValue)
+            {
+                ListOfBoard.Items.Add(new ListItem(boardListName[count], element));//照順序排value 0~...
+                count++;
+            }
+            
             color.Style.Add("background-color", "lightblue");
             Color a = Color.Black;
             String border = "white";
@@ -126,10 +105,6 @@ namespace Project_Tpage.WebPage
             searchText.Style.Add("background-color", border);
             ListOfBoard.Style.Add("background-color", border);
             boardText.Style.Add("background-color", border);
-            Panel0.Style.Add("background-color", border);
-            Panel1.Style.Add("background-color", border);
-            Panel2.Style.Add("background-color", border);
-            Panel3.Style.Add("background-color", border);
             StyleList.Style.Add("background-color", border);
   
             Title.Style.Add("position", "absolute");
@@ -138,11 +113,11 @@ namespace Project_Tpage.WebPage
 
             searchText.Style.Add("position", "absolute");
             searchText.Style.Add("top", "70px");
-            searchText.Style.Add("left", "32.5%");
+            searchText.Style.Add("left", "35%");
 
             btnSearch.Style.Add("position", "absolute");
             btnSearch.Style.Add("top", "70px");
-            btnSearch.Style.Add("left", "65%");
+            btnSearch.Style.Add("left", "63%");
 
             searchresult.Style.Add("position", "absolute");
             searchresult.Style.Add("top", "80px");
@@ -180,21 +155,6 @@ namespace Project_Tpage.WebPage
             StyleList.Style.Add("top", "475px");
             StyleList.Style.Add("left", "70%");
 
-            Panel0.Style.Add("position", "absolute");
-            Panel0.Style.Add("top", "450px");
-            Panel0.Style.Add("left", "80%");
-
-            Panel1.Style.Add("position", "absolute");
-            Panel1.Style.Add("top", "530px");
-            Panel1.Style.Add("left", "80%");
-
-            Panel2.Style.Add("position", "absolute");
-            Panel2.Style.Add("top", "610px");
-            Panel2.Style.Add("left", "80%");
-
-            Panel3.Style.Add("position", "absolute");
-            Panel3.Style.Add("top", "690px");
-            Panel3.Style.Add("left", "80%");
 
             boardText.Style.Add("position", "absolute");
             boardText.Style.Add("top", "540px");
@@ -205,8 +165,17 @@ namespace Project_Tpage.WebPage
             btnBoard.Style.Add("left", "3%");
 
             btnSet.Style.Add("position", "absolute");
-            btnSet.Style.Add("top", "40px");
-            btnSet.Style.Add("left", "20%");
+            btnSet.Style.Add("top", "70px");
+            btnSet.Style.Add("left", "30%");
+            inviteList.Style.Add("position", "absolute");
+            inviteList.Style.Add("top", "450px");
+            inviteList.Style.Add("left", "85%");
+            btnYes.Style.Add("position", "absolute");
+            btnYes.Style.Add("top", "460px");
+            btnYes.Style.Add("left", "80%");
+            btnNo.Style.Add("position", "absolute");
+            btnNo.Style.Add("top", "510px");
+            btnNo.Style.Add("left", "80%");
         }
 
         //  點選不同看板進入
@@ -224,15 +193,14 @@ namespace Project_Tpage.WebPage
         protected void btnboard_Click(object sender, EventArgs e)
         {
             DAT dat = new DAT();
-            dat["Board"] = ListOfBoard.SelectedValue.ToString();
+            dat["BID"] = ListOfBoard.SelectedValue;
             ToBoard(new ViewEventArgs(dat, this), out optDAT);
-           
         }
         //  抽卡,回傳資訊顯示於cardInfo
         protected void btnCard_Click(object sender, EventArgs e)
         {
             DoCard(new ViewEventArgs(this),out optDAT);
-            cardInfo.Text = optDAT[""]as string;
+            cardInfo.Text = optDAT["Info"] as string;
         }
 
         //  送出查詢資料
@@ -243,14 +211,11 @@ namespace Project_Tpage.WebPage
             DoSearch(new ViewEventArgs(dat, this), out optDAT);
         }
 
-
         //  前往廣告頁面
         protected void btnAD_Click(object sender, EventArgs e)
         {
             ToAD(new ViewEventArgs(this), out optDAT);
         }
-            
-        
 
         //  更改顯示樣式 存入view模式
         protected void StyleChanged(object sender, EventArgs e)
@@ -262,8 +227,6 @@ namespace Project_Tpage.WebPage
             if (stylevalue == 0)
             {
                 color.Style.Add("background-color", "lightblue");
-
-              
 
                 Color a = Color.Black;
                 String border = "white";
@@ -289,10 +252,6 @@ namespace Project_Tpage.WebPage
                 searchText.Style.Add("background-color", border);
                 ListOfBoard.Style.Add("background-color", border);
                 boardText.Style.Add("background-color", border);
-                Panel0.Style.Add("background-color", border);
-                Panel1.Style.Add("background-color", border);
-                Panel2.Style.Add("background-color", border);
-                Panel3.Style.Add("background-color", border);
                 StyleList.Style.Add("background-color", border);
 
                 Title.Style.Add("position", "absolute");
@@ -342,22 +301,6 @@ namespace Project_Tpage.WebPage
                 StyleList.Style.Add("position", "absolute");
                 StyleList.Style.Add("top", "475px");
                 StyleList.Style.Add("left", "70%");
-
-                Panel0.Style.Add("position", "absolute");
-                Panel0.Style.Add("top", "450px");
-                Panel0.Style.Add("left", "80%");
-
-                Panel1.Style.Add("position", "absolute");
-                Panel1.Style.Add("top", "530px");
-                Panel1.Style.Add("left", "80%");
-
-                Panel2.Style.Add("position", "absolute");
-                Panel2.Style.Add("top", "610px");
-                Panel2.Style.Add("left", "80%");
-
-                Panel3.Style.Add("position", "absolute");
-                Panel3.Style.Add("top", "690px");
-                Panel3.Style.Add("left", "80%");
 
                 boardText.Style.Add("position", "absolute");
                 boardText.Style.Add("top", "540px");
@@ -398,10 +341,6 @@ namespace Project_Tpage.WebPage
                 searchText.Style.Add("background-color", border);
                 ListOfBoard.Style.Add("background-color", border);
                 boardText.Style.Add("background-color", border);
-                Panel0.Style.Add("background-color", border);
-                Panel1.Style.Add("background-color", border);
-                Panel2.Style.Add("background-color", border);
-                Panel3.Style.Add("background-color", border);
                 StyleList.Style.Add("background-color", border);
 
                 Title.Style.Add("position", "absolute");
@@ -451,22 +390,6 @@ namespace Project_Tpage.WebPage
                 StyleList.Style.Add("position", "absolute");
                 StyleList.Style.Add("top", "475px");
                 StyleList.Style.Add("left", "70%");
-
-                Panel0.Style.Add("position", "absolute");
-                Panel0.Style.Add("top", "450px");
-                Panel0.Style.Add("left", "80%");
-
-                Panel1.Style.Add("position", "absolute");
-                Panel1.Style.Add("top", "530px");
-                Panel1.Style.Add("left", "80%");
-
-                Panel2.Style.Add("position", "absolute");
-                Panel2.Style.Add("top", "610px");
-                Panel2.Style.Add("left", "80%");
-
-                Panel3.Style.Add("position", "absolute");
-                Panel3.Style.Add("top", "690px");
-                Panel3.Style.Add("left", "80%");
 
                 boardText.Style.Add("position", "absolute");
                 boardText.Style.Add("top", "540px");
@@ -508,10 +431,6 @@ namespace Project_Tpage.WebPage
                 searchText.Style.Add("background-color", border);
                 ListOfBoard.Style.Add("background-color", border);
                 boardText.Style.Add("background-color", border);
-                Panel0.Style.Add("background-color", border);
-                Panel1.Style.Add("background-color", border);
-                Panel2.Style.Add("background-color", border);
-                Panel3.Style.Add("background-color", border);
                 StyleList.Style.Add("background-color", border);
 
                 Title.Style.Add("position", "absolute");
@@ -568,23 +487,7 @@ namespace Project_Tpage.WebPage
 
                 StyleList.Style.Add("position", "absolute");
                 StyleList.Style.Add("top", "430px");
-                StyleList.Style.Add("left", "0%");
-
-                Panel0.Style.Add("position", "absolute");
-                Panel0.Style.Add("top", "450px");
-                Panel0.Style.Add("left", "80%");
-
-                Panel1.Style.Add("position", "absolute");
-                Panel1.Style.Add("top", "530px");
-                Panel1.Style.Add("left", "80%");
-
-                Panel2.Style.Add("position", "absolute");
-                Panel2.Style.Add("top", "610px");
-                Panel2.Style.Add("left", "80%");
-
-                Panel3.Style.Add("position", "absolute");
-                Panel3.Style.Add("top", "690px");
-                Panel3.Style.Add("left", "80%");
+                StyleList.Style.Add("left", "0%");         
 
                 boardText.Style.Add("position", "absolute");
                 boardText.Style.Add("top", "540px");
@@ -598,57 +501,25 @@ namespace Project_Tpage.WebPage
             ToSetBoard(new ViewEventArgs(this), out optDAT);
         }
 
-        protected void yes_Click(object sender, EventArgs e)
+        protected void inviteList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Panel0.Visible = false;
-            invite--;
+
+        }
+
+        protected void btnYes_Click(object sender, EventArgs e)
+        {
             DAT dat = new DAT();
-            dat["ID"] = user.Name;
-            Doinvite(new ViewEventArgs(dat, this), out optDAT);
+            dat["UID"] = user.Userinfo.UID;
+            dat["BID"] = user.FollowBoardQueue[inviteList.SelectedIndex];
+            DoYesInvite(new ViewEventArgs(dat, this), out optDAT);
         }
-        protected void no_Click(object sender, EventArgs e)
+
+        protected void btnNo_Click(object sender, EventArgs e)
         {
-            Panel0.Visible = false;
-            invite--;
-        }
-        protected void yes1_Click(object sender, EventArgs e)
-        {
-            Panel1.Visible = false;
-            invite--;
             DAT dat = new DAT();
-            dat["ID"] = user.Name;
-            Doinvite(new ViewEventArgs(dat, this), out optDAT);
-        }
-        protected void no1_Click(object sender, EventArgs e)
-        {
-            Panel1.Visible = false;
-            invite--;
-        }
-        protected void yes2_Click(object sender, EventArgs e)
-        {
-            Panel2.Visible = false;
-            invite--;
-            DAT dat = new DAT();
-            dat["ID"] = user.Name;
-            Doinvite(new ViewEventArgs(dat, this), out optDAT);
-        }
-        protected void no2_Click(object sender, EventArgs e)
-        {
-            Panel2.Visible = false;
-            invite--;
-        }
-        protected void yes3_Click(object sender, EventArgs e)
-        {
-            Panel3.Visible = false;
-            invite--;
-            DAT dat = new DAT();
-            dat["ID"] = user.Name;
-            Doinvite(new ViewEventArgs(dat, this), out optDAT);
-        }
-        protected void no3_Click(object sender, EventArgs e)
-        {
-            Panel3.Visible = false;
-            invite--;
+            dat["UID"] = user.Userinfo.UID;
+            dat["BID"] = user.FollowBoardQueue[inviteList.SelectedIndex];
+            DoNoInvite(new ViewEventArgs(dat, this), out optDAT);
         }
     }
 }

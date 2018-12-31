@@ -14,6 +14,7 @@ namespace Project_Tpage.WebPage
         public event ViewEventHandler ToHome;
         // 確認購買
         public event ViewEventHandler DoBuy;
+
         /// <summary>
         /// 每次事件後取得的輸出結果。
         /// </summary>
@@ -25,13 +26,13 @@ namespace Project_Tpage.WebPage
         {
             //在登入頁面，未初始化Controller的情況，初始化Controller
             if (!Controller.IsConstrut)
-                Response.Redirect("Login.aspx");
+                Controller.Initial(StateEnum.Login);
             //讓Controller內的function訂閱這個頁面上的事件。
             //Do this in each Page_Load()
             Controller.controller.SubsribeEvent(this);
 
-            // 初始化需要ID、現有價格、背景配色(?)
-            user =  Controller.CrossPageDAT["user"] as User;
+            // 初始化需要ID、現有金額、背景配色(?)
+            user =  Controller.CrossPageDAT["User"] as User;
             IDInfo.Text = user.Userinfo.ID;
             moneyInfo.Text = user.TbitCoin.ToString();
         }
@@ -53,22 +54,22 @@ namespace Project_Tpage.WebPage
                 DAT dat = new DAT();
                 // 購買方案
                 if (btnList.SelectedIndex == 0) {
-                    dat["cost"] = 1;
-                    dat["minite"] = 5;
+                    dat["Money"] = 1;
+                    dat["Minute"] = 5;
                 }
                 else if (btnList.SelectedIndex == 1) {
-                    dat["cost"] = 2;
-                    dat["minite"] = 15;
+                    dat["Money"] = 2;
+                    dat["Minute"] = 15;
                 }
                 else if (btnList.SelectedIndex == 2) {
-                    dat["cost"] = 3;
-                    dat["minite"] = 30;
+                    dat["Money"] = 3;
+                    dat["Minute"] = 30;
                 }
                 else {
-                    dat["cost"] = 5;
-                    dat["minite"] = 60;
+                    dat["Money"] = 5;
+                    dat["Minute"] = 60;
                 }
-                dat["path"] = path;
+                dat["Path"] = path;
                 DoBuy(new ViewEventArgs(dat, this), out optDAT);
                 // 購買失敗 e.x. 餘額不足
                 if (optDAT.Keys.Contains("failinfo")) {

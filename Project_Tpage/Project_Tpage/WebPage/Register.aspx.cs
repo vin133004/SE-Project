@@ -28,8 +28,7 @@ namespace Project_Tpage.WebPage
         {
             //不在登入頁面，Controller未初始化的情況，導向登入頁面。
             if (!Controller.IsConstrut)
-                Response.Redirect("Login.aspx");
-
+                Controller.Initial(StateEnum.Login);
             //讓Controller內的function訂閱這個頁面上的事件。
             //Do this in each Page_Load()
             Controller.controller.SubsribeEvent(this);

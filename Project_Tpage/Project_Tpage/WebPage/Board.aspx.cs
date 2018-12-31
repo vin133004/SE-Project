@@ -40,68 +40,97 @@ namespace Project_Tpage.WebPage
             //在登入頁面，未初始化Controller的情況，初始化Controller
             if (!Controller.IsConstrut)
                 Controller.Initial(StateEnum.Login);
-
-
             //讓Controller內的function訂閱這個頁面上的事件。
             //Do this in each Page_Load()
             Controller.controller.SubsribeEvent(this);
 
             ListOfArticle.Items.Clear();
-            board=Controller.CrossPageDAT["Board"] as Class.Board;
+            board = Controller.CrossPageDAT["Board"] as Class.Board;
             user = Controller.CrossPageDAT["User"] as User;
             
-            Title.Text=board.Name;
+            Title.Text = board.Name;
+
             List<Class.Article> list;
             list = new List<Class.Article>();
+            // 清除上次累積的其他看板
             list.Clear();
-            list=Controller.model.GetArticlesOfBoard(board.BID);   
+            ListOfArticle.Items.Clear();
+            list = Controller.model.GetArticlesOfBoard(board.BID); 
+            
             foreach (Class.Article element in list)
             {
                 ListOfArticle.Items.Add(new ListItem(element.Title, element.AID));
             }
+            
+            bool isAdmin = false;
+            bool isMaster = false;
+            List<string> admin;
+            admin = new List<string>();
+            admin.Clear();
+            admin = board.Admin;
 
+            if (board.PrivateMaster == user.Userinfo.UID)
+            {
+                isMaster = true;
+                isAdmin = true;
+            }
+
+            foreach (string element in admin)
+            {
+                if (element == user.Userinfo.UID)
+                {
+                    isAdmin = true;
+                    break;
+                }
+            }
+
+            // 開啟管理者功能
+            if (isAdmin) {
+                btnDel.Enabled = true;
+                btnAdmin.Enabled = true;
+                if(isMaster)    // 版主有權刪除此看板
+                    btnDelBoard.Enabled = true;
+            }
+            
             btnarticle.Style.Add("position", "absolute");
             btnarticle.Style.Add("top", "220px");
             btnarticle.Style.Add("left", "15%");
 
-
-
         }
        
-        // 選擇要看文章
+        //  選擇要看文章
         protected void SelectArticle(object sender, EventArgs e)
         {
            //不做事
         }
 
-        // 返回首頁
+        //  返回首頁
         protected void btnBack_Click(object sender, EventArgs e)
         {
             ToBack(new ViewEventArgs(this),out optDAT);
-           
         }
        
         protected void follow_click(object sender, EventArgs e)
         {
             DAT dat = new DAT();
-            dat["ID"] = user.Name;
+            dat["UID"] = user.Userinfo.UID;
             DoFollow(new ViewEventArgs(dat, this), out optDAT);
         }
-        // 發新文章
+
+        //  發新文章
         protected void btnPo_Click(object sender, EventArgs e)
         {
-            ToEditor(new ViewEventArgs(this), out optDAT);
-            
+            ToEditor(new ViewEventArgs(this), out optDAT);   
         }
 
         //  刪除成員(版主or管理者) Info 回傳到 peopleInfo
         protected void btnDel_Click(object sender, EventArgs e)
         {
             DAT dat = new DAT();
-            dat["ID"]=peopleText.Text;
+            dat["ID"] = peopleText.Text;
             DoDelPeople(new ViewEventArgs(dat,this),out optDAT);
-            peopleInfo.Text = optDAT[""] as string;
-           
+            // 刪除情況確認
+            peopleInfo.Text = optDAT["Info"] as string;
         }
         //  邀請成為管理者(版主or管理者) Info 回傳到 peopleInfo
         protected void btnAdmin_Click(object sender, EventArgs e)
@@ -109,7 +138,8 @@ namespace Project_Tpage.WebPage
             DAT dat = new DAT();
             dat["ID"] = peopleText.Text;
             DoAdmin(new ViewEventArgs(dat, this), out optDAT);
-            peopleInfo.Text = optDAT[""] as string;
+            // 邀請狀況確認
+            peopleInfo.Text = optDAT["Info"] as string;
         }
         //  邀請加入(版主or管理者) Info 回傳到 peopleInfo
         protected void btnInvite_Click(object sender, EventArgs e)
@@ -117,37 +147,24 @@ namespace Project_Tpage.WebPage
             DAT dat = new DAT();
             dat["ID"] = peopleText.Text;
             DoInvite(new ViewEventArgs(dat, this), out optDAT);
-            peopleInfo.Text = optDAT[""] as string;
+            // 邀請狀況確認
+            peopleInfo.Text = optDAT["Info"] as string;
         }
+
         // 刪除看板(僅限版主)
         protected void btnDelBoard_Click(object sender, EventArgs e)
         {
-            bool can = false;
-            List<string> admin;
-            admin = new List<string>();
-            admin.Clear();
-            admin=board.Admin;
-            foreach(string element in admin)
-            {
-                if (element == user.Name)
-                {
-                    can = true;
-                    break;
-                }
-            }
-            if (can)
-            { DoDelBoard(new ViewEventArgs(this), out optDAT); }
-           
+            DAT dat = new DAT();
+            dat["BID"] = board.BID;
+            DoDelBoard(new ViewEventArgs(dat,this), out optDAT); 
         }
-        //進入文章
+
+        // 進入文章
         protected void btnarticle_Click(object sender, EventArgs e)
         {
             DAT dat = new DAT();
-            dat["Value"] = ListOfArticle.SelectedItem.Value;
-            
-            //引發事件，取得輸出結果在optDAT裡。
-            ToArticle(new ViewEventArgs(dat, this), out optDAT);
-           
+            dat["AID"] = ListOfArticle.SelectedItem.Value;
+            ToArticle(new ViewEventArgs(dat, this), out optDAT);     
         }
     }
 }

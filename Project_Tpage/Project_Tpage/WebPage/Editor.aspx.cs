@@ -24,19 +24,20 @@ namespace Project_Tpage.WebPage
         {
             //在登入頁面，未初始化Controller的情況，初始化Controller
             if (!Controller.IsConstrut)
-                Response.Redirect("Login.aspx");
+                Controller.Initial(StateEnum.Login);
             //讓Controller內的function訂閱這個頁面上的事件。
             //Do this in each Page_Load()
             Controller.controller.SubsribeEvent(this);
 
             // 判定編輯還是新文章
-            if (Controller.CrossPageDAT["edit"] as string == "true") {
+            if (Controller.CrossPageDAT["Edit"] as string == "true") {
                 // 編輯文章 
-                article = Controller.CrossPageDAT["Content"] as Class.Article;
+                article = Controller.CrossPageDAT["Article"] as Class.Article;
                 Tittle.Text = article.Title;
                 Content.Text = article.Content;
             }
         }
+
         protected void Back_Click(object sender, EventArgs e)
         {
             ToBack(new ViewEventArgs(this), out optDAT);
@@ -46,8 +47,7 @@ namespace Project_Tpage.WebPage
         {
             DAT dat = new DAT();
             dat["Title"] = Tittle.Text;
-            // 欄位怕重複，Content被用於整個文章物件
-            dat["ArticleContent"] = Content.Text;
+            dat["Content"] = Content.Text;
             DoCreate(new ViewEventArgs(dat, this), out optDAT);
         }
     }

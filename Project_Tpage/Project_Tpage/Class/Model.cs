@@ -823,14 +823,14 @@ namespace Project_Tpage.Class
                 }
                 else if (ToState == StateEnum.Article)
                 {
-                    opt["Content"] = DB.Get<Article>((string)ipt["AID"]);
+                    opt["Article"] = DB.Get<Article>((string)ipt["AID"]);
 
                     if (ipt.Keys.Contains("AdvertiseBlocks"))
                         opt["Advertise"] = GetAdOfBlocks(ipt["AdvertiseBlocks"] as List<int>);
                 }
                 else if (ToState == StateEnum.EditArticle)
                 {
-                    opt["Content"] = DB.Get<Article>((string)ipt["AID"]);
+                    opt["Article"] = DB.Get<Article>((string)ipt["AID"]);
                 }
                 else if (ToState == StateEnum.Login)
                 {

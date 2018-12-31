@@ -512,9 +512,6 @@ namespace Project_Tpage.Class
 
         public List<string> Admin { get; set; }
 
-
-
-
         public static Board New(string master)
         {
             Board rtn = new Board(master);

@@ -353,8 +353,6 @@ E:\code\SE-project\Project_Tpage\Project_Tpage\bin\Microsoft.Web.Infrastructure.
 E:\code\SE-project\Project_Tpage\Project_Tpage\bin\Newtonsoft.Json.dll
 E:\code\SE-project\Project_Tpage\Project_Tpage\bin\System.Web.Optimization.dll
 E:\code\SE-project\Project_Tpage\Project_Tpage\bin\WebGrease.dll
-E:\code\SE-project\Project_Tpage\Project_Tpage\bin\Google.Protobuf.dll
-E:\code\SE-project\Project_Tpage\Project_Tpage\bin\MySql.Data.xml
 E:\code\SE-project\Project_Tpage\Project_Tpage\bin\System.Web.Optimization.xml
 E:\code\SE-project\Project_Tpage\Project_Tpage\bin\Newtonsoft.Json.xml
 E:\code\SE-project\Project_Tpage\Project_Tpage\bin\Antlr3.Runtime.pdb
