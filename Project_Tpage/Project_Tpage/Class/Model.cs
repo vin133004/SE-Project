@@ -695,6 +695,18 @@ namespace Project_Tpage.Class
                 .Select(x => new Article(x)).ToList();
         }
         /// <summary>
+        /// 取得特定文章的留言內容。
+        /// </summary>
+        /// <param name="p_AID"></param>
+        /// <returns></returns>
+        public List<AMessage> GetAMessagesOfArticle(string p_AID)
+        {
+            return Enumerable.Cast<DataRow>
+                (DB.GetSqlData(string.Format("SELECT * FROM {0}", DB.DB_AMessageData_TableName)).Rows)
+                .Where(x => DB.AnlType<string>(x["OfArticle"]).Equals(p_AID))
+                .Select(x => new AMessage(x)).ToList();
+        }
+        /// <summary>
         /// 取得指定使用者的使用者看板主要內容。
         /// </summary>
         /// <param name="uid">指定使用者。</param>
