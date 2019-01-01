@@ -116,39 +116,26 @@ namespace Project_Tpage.Class
             string ID = e.data["ID"] as string;
             string Password = e.data["Password"] as string;
 
-            //設定錯誤資訊。
-            string failinfo = "";
+            opt = new DAT();
             try
             {
                 //嘗試登入
                 CrossPageDAT["User"] = model.Login(ID, Password);
+
+                opt.Append(model.RequestPageData(StateEnum.Home, e.data));
+                return;
             }
             catch (ModelException me)
             {
                 //登入失敗則說明錯誤資訊。
                 if (me.ErrorNumber == ModelException.Error.LoginFailed)
-                    failinfo = me.userMessage == "" ? "登入失敗" : me.userMessage;
+                    opt["failinfo"] = me.userMessage == "" ? "登入失敗" : me.userMessage;
             }
             catch (Exception)
             {
-                failinfo = "登入失敗";
+                opt["failinfo"] = "登入失敗";
             }
-
-
-            //若無錯誤資訊，則為成功登入，切換至Home state
-            if (failinfo == "")
-            {
-                opt = model.RequestPageData(StateEnum.Home, e.data);
-
-                //頁面切換至HomePage
-                //page.Response.Redirect("");
-            }
-            else//否則為登入失敗，重回Login state
-            {
-                opt = model.RequestPageData(StateEnum.Login, e.data);
-
-                opt["failinfo"] = failinfo;
-            }
+            opt.Append(model.RequestPageData(StateEnum.Login, e.data));
         }
         public void LoginState_ToRegister(ViewEventArgs e, out DAT opt)
         {
@@ -167,33 +154,24 @@ namespace Project_Tpage.Class
             uif.Email = e.data["Email"] as string;
             uif.StudentID = e.data["StudentID"] as string;
 
-            //設定錯誤資訊。
-            string failinfo = "";
+            opt = new DAT();
             try
             {
                 //嘗試註冊新的使用者。
                 model.Register(uif);
+
+                opt.Append(model.RequestPageData(StateEnum.Login, e.data));
+                return;
             }
             catch (ModelException me) when (me.ErrorNumber == ModelException.Error.InvalidUserInformation)
             {
-                failinfo = me.userMessage;
+                opt["failinfo"] = me.userMessage;
             }
             catch (Exception)
             {
-                failinfo += "註冊失敗。";
+                opt["failinfo"] = "註冊失敗。";
             }
-
-
-            if (failinfo == "")
-            {
-                opt = model.RequestPageData(StateEnum.Login, e.data);
-            }
-            else
-            {
-                opt = model.RequestPageData(StateEnum.Register, e.data);
-
-                opt["failinfo"] = failinfo;
-            }
+            opt.Append(model.RequestPageData(StateEnum.Register, e.data));
         }
         public void RegisterState_ToBack(ViewEventArgs e, out DAT opt)
         {
@@ -380,7 +358,38 @@ namespace Project_Tpage.Class
         }
         public void SettingState_DoChange(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.Home, e.data);
+            UserInfo uif = UserInfo.New;
+            UserSetting ust = UserSetting.New;
+
+
+            uif.Password = e.data["Password"] as string;
+            uif.StudentID = e.data["StudentID"] as string;
+            uif.Email = e.data["Email"] as string;
+            uif.Gender = (Gender)(int)e.data["Gender"];
+            uif.Realname = e.data["Realname"] as string;
+            uif.Nickname = e.data["Nickname"] as string;
+            ust.Viewstyle = (int)e.data["Viewstyle"];
+
+            opt = new DAT();
+            try
+            {
+                User usr = CrossPageDAT["User"] as User;
+                model.SetUserSetting(uif, ust, ref usr);
+                CrossPageDAT["User"] = usr;
+
+                opt.Append(model.RequestPageData(StateEnum.Home, e.data));
+
+                return;
+            }
+            catch(ModelException me)
+            {
+                opt["failinfo"] = me.userMessage;
+            }
+            catch(Exception)
+            {
+                opt["failinfo"] = "設定失敗。";
+            }
+            opt.Append(model.RequestPageData(StateEnum.Home, e.data));
         }
 
     }
@@ -456,6 +465,12 @@ namespace Project_Tpage.Class
             Clear();
             foreach (string key in src.Keys)
                 Add(key, src[key]);
+        }
+
+        public void Append(Dictionary<string, object> src)
+        {
+            foreach (KeyValuePair<string, object> x in src)
+                this[x.Key] = x.Value;
         }
 
         /// <summary>

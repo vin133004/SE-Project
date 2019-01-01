@@ -55,6 +55,8 @@ namespace Project_Tpage.WebPage
             }
             else
             {
+                foreach (KeyValuePair<string, object> v in optDAT)
+                    Controller.CrossPageDAT[v.Key] = v.Value;
                 Response.Redirect("Home");
             }
         }

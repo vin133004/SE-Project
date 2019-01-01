@@ -342,13 +342,13 @@ namespace Project_Tpage.Class
         /// </summary>
         /// <param name="_uif">使用者資訊。</param>
         /// <param name="_ust">使用者設定。</param>
-        public void SetUserSetting(UserInfo p_uif, UserSetting p_ust)
+        public void SetUserSetting(UserInfo p_uif, UserSetting p_ust, ref User usr)
         {
             User.ValidUserInfo(p_uif);
 
-            user.Userinfo = p_uif;
-            user.Usersetting = p_ust;
-            DB.Set<User>(user);
+            usr.Userinfo = p_uif;
+            usr.Usersetting = p_ust;
+            DB.Set<User>(usr);
         }
         /// <summary>
         /// 使用者發布文章。
