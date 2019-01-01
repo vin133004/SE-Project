@@ -121,7 +121,7 @@ namespace Project_Tpage.Class
             try
             {
                 //嘗試登入
-                model.Login(ID, Password);
+                CrossPageDAT["User"] = model.Login(ID, Password);
             }
             catch (ModelException me)
             {

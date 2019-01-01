@@ -7,8 +7,7 @@
 // </自動產生的>
 //------------------------------------------------------------------------------
 
-namespace Project_Tpage.WebPage
-{
+namespace Project_Tpage.WebPage {
     
     
     public partial class Register {
@@ -68,13 +67,13 @@ namespace Project_Tpage.WebPage
         protected global::System.Web.UI.WebControls.TextBox tbx2;
         
         /// <summary>
-        /// lbl3 控制項。
+        /// Label1 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lbl3;
+        protected global::System.Web.UI.WebControls.Label Label1;
         
         /// <summary>
         /// tbx3 控制項。
@@ -86,13 +85,13 @@ namespace Project_Tpage.WebPage
         protected global::System.Web.UI.WebControls.TextBox tbx3;
         
         /// <summary>
-        /// lbl4 控制項。
+        /// lbl3 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lbl4;
+        protected global::System.Web.UI.WebControls.Label lbl3;
         
         /// <summary>
         /// tbx4 控制項。
@@ -102,6 +101,24 @@ namespace Project_Tpage.WebPage
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox tbx4;
+        
+        /// <summary>
+        /// lbl4 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lbl4;
+        
+        /// <summary>
+        /// tbx5 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox tbx5;
         
         /// <summary>
         /// lblError 控制項。

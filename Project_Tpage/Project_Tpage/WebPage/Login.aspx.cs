@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Project_Tpage.Class;
-using System.Drawing;
+
 namespace Project_Tpage.WebPage
 {
     public partial class Login : System.Web.UI.Page
@@ -23,7 +23,7 @@ namespace Project_Tpage.WebPage
         /// 每次事件後取得的輸出結果。
         /// </summary>
         public DAT optDAT;
-  
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //在登入頁面，未初始化Controller的情況，初始化Controller
@@ -34,10 +34,7 @@ namespace Project_Tpage.WebPage
             //讓Controller內的function訂閱這個頁面上的事件。
             //Do this in each Page_Load()
             Controller.controller.SubsribeEvent(this);
-         
-            
         }
-    
 
         public void btn1_Click(object sender, EventArgs e)
         {
@@ -50,6 +47,16 @@ namespace Project_Tpage.WebPage
 
             //引發事件，取得輸出結果在optDAT裡。
             DoLogin(new ViewEventArgs(dat, this), out optDAT);
+
+            if(optDAT.Keys.Contains("failinfo"))
+            {
+                lblFail.Visible = true;
+                lblFail.Text = optDAT["failinfo"] as string;
+            }
+            else
+            {
+                Response.Redirect("Home");
+            }
         }
 
 
@@ -59,6 +66,8 @@ namespace Project_Tpage.WebPage
 
             //引發事件。
             ToRegister(new ViewEventArgs(this), out optDAT);
+
+            Response.Redirect("Register");
         }
 
     }

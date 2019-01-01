@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Project_Tpage.Class;
-using System.Drawing;
+
 namespace Project_Tpage.WebPage
 {
     public partial class Register : System.Web.UI.Page
@@ -23,6 +23,7 @@ namespace Project_Tpage.WebPage
         /// 每次事件後取得的輸出結果。
         /// </summary>
         public DAT optDAT;
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //不在登入頁面，Controller未初始化的情況，導向登入頁面。
@@ -31,21 +32,26 @@ namespace Project_Tpage.WebPage
             //讓Controller內的function訂閱這個頁面上的事件。
             //Do this in each Page_Load()
             Controller.controller.SubsribeEvent(this);
-           
         }
-    
 
         public void btn1_Click(object sender, EventArgs e)
         {
             //當使用者按下註冊按鈕，引發註冊事件。
+
+            if(!tbx2.Text.Equals(tbx3.Text))
+            {
+                lblError.Text = "確認密碼有誤！";
+                lblError.Visible = true;
+                return;
+            }
 
 
             //設定輸入參數資料
             DAT dat = new DAT();
             dat["Id"] = tbx1.Text;
             dat["Password"] = tbx2.Text;
-            dat["Email"] = tbx3.Text;
-            dat["StudentID"] = tbx4.Text;
+            dat["Email"] = tbx4.Text;
+            dat["StudentID"] = tbx5.Text;
             
 
             //引發事件，取得輸出結果在optDAT裡。
@@ -56,8 +62,10 @@ namespace Project_Tpage.WebPage
             {
                 lblError.Visible = true;
                 lblError.Text = optDAT["failinfo"] as string;
-
-                tbx1.Text = tbx2.Text = tbx3.Text = tbx4.Text = "";
+            }
+            else
+            {
+                Response.Redirect("Login");
             }
         }
         
@@ -67,6 +75,8 @@ namespace Project_Tpage.WebPage
 
             //引發事件。
             ToBack(new ViewEventArgs(this), out optDAT);
+
+            Response.Redirect("Login");
         }
     }
 }
