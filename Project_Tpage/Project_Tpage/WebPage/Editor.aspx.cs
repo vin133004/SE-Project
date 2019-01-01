@@ -30,8 +30,7 @@ namespace Project_Tpage.WebPage
             //Do this in each Page_Load()
             Controller.controller.SubsribeEvent(this);
             user = Controller.CrossPageDAT["User"] as Class.User;
-            int style = 0;
-            style = user.Usersetting.Viewstyle;
+
             // 判定編輯還是新文章
             if (Controller.CrossPageDAT.Keys.Contains("Article")) {
                 // 編輯文章 
@@ -39,64 +38,39 @@ namespace Project_Tpage.WebPage
                 Tittle.Text = article.Title;
                 Content.Text = article.Content;
             }
+            int style = 0;
+            style = user.Usersetting.Viewstyle;
+            Color a;
+            string border;
             if (style == 0)
             {
                 color.Style.Add("background-color", "lightblue");
-                Color a = Color.Black;
-                String border = "white";
-                la1.ForeColor = a;
-                Tittle.ForeColor = a;
-                la2.ForeColor = a;
-                Content.ForeColor = a;
-                Back.ForeColor = a;
-                Send.ForeColor = a;
-                
-                la1.Style.Add("background-color", border);
-                Tittle.Style.Add("background-color", border);
-                la2.Style.Add("background-color", border);
-                Send.Style.Add("background-color", border);
-                Back.Style.Add("background-color", border);
-                Content.Style.Add("background-color", border);
-                
+                a = Color.Black;
+                border = "white";
             }
             else if (style == 1)
             {
                 color.Style.Add("background-color", "black");
-                Color a = Color.WhiteSmoke;
-                String border = "DarkGray";
-                la1.ForeColor = a;
-                Tittle.ForeColor = a;
-                la2.ForeColor = a;
-                Content.ForeColor = a;
-                Back.ForeColor = a;
-                Send.ForeColor = a;
-
-                la1.Style.Add("background-color", border);
-                Tittle.Style.Add("background-color", border);
-                la2.Style.Add("background-color", border);
-                Send.Style.Add("background-color", border);
-                Back.Style.Add("background-color", border);
-                Content.Style.Add("background-color", border);
+                a = Color.WhiteSmoke;
+                border = "DarkGray";
             }
             else
             {
                 color.Style.Add("background-color", "BurlyWood");
-                Color a = Color.BlueViolet;
-                String border = "CadetBlue";
-                la1.ForeColor = a;
-                Tittle.ForeColor = a;
-                la2.ForeColor = a;
-                Content.ForeColor = a;
-                Back.ForeColor = a;
-                Send.ForeColor = a;
-
-                la1.Style.Add("background-color", border);
-                Tittle.Style.Add("background-color", border);
-                la2.Style.Add("background-color", border);
-                Send.Style.Add("background-color", border);
-                Back.Style.Add("background-color", border);
-                Content.Style.Add("background-color", border);
+                a = Color.BlueViolet;
+                border = "CadetBlue";   
             }
+            la1.ForeColor = a;
+            Tittle.ForeColor = a;
+            la2.ForeColor = a;
+            Content.ForeColor = a;
+            Back.ForeColor = a;
+            Send.ForeColor = a;
+
+            Tittle.Style.Add("background-color", border);
+            Send.Style.Add("background-color", border);
+            Back.Style.Add("background-color", border);
+            Content.Style.Add("background-color", border);
         }
     
 

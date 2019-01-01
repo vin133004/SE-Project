@@ -33,7 +33,7 @@
             <asp:Label ID="Blank2" runat="server" Height="50" Width="500"  />
             <asp:ImageButton ID="btnLike" runat="server" Height="50" Width="50" OnClick="btnLike_Click" ImageUrl="./pictures/Like.jpg" /> 
             <br />     
-            <asp:TextBox ID="Message" runat="server" Height="40" Width="600" />
+            <asp:TextBox ID="Message" runat="server" Height="40" Width="600"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="Large"/>
             <asp:Button ID="btnSend" runat="server" Height="50" Width="50" Text="發送" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="Large" OnClick="btnSend_Click" />
             <asp:Label ID="lblError" runat="server" Height="40" Width="200" Visible="false" />
             <br />

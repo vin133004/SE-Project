@@ -37,93 +37,41 @@ namespace Project_Tpage.WebPage
             style = user.Usersetting.Viewstyle;
             IDInfo.Text = user.Userinfo.ID;
             moneyInfo.Text = user.TbitCoin.ToString();
+            Color a;      
+            string border;
             if (style == 0)
             {
                 color.Style.Add("background-color", "lightblue");
-                Color a = Color.Black;
-                String border = "white";
-                IDLabel.ForeColor = a;
-                IDInfo.ForeColor = a;
-                moneyLabel.ForeColor = a;
-                moneyInfo.ForeColor = a;
-                upInfo.ForeColor = a;
-                FileTmp.ForeColor = a;
-                costInfo.ForeColor = a;
-                btnList.ForeColor = a;
-                btnHome.ForeColor = a;
-                btnSend.ForeColor = a;
-                lblError.ForeColor = a;
-                
-                IDLabel.Style.Add("background-color", border);
-                IDInfo.Style.Add("background-color", border);
-                moneyLabel.Style.Add("background-color", border);
-                moneyInfo.Style.Add("background-color", border);
-                upInfo.Style.Add("background-color", border);
-                FileTmp.Style.Add("background-color", border);
-                costInfo.Style.Add("background-color", border);
-                btnList.Style.Add("background-color", border);
-                btnHome.Style.Add("background-color", border);
-                btnSend.Style.Add("background-color", border);
-                lblError.Style.Add("background-color", border);
+                a = Color.Black;
+                border = "white";
             }
             else if (style == 1)
             {
                 color.Style.Add("background-color", "black");
-                Color a = Color.WhiteSmoke;
-                String border = "DarkGray";
-                IDLabel.ForeColor = a;
-                IDInfo.ForeColor = a;
-                moneyLabel.ForeColor = a;
-                moneyInfo.ForeColor = a;
-                upInfo.ForeColor = a;
-                FileTmp.ForeColor = a;
-                costInfo.ForeColor = a;
-                btnList.ForeColor = a;
-                btnHome.ForeColor = a;
-                btnSend.ForeColor = a;
-                lblError.ForeColor = a;
-
-                IDLabel.Style.Add("background-color", border);
-                IDInfo.Style.Add("background-color", border);
-                moneyLabel.Style.Add("background-color", border);
-                moneyInfo.Style.Add("background-color", border);
-                upInfo.Style.Add("background-color", border);
-                FileTmp.Style.Add("background-color", border);
-                costInfo.Style.Add("background-color", border);
-                btnList.Style.Add("background-color", border);
-                btnHome.Style.Add("background-color", border);
-                btnSend.Style.Add("background-color", border);
-                lblError.Style.Add("background-color", border);
+                a = Color.WhiteSmoke;
+                border = "DarkGray";   
             }
             else
             {
                 color.Style.Add("background-color", "BurlyWood");
-                Color a = Color.BlueViolet;
-                String border = "CadetBlue";
-                IDLabel.ForeColor = a;
-                IDInfo.ForeColor = a;
-                moneyLabel.ForeColor = a;
-                moneyInfo.ForeColor = a;
-                upInfo.ForeColor = a;
-                FileTmp.ForeColor = a;
-                costInfo.ForeColor = a;
-                btnList.ForeColor = a;
-                btnHome.ForeColor = a;
-                btnSend.ForeColor = a;
-                lblError.ForeColor = a;
-
-                IDLabel.Style.Add("background-color", border);
-                IDInfo.Style.Add("background-color", border);
-                moneyLabel.Style.Add("background-color", border);
-                moneyInfo.Style.Add("background-color", border);
-                upInfo.Style.Add("background-color", border);
-                FileTmp.Style.Add("background-color", border);
-                costInfo.Style.Add("background-color", border);
-                btnList.Style.Add("background-color", border);
-                btnHome.Style.Add("background-color", border);
-                btnSend.Style.Add("background-color", border);
-                lblError.Style.Add("background-color", border);
+                a = Color.BlueViolet;
+                border = "CadetBlue";
             }
+            IDLabel.ForeColor = a;
+            IDInfo.ForeColor = a;
+            moneyLabel.ForeColor = a;
+            moneyInfo.ForeColor = a;
+            upInfo.ForeColor = a;
+            FileTmp.ForeColor = a;
+            costInfo.ForeColor = a;
+            btnList.ForeColor = a;
+            btnHome.ForeColor = a;
+            btnSend.ForeColor = a;
+            lblError.ForeColor = a;
+            panelInfo.ForeColor = a;
+            FileTmp.Style.Add("background-color", border);
+            btnHome.Style.Add("background-color", border);
+            btnSend.Style.Add("background-color", border);
         }
         protected void btnHome_Click(object sender, EventArgs e)
         {

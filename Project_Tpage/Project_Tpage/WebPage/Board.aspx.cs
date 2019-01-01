@@ -47,8 +47,7 @@ namespace Project_Tpage.WebPage
             ListOfArticle.Items.Clear();
             board = Controller.CrossPageDAT["Board"] as Class.Board;
             user = Controller.CrossPageDAT["User"] as User;
-            int style = 0;
-            style = user.Usersetting.Viewstyle;
+            
             Follow.ImageUrl = Controller.CrossPageDAT["LikeImage"] as string;
             Title.Text = board.Name;
 
@@ -92,108 +91,55 @@ namespace Project_Tpage.WebPage
                 if(isMaster)    // 版主有權刪除此看板
                     btnDelBoard.Enabled = true;
             }
-            
+
             btnarticle.Style.Add("position", "absolute");
             btnarticle.Style.Add("top", "220px");
             btnarticle.Style.Add("left", "15%");
+            int style = 0;
+            style = user.Usersetting.Viewstyle;
+            Color a;
+            string border;
             if (style == 0)
             {
                 color.Style.Add("background-color", "lightblue");
-                Color a = Color.Black;
-                String border = "white";
-                Title.ForeColor = a;
-                Follow.ForeColor = a;
-                btnarticle.ForeColor = a;
-                ListOfArticle.ForeColor = a;
-                btnBack.ForeColor = a;
-                btnPo.ForeColor = a;
-                peopleText.ForeColor = a;
-                btnInvite.ForeColor = a;
-                btnAdmin.ForeColor = a;
-                btnDel.ForeColor = a;
-                peopleInfo.ForeColor = a;
-                btnDelBoard.ForeColor = a;
-                
-                Title.Style.Add("background-color", border);
-                Follow.Style.Add("background-color", border);
-                btnarticle.Style.Add("background-color", border);
-                ListOfArticle.Style.Add("background-color", border);
-                btnBack.Style.Add("background-color", border);
-                btnPo.Style.Add("background-color", border);
-                peopleText.Style.Add("background-color", border);
-                btnInvite.Style.Add("background-color", border);
-                btnAdmin.Style.Add("background-color", border);
-                btnDel.Style.Add("background-color", border);
-                peopleInfo.Style.Add("background-color", border);
-                btnDelBoard.Style.Add("background-color", border);
-               
+                a = Color.Black;
+                border = "white";  
             }
             else if (style == 1)
             {
                 color.Style.Add("background-color", "black");
-                Color a = Color.WhiteSmoke;
-                String border = "DarkGray";
-
-                Title.ForeColor = a;
-                Follow.ForeColor = a;
-                btnarticle.ForeColor = a;
-                ListOfArticle.ForeColor = a;
-                btnBack.ForeColor = a;
-                btnPo.ForeColor = a;
-                peopleText.ForeColor = a;
-                btnInvite.ForeColor = a;
-                btnAdmin.ForeColor = a;
-                btnDel.ForeColor = a;
-                peopleInfo.ForeColor = a;
-                btnDelBoard.ForeColor = a;
-
-                Title.Style.Add("background-color", border);
-                Follow.Style.Add("background-color", border);
-                btnarticle.Style.Add("background-color", border);
-                ListOfArticle.Style.Add("background-color", border);
-                btnBack.Style.Add("background-color", border);
-                btnPo.Style.Add("background-color", border);
-                peopleText.Style.Add("background-color", border);
-                btnInvite.Style.Add("background-color", border);
-                btnAdmin.Style.Add("background-color", border);
-                btnDel.Style.Add("background-color", border);
-                peopleInfo.Style.Add("background-color", border);
-                btnDelBoard.Style.Add("background-color", border);
+                a = Color.WhiteSmoke;
+                border = "DarkGray";
             }
             else
             {
                 color.Style.Add("background-color", "BurlyWood");
-                Color a = Color.BlueViolet;
-                String border = "CadetBlue";
-
-                Title.ForeColor = a;
-                Follow.ForeColor = a;
-                btnarticle.ForeColor = a;
-                ListOfArticle.ForeColor = a;
-                btnBack.ForeColor = a;
-                btnPo.ForeColor = a;
-                peopleText.ForeColor = a;
-                btnInvite.ForeColor = a;
-                btnAdmin.ForeColor = a;
-                btnDel.ForeColor = a;
-                peopleInfo.ForeColor = a;
-                btnDelBoard.ForeColor = a;
-
-                Title.Style.Add("background-color", border);
-                Follow.Style.Add("background-color", border);
-                btnarticle.Style.Add("background-color", border);
-                ListOfArticle.Style.Add("background-color", border);
-                btnBack.Style.Add("background-color", border);
-                btnPo.Style.Add("background-color", border);
-                peopleText.Style.Add("background-color", border);
-                btnInvite.Style.Add("background-color", border);
-                btnAdmin.Style.Add("background-color", border);
-                btnDel.Style.Add("background-color", border);
-                peopleInfo.Style.Add("background-color", border);
-                btnDelBoard.Style.Add("background-color", border);
+                a = Color.BlueViolet;
+                border = "CadetBlue";
             }
+            Title.ForeColor = a;
+            Follow.ForeColor = a;
+            btnarticle.ForeColor = a;
+            ListOfArticle.ForeColor = a;
+            btnBack.ForeColor = a;
+            btnPo.ForeColor = a;
+            peopleText.ForeColor = a;
+            btnInvite.ForeColor = a;
+            btnAdmin.ForeColor = a;
+            btnDel.ForeColor = a;
+            peopleInfo.ForeColor = a;
+            btnDelBoard.ForeColor = a;
+
+            btnarticle.Style.Add("background-color", border);
+            ListOfArticle.Style.Add("background-color", border);
+            btnBack.Style.Add("background-color", border);
+            btnPo.Style.Add("background-color", border);
+            peopleText.Style.Add("background-color", border);
+            btnInvite.Style.Add("background-color", border);
+            btnAdmin.Style.Add("background-color", border);
+            btnDel.Style.Add("background-color", border);
+            btnDelBoard.Style.Add("background-color", border);
         }
-    }
        
         //  選擇要看文章
         protected void SelectArticle(object sender, EventArgs e)

@@ -16,14 +16,14 @@
             <asp:Label ID="moneyLabel" runat="server" Width="150" Height="30" Text="用戶金額：" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="Large" />
             <asp:Label ID="moneyInfo" runat="server" Width="250" Height="30" Text="" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="Large" />
             <br />
-           
-            <h3>若想要置放廣告請依照下列步驟：</h3>
-            <h3>1. 選擇想廣告的圖片</h3>
-            <h3>2. 挑喜歡的廣告模式</h3>
-            <h3>3. 點選確認購買即可</h3>
-            <h3>！！返回並不扣除任何手續！！</h3>
-            <h3>自動安排播出時間不可決定時段</h3>
-
+            <asp:Panel ID="panelInfo" runat="server" >
+                <h3>若想要置放廣告請依照下列步驟：</h3>
+                <h3>1. 選擇想廣告的圖片</h3>
+                <h3>2. 挑喜歡的廣告模式</h3>
+                <h3>3. 點選確認購買即可</h3>
+                <h3>！！返回並不扣除任何手續！！</h3>
+                <h3>自動安排播出時間不可決定時段</h3>
+            </asp:Panel>        
             <br />
             <asp:Label ID="upInfo" runat="server" Text="上傳檔案" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" /><br/>
             <asp:FileUpload ID="FileTmp" runat="server" Width="300" Height="50" /><br />

@@ -48,8 +48,7 @@ namespace Project_Tpage.WebPage
             Controller.controller.SubsribeEvent(this);
            
             user = Controller.CrossPageDAT["User"] as Class.User;
-            int style = 0;
-            style = user.Usersetting.Viewstyle;
+            
             article = Controller.CrossPageDAT["Article"] as Class.Article;
             
             Content.Text = article.Content;
@@ -69,121 +68,61 @@ namespace Project_Tpage.WebPage
             }
 
             numLike.Text = "x" + article.LikeCount.ToString();
-
+            
 
             if (Controller.CrossPageDAT.Keys.Contains("Admin")) {
                 btnDel.Enabled = true;
                 if(article.ReleaseUser == user.Userinfo.UID)
                     btnEdit.Enabled = true;
             }
+            int style = 0;
+            style = user.Usersetting.Viewstyle;
+            Color a;
+            string border;
             if (style == 0)
             {
                 color.Style.Add("background-color", "lightblue");
-                Color a = Color.Black;
-                String border = "white";
-                Title.ForeColor = a;
-                blank3.ForeColor = a;
-                btnDel.ForeColor = a;
-                ReleaseUser.ForeColor = a;
-                ReleaseTime.ForeColor = a;
-                Content.ForeColor = a;      
-                allMessage.ForeColor = a;
-                numLike.ForeColor = a;
-                btnLike.ForeColor = a;
-                Message.ForeColor = a;
-                btnSend.ForeColor = a;
-                lblError.ForeColor = a;
-                btnBack.ForeColor = a;
-                btnHome.ForeColor = a;
-                btnEdit.ForeColor = a;
-                Title.Style.Add("background-color", border);
-                blank3.Style.Add("background-color", border);
-                btnDel.Style.Add("background-color", border);
-                ReleaseUser.Style.Add("background-color", border);
-                ReleaseTime.Style.Add("background-color", border);
-                Content.Style.Add("background-color", border);        
-                allMessage.Style.Add("background-color", border);
-                numLike.Style.Add("background-color", border);
-                btnLike.Style.Add("background-color", border);
-                Message.Style.Add("background-color", border);
-                btnSend.Style.Add("background-color", border);
-                lblError.Style.Add("background-color", border);
-                btnBack.Style.Add("background-color", border);
-                btnHome.Style.Add("background-color", border);
-                btnEdit.Style.Add("background-color", border);
+                a = Color.Black;
+                border = "white";        
             }
             else if (style == 1)
             {
                 color.Style.Add("background-color", "black");
-                Color a = Color.WhiteSmoke;
-                String border = "DarkGray";
-                Title.ForeColor = a;
-                blank3.ForeColor = a;
-                btnDel.ForeColor = a;
-                ReleaseUser.ForeColor = a;
-                ReleaseTime.ForeColor = a;
-                Content.ForeColor = a;
-                allMessage.ForeColor = a;
-                numLike.ForeColor = a;
-                btnLike.ForeColor = a;
-                Message.ForeColor = a;
-                btnSend.ForeColor = a;
-                lblError.ForeColor = a;
-                btnBack.ForeColor = a;
-                btnHome.ForeColor = a;
-                btnEdit.ForeColor = a;
-                Title.Style.Add("background-color", border);
-                blank3.Style.Add("background-color", border);
-                btnDel.Style.Add("background-color", border);
-                ReleaseUser.Style.Add("background-color", border);
-                ReleaseTime.Style.Add("background-color", border);
-                Content.Style.Add("background-color", border);
-                allMessage.Style.Add("background-color", border);
-                numLike.Style.Add("background-color", border);
-                btnLike.Style.Add("background-color", border);
-                Message.Style.Add("background-color", border);
-                btnSend.Style.Add("background-color", border);
-                lblError.Style.Add("background-color", border);
-                btnBack.Style.Add("background-color", border);
-                btnHome.Style.Add("background-color", border);
-                btnEdit.Style.Add("background-color", border);
+                a = Color.WhiteSmoke;
+                border = "DarkGray";
             }
             else
             {
                 color.Style.Add("background-color", "BurlyWood");
-                Color a = Color.BlueViolet;
-                String border = "CadetBlue";
-                Title.ForeColor = a;
-                blank3.ForeColor = a;
-                btnDel.ForeColor = a;
-                ReleaseUser.ForeColor = a;
-                ReleaseTime.ForeColor = a;
-                Content.ForeColor = a;
-                allMessage.ForeColor = a;
-                numLike.ForeColor = a;
-                btnLike.ForeColor = a;
-                Message.ForeColor = a;
-                btnSend.ForeColor = a;
-                lblError.ForeColor = a;
-                btnBack.ForeColor = a;
-                btnHome.ForeColor = a;
-                btnEdit.ForeColor = a;
-                Title.Style.Add("background-color", border);
-                blank3.Style.Add("background-color", border);
-                btnDel.Style.Add("background-color", border);
-                ReleaseUser.Style.Add("background-color", border);
-                ReleaseTime.Style.Add("background-color", border);
-                Content.Style.Add("background-color", border);
-                allMessage.Style.Add("background-color", border);
-                numLike.Style.Add("background-color", border);
-                btnLike.Style.Add("background-color", border);
-                Message.Style.Add("background-color", border);
-                btnSend.Style.Add("background-color", border);
-                lblError.Style.Add("background-color", border);
-                btnBack.Style.Add("background-color", border);
-                btnHome.Style.Add("background-color", border);
-                btnEdit.Style.Add("background-color", border);
+                a = Color.BlueViolet;
+                border = "CadetBlue";
             }
+            Title.ForeColor = a;
+            blank3.ForeColor = a;
+            btnDel.ForeColor = a;
+            ReleaseUser.ForeColor = a;
+            ReleaseTime.ForeColor = a;
+            Content.ForeColor = a;
+            allMessage.ForeColor = a;
+            numLike.ForeColor = a;
+            btnLike.ForeColor = a;
+            Message.ForeColor = a;
+            btnSend.ForeColor = a;
+            lblError.ForeColor = a;
+            btnBack.ForeColor = a;
+            btnHome.ForeColor = a;
+            btnEdit.ForeColor = a;
+
+            blank3.Style.Add("background-color", border);
+            btnDel.Style.Add("background-color", border);
+            allMessage.Style.Add("background-color", border);
+            btnLike.Style.Add("background-color", border);
+            Message.Style.Add("background-color", border);
+            btnSend.Style.Add("background-color", border);
+            lblError.Style.Add("background-color", border);
+            btnBack.Style.Add("background-color", border);
+            btnHome.Style.Add("background-color", border);
+            btnEdit.Style.Add("background-color", border);
         }
 
         //  返回看板

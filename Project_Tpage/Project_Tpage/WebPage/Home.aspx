@@ -40,16 +40,9 @@
             <asp:Label ID="cardInfo" runat="server" Width="200" Height="50" Font-Names="微軟正黑體" Font-Size="X-Large" Text="" />
             <asp:Button ID="btnAD" runat="server"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Width="150" Height="75" BorderStyle="None" Text="購買廣告" OnClick="btnAD_Click" />           
             <asp:Label ID="blank2" runat="server" Width="10" Height="20" Text="" />
-            <asp:Label ID="StyleInfo" runat="server" Width="90" Height="20" Text="顯示模式" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="Larger" />
-            <asp:DropDownList ID="StyleList" runat="server"  AutoPostBack="true" Font-Names="微軟正黑體" Font-Size="Large" OnSelectedIndexChanged="StyleChanged">
-                <asp:ListItem >日間模式</asp:ListItem>
-                <asp:ListItem >夜間模式</asp:ListItem>
-                 <asp:ListItem  >模式</asp:ListItem>
-            </asp:DropDownList>
             <asp:ListBox ID="inviteList" runat="server" Width="100" Font-Names="微軟正黑體" Font-Size="Large" OnSelectedIndexChanged="inviteList_SelectedIndexChanged"></asp:ListBox>
             <asp:Button ID="btnYes" runat="server"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Height="40" BorderStyle="None" Text="接受" OnClick="btnYes_Click"/>
-            <asp:Button ID="btnNo" runat="server"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Height="40" BorderStyle="None" Text="拒絕" OnClick="btnNo_Click"/>
-            <asp:TextBox ID="boardText" runat="server" Height="35" Width="500" Visible="false" />     
+            <asp:Button ID="btnNo" runat="server"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Height="40" BorderStyle="None" Text="拒絕" OnClick="btnNo_Click"/>  
         </center>
     </form>
 </body>

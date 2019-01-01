@@ -63,7 +63,6 @@ namespace Project_Tpage.Class
                 (p as Home).ToAD += HomeState_ToAD;
                 (p as Home).DoSearch += HomeState_DoSearch;
                 (p as Home).DoCard += HomeState_DoCard;
-                (p as Home).DoStyle += HomeState_DoStyle;
                 (p as Home).ToSetBoard += HomeState_ToSetBoard;
                 (p as Home).DoYesInvite += HomeState_DoYesInvite;
                 (p as Home).DoNoInvite += HomeState_DoNoInvite;
@@ -220,10 +219,6 @@ namespace Project_Tpage.Class
             opt = model.RequestPageData(StateEnum.Board, e.data);
         }
         public void HomeState_DoCard(ViewEventArgs e, out DAT opt)
-        {
-            opt = model.RequestPageData(StateEnum.Home, e.data);
-        }
-        public void HomeState_DoStyle(ViewEventArgs e, out DAT opt)
         {
             opt = model.RequestPageData(StateEnum.Home, e.data);
         }
