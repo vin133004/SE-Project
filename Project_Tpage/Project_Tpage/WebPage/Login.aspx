@@ -7,15 +7,15 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title></title>
 </head>
-<body style="background-color:lightblue;">
+<body id="color" runat="server" style="background-color:lightblue;">
     <form id="form1" runat="server">
 		<div style="height:200px; margin-left:30%; margin-right:30%; width:40%;">
-			<asp:Panel runat="server" HorizontalAlign="Center">
+			<asp:Panel ID="pa1" runat="server" HorizontalAlign="Center">
 				<asp:Label runat="server" ID="lblTitle" Text="Tpage" Font-Names="微軟正黑體" Font-Size="48" Font-Bold="true" ForeColor="#0000EF"></asp:Label>
 			</asp:Panel>
 		</div>
         <div style="width:20%; margin-left:40%; margin-right:40%;">
-			<asp:Panel runat="server" Width="100%" Height="600px" BackColor="#EFEFEF">
+			<asp:Panel ID="pa2" runat="server" Width="100%" Height="600px" BackColor="#EFEFEF">
 				<div style="height:130px;"></div>
 				<div style="margin-left:10%;">
 					<asp:Label runat="server" ID="lbl1" Font-Names="微軟正黑體" Font-Size="18" Height="60px">帳號</asp:Label>

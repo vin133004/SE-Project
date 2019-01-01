@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title></title>
 </head>
-<body>
+<body id="color" runat="server">
     <form id="form1" runat="server">
         <asp:Label ID="nameLabel" runat="server" Text="看板名稱：" Font-Size="X-Large" Font-Bold="true" Font-Names="微軟正黑體" />
         <asp:TextBox ID="boardName" runat="server" Height="30" Width="300" Font-Bold="true" Font-Size="X-Large" Font-Names="微軟正黑體"/><br />

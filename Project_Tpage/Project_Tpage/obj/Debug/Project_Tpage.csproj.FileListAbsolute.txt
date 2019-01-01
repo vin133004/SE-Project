@@ -503,8 +503,6 @@ C:\Users\MY\Desktop\SE-project\Project_Tpage\Project_Tpage\bin\Microsoft.Web.Inf
 C:\Users\MY\Desktop\SE-project\Project_Tpage\Project_Tpage\bin\Newtonsoft.Json.dll
 C:\Users\MY\Desktop\SE-project\Project_Tpage\Project_Tpage\bin\System.Web.Optimization.dll
 C:\Users\MY\Desktop\SE-project\Project_Tpage\Project_Tpage\bin\WebGrease.dll
-C:\Users\MY\Desktop\SE-project\Project_Tpage\Project_Tpage\bin\Google.Protobuf.dll
-C:\Users\MY\Desktop\SE-project\Project_Tpage\Project_Tpage\bin\MySql.Data.xml
 C:\Users\MY\Desktop\SE-project\Project_Tpage\Project_Tpage\bin\System.Web.Optimization.xml
 C:\Users\MY\Desktop\SE-project\Project_Tpage\Project_Tpage\bin\Newtonsoft.Json.xml
 C:\Users\MY\Desktop\SE-project\Project_Tpage\Project_Tpage\bin\Antlr3.Runtime.pdb

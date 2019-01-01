@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Project_Tpage.Class;
-
+using System.Drawing;
 namespace Project_Tpage.WebPage
 {
     public partial class Register : System.Web.UI.Page
@@ -23,7 +23,6 @@ namespace Project_Tpage.WebPage
         /// 每次事件後取得的輸出結果。
         /// </summary>
         public DAT optDAT;
-
         protected void Page_Load(object sender, EventArgs e)
         {
             //不在登入頁面，Controller未初始化的情況，導向登入頁面。
@@ -32,7 +31,9 @@ namespace Project_Tpage.WebPage
             //讓Controller內的function訂閱這個頁面上的事件。
             //Do this in each Page_Load()
             Controller.controller.SubsribeEvent(this);
+           
         }
+    
 
         public void btn1_Click(object sender, EventArgs e)
         {

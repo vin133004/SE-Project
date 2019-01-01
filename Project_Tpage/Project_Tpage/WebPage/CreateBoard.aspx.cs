@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Project_Tpage.Class;
-
+using System.Drawing;
 namespace Project_Tpage.WebPage
 {
     public partial class CreateBoard : System.Web.UI.Page
@@ -21,7 +21,7 @@ namespace Project_Tpage.WebPage
         /// 每次事件後取得的輸出結果。
         /// </summary>
         public DAT optDAT;
-
+        private Class.User user;
         protected void Page_Load(object sender, EventArgs e)
         {
             //在登入頁面，未初始化Controller的情況，初始化Controller
@@ -30,7 +30,116 @@ namespace Project_Tpage.WebPage
             //讓Controller內的function訂閱這個頁面上的事件。
             //Do this in each Page_Load()
             Controller.controller.SubsribeEvent(this);
+            user = Controller.CrossPageDAT["User"] as Class.User;
+            int style = 0;
+            style = user.Usersetting.Viewstyle;
+            if (style == 0)
+            {
+                color.Style.Add("background-color", "lightblue");
+                Color a = Color.Black;
+                String border = "white";
+                nameLabel.ForeColor = a;
+                boardName.ForeColor = a;
+                infoLabel.ForeColor = a;
+                boardInfo.ForeColor = a;
+                Announce.ForeColor = a;
+                peopleName.ForeColor = a;
+                btnInvite.ForeColor = a;
+                btnNoInvite.ForeColor = a;
+                inviteInfo.ForeColor = a;
+                listLabel.ForeColor = a;
+                inviteList.ForeColor = a;
+                btnBack.ForeColor = a;
+                btnPo.ForeColor = a;
+                lblError.ForeColor = a;
+                
+                nameLabel.Style.Add("background-color", border);
+                boardName.Style.Add("background-color", border);
+                infoLabel.Style.Add("background-color", border);
+                boardInfo.Style.Add("background-color", border);
+                Announce.Style.Add("background-color", border);
+                peopleName.Style.Add("background-color", border);
+                btnInvite.Style.Add("background-color", border);
+                btnNoInvite.Style.Add("background-color", border);
+                inviteInfo.Style.Add("background-color", border);
+                listLabel.Style.Add("background-color", border);
+                inviteList.Style.Add("background-color", border);
+                btnBack.Style.Add("background-color", border);
+                btnPo.Style.Add("background-color", border);
+                lblError.Style.Add("background-color", border);
+            }
+            else if (style == 1)
+            {
+                color.Style.Add("background-color", "black");
+                Color a = Color.WhiteSmoke;
+                String border = "DarkGray";
+                nameLabel.ForeColor = a;
+                boardName.ForeColor = a;
+                infoLabel.ForeColor = a;
+                boardInfo.ForeColor = a;
+                Announce.ForeColor = a;
+                peopleName.ForeColor = a;
+                btnInvite.ForeColor = a;
+                btnNoInvite.ForeColor = a;
+                inviteInfo.ForeColor = a;
+                listLabel.ForeColor = a;
+                inviteList.ForeColor = a;
+                btnBack.ForeColor = a;
+                btnPo.ForeColor = a;
+                lblError.ForeColor = a;
+
+                nameLabel.Style.Add("background-color", border);
+                boardName.Style.Add("background-color", border);
+                infoLabel.Style.Add("background-color", border);
+                boardInfo.Style.Add("background-color", border);
+                Announce.Style.Add("background-color", border);
+                peopleName.Style.Add("background-color", border);
+                btnInvite.Style.Add("background-color", border);
+                btnNoInvite.Style.Add("background-color", border);
+                inviteInfo.Style.Add("background-color", border);
+                listLabel.Style.Add("background-color", border);
+                inviteList.Style.Add("background-color", border);
+                btnBack.Style.Add("background-color", border);
+                btnPo.Style.Add("background-color", border);
+                lblError.Style.Add("background-color", border);
+            }
+            else
+            {
+                color.Style.Add("background-color", "BurlyWood");
+                Color a = Color.BlueViolet;
+                String border = "CadetBlue";
+                nameLabel.ForeColor = a;
+                boardName.ForeColor = a;
+                infoLabel.ForeColor = a;
+                boardInfo.ForeColor = a;
+                Announce.ForeColor = a;
+                peopleName.ForeColor = a;
+                btnInvite.ForeColor = a;
+                btnNoInvite.ForeColor = a;
+                inviteInfo.ForeColor = a;
+                listLabel.ForeColor = a;
+                inviteList.ForeColor = a;
+                btnBack.ForeColor = a;
+                btnPo.ForeColor = a;
+                lblError.ForeColor = a;
+
+                nameLabel.Style.Add("background-color", border);
+                boardName.Style.Add("background-color", border);
+                infoLabel.Style.Add("background-color", border);
+                boardInfo.Style.Add("background-color", border);
+                Announce.Style.Add("background-color", border);
+                peopleName.Style.Add("background-color", border);
+                btnInvite.Style.Add("background-color", border);
+                btnNoInvite.Style.Add("background-color", border);
+                inviteInfo.Style.Add("background-color", border);
+                listLabel.Style.Add("background-color", border);
+                inviteList.Style.Add("background-color", border);
+                btnBack.Style.Add("background-color", border);
+                btnPo.Style.Add("background-color", border);
+                lblError.Style.Add("background-color", border);
+            }
         }
+    
 
         protected void btnPo_Click(object sender, EventArgs e)
         {

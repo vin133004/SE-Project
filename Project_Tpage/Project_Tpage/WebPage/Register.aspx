@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title></title>
 </head>
-<body style="background-color:lightgreen">
+<body id="color" runat="server"style="background-color:lightgreen">
     <form id="form1" runat="server">
         <div style="width:48%; margin-left:16%; margin-right:36%; margin-top:5%;">
 			<asp:Panel runat="server" ID="pnlMain" Width="100%" Height="800px" BackColor="#EFEFEF">

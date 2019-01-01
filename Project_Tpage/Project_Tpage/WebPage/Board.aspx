@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title></title>
 </head>
-<body>
+<body id="color" runat="server">
     <form id="form1" runat="server">
         <center>
             <asp:Label ID="Title" runat="server" Width="650" Height="75" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="XX-Large" Text="看板名稱" />

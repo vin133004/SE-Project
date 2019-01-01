@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title></title>
 </head>
-<body>
+<body id="color" runat="server">
     <form id="form1" runat="server">
         <asp:Label ID="Accountlabel" runat="server" Width="10%" Text="帳號：" Font-Bold="true" Font-Size="X-Large" Font-Names="微軟正黑體" />
         <asp:Label ID="AccountText" runat="server" Width="10%" Text="" Font-Bold="true" Font-Size="X-Large" Font-Names="微軟正黑體" /><br />

@@ -10,12 +10,12 @@
 <body id="color" style="background-color:lightblue" runat="server">
     <form id="form1" runat="server">
         <div>
-            <asp:Label Font-Bold="true" Font-Size="Medium" Text="文章標題" Font-Names="微軟正黑體" runat="server"></asp:Label>
+            <asp:Label ID="la1" Font-Bold="true" Font-Size="Medium" Text="文章標題" Font-Names="微軟正黑體" runat="server"></asp:Label>
                     <asp:TextBox ID="Tittle" Font-Size="Medium"  Width="500" Height="30" TextMode="SingleLine" runat="server" ></asp:TextBox>
                  
                     <br />   
             <br />
-         <asp:Label Font-Bold="true" Font-Size="Medium" Text="文章內容" Font-Names="微軟正黑體" runat="server"></asp:Label>
+         <asp:Label ID="la2" Font-Bold="true" Font-Size="Medium" Text="文章內容" Font-Names="微軟正黑體" runat="server"></asp:Label>
    <br />
              
                 <asp:TextBox ID="Content" runat="server" Width="1000" Height="500" TextMode="MultiLine" /><br />

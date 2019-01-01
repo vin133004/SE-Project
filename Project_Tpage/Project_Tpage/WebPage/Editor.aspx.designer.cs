@@ -31,6 +31,15 @@ namespace Project_Tpage.WebPage {
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
         
         /// <summary>
+        /// la1 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label la1;
+        
+        /// <summary>
         /// Tittle 控制項。
         /// </summary>
         /// <remarks>
@@ -38,6 +47,15 @@ namespace Project_Tpage.WebPage {
         /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox Tittle;
+        
+        /// <summary>
+        /// la2 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 若要修改，請將欄位宣告從設計工具檔案移到程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label la2;
         
         /// <summary>
         /// Content 控制項。
