@@ -302,6 +302,7 @@ namespace Project_Tpage.WebPage
         protected void btnNew_Click(object sender, EventArgs e)
         {
             ToCreateBoard(new ViewEventArgs(this), out optDAT);
+            Response.Redirect("CreateBoard");
         }
         //進入按鈕
         protected void btnboard_Click(object sender, EventArgs e)

@@ -85,7 +85,7 @@ namespace Project_Tpage.WebPage
             // 看板名稱
             dat["BoardName"] = boardName.Text;
             // 是否公開
-            dat["Public"] = boardInfo.SelectedIndex == 0 ? true : false;
+            dat["Public"] = boardInfo.SelectedIndex == 0 ? "true" : "false";
 
             // 邀請清單
             List<string> people = new List<string>();
@@ -100,11 +100,18 @@ namespace Project_Tpage.WebPage
                 lblError.Visible = true;
                 lblError.Text = optDAT["failinfo"] as string;
             }
+            else
+            {
+                foreach (KeyValuePair<string, object> v in optDAT)
+                    Controller.CrossPageDAT[v.Key] = v.Value;
+                Response.Redirect("Home");
+            }
         }
 
         protected void btnBack_Click(object sender, EventArgs e)
         {
             ToHome(new ViewEventArgs(this), out optDAT);
+            Response.Redirect("Home");
         }
 
         protected void btnInvite_Click(object sender, EventArgs e)
@@ -137,6 +144,11 @@ namespace Project_Tpage.WebPage
             else {
                 inviteInfo.Text = "移除失敗(無此人)";
             }
+        }
+
+        protected void boardInfo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

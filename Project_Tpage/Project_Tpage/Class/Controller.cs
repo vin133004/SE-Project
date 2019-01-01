@@ -248,7 +248,28 @@ namespace Project_Tpage.Class
         //  Create Board State
         public void CreateBoardState_DoCreate(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.Home, e.data);
+            Board brd = Board.New(model.user.Userinfo.UID);
+            brd.Name = e.data["BoardName"] as string;
+            string s = e.data["Public"] as string;
+            brd.IsPublic = s=="true"?true:false;
+
+            opt = new DAT();
+            try
+            {
+                model.Board_New(brd);   
+
+                opt.Append(model.RequestPageData(StateEnum.Home, e.data));
+                return;
+            }
+            catch (ModelException me) when (me.ErrorNumber == ModelException.Error.InvalidUserInformation)
+            {
+                opt["failinfo"] = me.userMessage;
+            }
+            catch (Exception)
+            {
+                opt["failinfo"] = "建立看板失敗。";
+            }
+            opt.Append(model.RequestPageData(StateEnum.CreateBoard, e.data));
         }
         public void CreateBoardState_DoInvite(ViewEventArgs e, out DAT opt)
         {

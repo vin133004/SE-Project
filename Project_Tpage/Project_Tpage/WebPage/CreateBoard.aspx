@@ -14,7 +14,7 @@
         <asp:Label ID="blank1" runat="server" /><br />
         <asp:Label ID="infoLabel" runat="server" Text="公開他人瀏覽：" Font-Size="X-Large" Font-Bold="true" Font-Names="微軟正黑體" /><br />
         <asp:Label ID="blank2" runat="server" /><br />
-        <asp:RadioButtonList ID="boardInfo" runat="server" AutoPostBack="true" Font-Size="Large" RepeatColumns="2">
+        <asp:RadioButtonList ID="boardInfo" runat="server" AutoPostBack="true" Font-Size="Large" RepeatColumns="2" OnSelectedIndexChanged="boardInfo_SelectedIndexChanged">
             <asp:ListItem>公開(任何人都可察看文章)</asp:ListItem>
             <asp:ListItem>非公開(僅限內部成員文章)</asp:ListItem>
         </asp:RadioButtonList>
