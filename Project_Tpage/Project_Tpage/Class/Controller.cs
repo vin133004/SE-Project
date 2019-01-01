@@ -33,7 +33,7 @@ namespace Project_Tpage.Class
             controller = new Controller();
 
             IsConstrut = true;
-            CrossPageDAT = null;
+            CrossPageDAT = new DAT();
 
             model.State = state;
         }
