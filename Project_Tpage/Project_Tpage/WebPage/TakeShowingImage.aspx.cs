@@ -13,7 +13,8 @@ namespace Project_Tpage.WebPage
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Controller.CrossPageDAT.Keys.Contains("TEMP_ShowingImage"))
+            if (Controller.CrossPageDAT.Keys.Contains("TEMP_ShowingImage") 
+                && Controller.CrossPageDAT["TEMP_ShowingImage"] != null)
                 Response.BinaryWrite((byte[])new ImageConverter().
                     ConvertTo(Controller.CrossPageDAT["TEMP_ShowingImage"], typeof(byte[])));
         }

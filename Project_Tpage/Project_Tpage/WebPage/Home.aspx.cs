@@ -56,7 +56,8 @@ namespace Project_Tpage.WebPage
             boardQueuelistName = Controller.CrossPageDAT["FollowBoardQueueName"] as List<string>;
 
             int count = 0;
-            foreach (string BID in user.FollowBoardQueue) {
+            foreach (string BID in user.FollowBoardQueue)
+            {
                 inviteList.Items.Add(new ListItem(boardQueuelistName[count], BID));
                 count++;
             }

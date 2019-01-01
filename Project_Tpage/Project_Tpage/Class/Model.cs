@@ -794,6 +794,7 @@ namespace Project_Tpage.Class
             ad.Body = new Bitmap(content);
             ad.Deadline = new DateTime(deadline.Ticks);
             ad.Size = content.Size;
+            ad.Location = 0;
 
             usr.TbitCoin -= price;
             DB.Set<User>(usr);
@@ -825,28 +826,51 @@ namespace Project_Tpage.Class
             {
                 if (ToState == StateEnum.Home)
                 {
-                    if (ipt.Keys.Contains("AdvertiseBlocks"))
-                        opt["Advertise"] = GetAdOfBlocks(ipt["AdvertiseBlocks"] as List<int>);
+                    List<Advertise> temp = GetAdOfBlocks(new List<int>() { 0 });
+                    Controller.CrossPageDAT["TEMP_ShowingImage"] = temp.Count > 0 ? temp[0].Body : null;
+
+                    User usr = (Controller.CrossPageDAT.Keys.Contains("User") ?
+                                Controller.CrossPageDAT["User"] : ipt["User"]) as User;
+                    Controller.CrossPageDAT["FollowBoardQueueName"] = usr.FollowBoardQueue.
+                        Select(x => DB.Get<Board>(x).Name).ToList();
+
+                    Controller.CrossPageDAT["BoardListName"] = usr.FollowBoard.
+                        Select(x => DB.Get<Board>(x).Name).ToList();
+
                 }
                 else if (ToState == StateEnum.Board)
                 {
-                    bool isClass = (bool)ipt["GroupType"];
+                    opt["BID"] = ipt["BID"];
 
-                    opt["Board"] = ipt["Board"];
+                    opt["Board"] = DB.Get<Board>(ipt["BID"] as string);
+                    opt["ArticleList"] = GetArticlesOfBoard(ipt["BID"] as string);
 
-                    if (ipt.Keys.Contains("AdvertiseBlocks"))
-                        opt["Advertise"] = GetAdOfBlocks(ipt["AdvertiseBlocks"] as List<int>);
+                    User usr = (Controller.CrossPageDAT.Keys.Contains("User") ?
+                                Controller.CrossPageDAT["User"] : ipt["User"]) as User;
+                    opt["LikeImage"] = usr.FollowBoard.Contains(ipt["BID"] as string);
                 }
                 else if (ToState == StateEnum.Article)
                 {
-                    opt["Article"] = DB.Get<Article>((string)ipt["AID"]);
+                    User usr = (Controller.CrossPageDAT.Keys.Contains("User") ?
+                                Controller.CrossPageDAT["User"] : ipt["User"]) as User;
 
-                    if (ipt.Keys.Contains("AdvertiseBlocks"))
-                        opt["Advertise"] = GetAdOfBlocks(ipt["AdvertiseBlocks"] as List<int>);
+                    Article atc = DB.Get<Article>((string)ipt["AID"]);
+                    opt["Article"] = atc;
+                    opt["ReleaseUser"] = DB.UserID_UIDconvert(atc.ReleaseUser, false);
+                    opt["AllMessage"] = GetAMessagesOfArticle(atc.AID);
+
+                    if (usr.Userinfo.UID.Equals(atc.ReleaseUser) ||
+                        DB.Get<Board>(ipt["BID"] as string).Admin.Contains(usr.Userinfo.UID))
+                        opt["Admin"] = true;
+                    else
+                        Controller.CrossPageDAT.Remove("Admin");
                 }
                 else if (ToState == StateEnum.EditArticle)
                 {
-                    opt["Article"] = DB.Get<Article>((string)ipt["AID"]);
+                    if (ipt.Keys.Contains("AID"))
+                        opt["Article"] = DB.Get<Article>((string)ipt["AID"]);
+                    else
+                        Controller.CrossPageDAT.Remove("Article");
                 }
                 else if (ToState == StateEnum.Login)
                 {
