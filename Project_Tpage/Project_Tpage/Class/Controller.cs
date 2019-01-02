@@ -360,7 +360,11 @@ namespace Project_Tpage.Class
             opt = new DAT();
             try
             {
-                model.BoardFollow_Add(Model.DB.Get<User>(Model.DB.UserID_UIDconvert(e.data["People"] as string, true)), model.user.Userinfo.UID,e.data["BID"] as string);
+                User usr = Model.DB.Get<User>(Model.DB.UserID_UIDconvert(e.data["ID"] as string, true));
+                string sender = model.user.Userinfo.UID;
+                string bid = e.data["BID"] as string;
+                model.BoardFollow_Add(usr,sender,bid);
+                opt["Info"] = "邀請成功";
             }
             catch (Exception)
             {
@@ -372,7 +376,10 @@ namespace Project_Tpage.Class
             opt = new DAT();
             try
             {
-                model.Admin_Add(Model.DB.Get<Board>(e.data["BID"] as string),Model.DB.UserID_UIDconvert(e.data["People"] as string, true));
+                Board brd = Model.DB.Get<Board>(e.data["BID"] as string);
+                string uid = Model.DB.UserID_UIDconvert(e.data["ID"] as string, true);
+                model.Admin_Add(brd,uid);
+                opt["Info"] = "加入管理者群組成功";
             }
             catch (Exception)
             {
@@ -384,7 +391,10 @@ namespace Project_Tpage.Class
             opt = new DAT();
             try
             {
-                model.RemoveAFollowedUser(Model.DB.Get<Board>(e.data["BID"] as string), Model.DB.Get<User>(Model.DB.UserID_UIDconvert(e.data["People"] as string, true)));
+                Board brd = Model.DB.Get<Board>(e.data["BID"] as string);
+                User usr = Model.DB.Get<User>(Model.DB.UserID_UIDconvert(e.data["ID"] as string, true));
+                model.RemoveAFollowedUser(brd,usr);
+                opt["Info"] = "刪除成功";
             }
             catch (Exception)
             {
