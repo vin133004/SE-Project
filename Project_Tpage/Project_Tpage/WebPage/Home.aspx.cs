@@ -41,9 +41,11 @@ namespace Project_Tpage.WebPage
 
         //  初始化
         protected void Page_Load(object sender, EventArgs e)
-        {
+        { 
             if (!Controller.IsConstrut)
                 Controller.Initial(StateEnum.Login);
+            if (Session["UID"] == null)
+                Response.Redirect("Login");
             //讓Controller內的function訂閱這個頁面上的事件。
             //Do this in each Page_Load()
             Controller.controller.SubsribeEvent(this);

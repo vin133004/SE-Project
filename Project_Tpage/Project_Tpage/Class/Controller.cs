@@ -248,7 +248,7 @@ namespace Project_Tpage.Class
         //  Create Board State
         public void CreateBoardState_DoCreate(ViewEventArgs e, out DAT opt)
         {
-            Board brd = Board.New(model.user.Userinfo.UID);
+            Board brd = Board.New(e.data["Master"] as string);
             brd.Name = e.data["BoardName"] as string;
             string s = e.data["Public"] as string;
             brd.IsPublic = s=="true"?true:false;

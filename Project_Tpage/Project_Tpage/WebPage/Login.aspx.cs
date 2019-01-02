@@ -57,6 +57,7 @@ namespace Project_Tpage.WebPage
             {
                 foreach (KeyValuePair<string, object> v in optDAT)
                     Controller.CrossPageDAT[v.Key] = v.Value;
+                Session["UID"] = ((User)Controller.CrossPageDAT["User"]).Userinfo.UID;
                 Response.Redirect("Home");
             }
         }

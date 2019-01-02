@@ -298,13 +298,13 @@ namespace Project_Tpage.Class
 
             try
             {
-                user = DB.Get<User>(DB.UserID_UIDconvert(p_ID));
-                if (user == null)
+                User usr = DB.Get<User>(DB.UserID_UIDconvert(p_ID));
+                if (usr == null)
                     throw new ModelException(
                         ModelException.Error.LoginFailed,
                         "Model類別－Login()發生例外：登入失敗：未知錯誤。",
                         "發生未知錯誤，登入失敗。");
-                else if (!user.Userinfo.Password.Equals(p_Password))
+                else if (!usr.Userinfo.Password.Equals(p_Password))
                 {
                     throw new ModelException(
                         ModelException.Error.LoginFailed,
@@ -313,7 +313,7 @@ namespace Project_Tpage.Class
                 }
                 else
                 {
-                    return user;
+                    return usr;
                 }
             }
             catch (ModelException me)

@@ -27,6 +27,8 @@ namespace Project_Tpage.WebPage
             //在登入頁面，未初始化Controller的情況，初始化Controller
             if (!Controller.IsConstrut)
                 Controller.Initial(StateEnum.Login);
+            if (Session["UID"] == null)
+                Response.Redirect("Login");
             //讓Controller內的function訂閱這個頁面上的事件。
             //Do this in each Page_Load()
             Controller.controller.SubsribeEvent(this);
@@ -82,6 +84,7 @@ namespace Project_Tpage.WebPage
         protected void btnPo_Click(object sender, EventArgs e)
         {
             DAT dat = new DAT();
+            dat["Master"] = Session["UID"];
             // 看板名稱
             dat["BoardName"] = boardName.Text;
             // 是否公開
