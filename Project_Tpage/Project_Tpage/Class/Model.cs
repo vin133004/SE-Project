@@ -528,10 +528,14 @@ namespace Project_Tpage.Class
         public void Board_New(Board brd,List<string> Peoples)
         {
             DB.Set<Board>(brd);
-            foreach(string p in Peoples)
+
+            User master = DB.Get<User>(brd.PrivateMaster);
+            master.FollowBoard.Add(brd.BID);
+            DB.Set<User>(master);
+            foreach (string p in Peoples)
             {
-                User usr = DB.Get<User>(DB.UserID_UIDconvert(p,true));
-                BoardFollow_Add(usr, brd.PrivateMaster, brd.Name);
+                User usr = DB.Get<User>(DB.UserID_UIDconvert(p, true));
+                BoardFollow_Add(usr, brd.PrivateMaster, brd.BID);
             }
         }
         /// <summary>
@@ -837,11 +841,10 @@ namespace Project_Tpage.Class
 
                     User usr = (Controller.CrossPageDAT.Keys.Contains("User") ?
                                 Controller.CrossPageDAT["User"] : ipt["User"]) as User;
-                    Controller.CrossPageDAT["FollowBoardQueueName"] = usr.FollowBoardQueue.
-                        Select(x => DB.Get<Board>(x).Name).ToList();
 
-                    Controller.CrossPageDAT["BoardListName"] = usr.FollowBoard.
-                        Select(x => DB.Get<Board>(x).Name).ToList();
+                    Controller.CrossPageDAT["BoardListName"] = usr.FollowBoard.Select(x => DB.Get<Board>(x).Name).ToList();
+
+                    Controller.CrossPageDAT["FollowBoardQueueName"] = usr.FollowBoardQueue.Select(x => DB.Get<Board>(x.Split('@')[1]).Name).ToList();
 
                 }
                 else if (ToState == StateEnum.Board)
@@ -1464,7 +1467,7 @@ namespace Project_Tpage.Class
             {
                 if (obj is DBNull || obj == null) return false;
 
-                return (int)obj == 1 ? true : false;
+                return (ulong)obj == 1 ? true : false;
             }
             else if (typeof(T).Equals(typeof(Gender)))
             {

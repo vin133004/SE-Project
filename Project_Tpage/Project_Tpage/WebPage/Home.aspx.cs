@@ -12,7 +12,7 @@ namespace Project_Tpage.WebPage
     {
         //  進去看板頁面
         public event ViewEventHandler ToBoard;
-        
+
         //  進去申請看板頁面
         public event ViewEventHandler ToCreateBoard;
 
@@ -42,28 +42,28 @@ namespace Project_Tpage.WebPage
         //  初始化
         protected void Page_Load(object sender, EventArgs e)
         {
+            //讓Controller內的function訂閱這個頁面上的事件。
+            //Do this in each Page_Load()
             Controller.controller.SubsribeEvent(this);
             if (Page.IsPostBack)
                 return;
+
             if (!Controller.IsConstrut)
                 Controller.Initial(StateEnum.Login);
             if (Session["UID"] == null)
                 Response.Redirect("Login");
-            //讓Controller內的function訂閱這個頁面上的事件。
-            //Do this in each Page_Load()
-           
-          
+
             user = Controller.CrossPageDAT["User"] as User;
             ADimage.ImageUrl = "TakeShowingImage.aspx";
             // 邀請加入的看板名字
+            int count = 0;
             List<string> boardQueuelistName = new List<string>();
             boardQueuelistName.Clear();
             boardQueuelistName = Controller.CrossPageDAT["FollowBoardQueueName"] as List<string>;
 
-            int count = 0;
             foreach (string BID in user.FollowBoardQueue)
             {
-                inviteList.Items.Add(new ListItem(boardQueuelistName[count], BID));
+                inviteList.Items.Add(new ListItem(boardQueuelistName[count], BID.Split('@')[1]));
                 count++;
             }
 
@@ -136,7 +136,7 @@ namespace Project_Tpage.WebPage
 
                 btnSet.Style.Add("position", "absolute");
                 btnSet.Style.Add("top", "70px");
-                btnSet.Style.Add("left", "20%");
+                btnSet.Style.Add("left", "30%");
                 inviteList.Style.Add("position", "absolute");
                 inviteList.Style.Add("top", "450px");
                 inviteList.Style.Add("left", "80%");
@@ -152,7 +152,7 @@ namespace Project_Tpage.WebPage
                 color.Style.Add("background-color", "black");
                 a = Color.WhiteSmoke;
                 border = "DarkGray";
-               
+
                 Title.Style.Add("position", "absolute");
                 Title.Style.Add("top", "10px");
                 Title.Style.Add("left", "45%");
@@ -199,7 +199,7 @@ namespace Project_Tpage.WebPage
 
                 btnSet.Style.Add("position", "absolute");
                 btnSet.Style.Add("top", "70px");
-                btnSet.Style.Add("left", "20%");
+                btnSet.Style.Add("left", "30%");
                 inviteList.Style.Add("position", "absolute");
                 inviteList.Style.Add("top", "450px");
                 inviteList.Style.Add("left", "80%");
@@ -214,7 +214,7 @@ namespace Project_Tpage.WebPage
             {
                 color.Style.Add("background-color", "BurlyWood");
                 a = Color.BlueViolet;
-                border = "CadetBlue";   
+                border = "CadetBlue";
 
                 Title.Style.Add("position", "absolute");
                 Title.Style.Add("top", "10px");
@@ -302,7 +302,7 @@ namespace Project_Tpage.WebPage
         {
             //不做事
         }
-        
+
         //  進入申請
         protected void btnNew_Click(object sender, EventArgs e)
         {
@@ -319,7 +319,7 @@ namespace Project_Tpage.WebPage
         //  抽卡,回傳資訊顯示於cardInfo
         protected void btnCard_Click(object sender, EventArgs e)
         {
-            DoCard(new ViewEventArgs(this),out optDAT);
+            DoCard(new ViewEventArgs(this), out optDAT);
             cardInfo.Text = optDAT["Info"] as string;
         }
 

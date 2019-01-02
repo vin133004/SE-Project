@@ -14,7 +14,7 @@
             <asp:Button ID="btnSet" runat="server"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Height="40" BorderStyle="None" Text="設定" OnClick="btnset_Click"/>
             <asp:TextBox ID="searchText" runat="server"  Font-Names="微軟正黑體" Height="35" Width="400" Font-Size="Large" Font-Bold="true" />
             <asp:Button ID="btnSearch" runat="server" Height="40" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Text="查詢" OnClick="btnSearch_Click" />
-             <asp:Label ID="searchresult" Font-Bold="true" Font-Names="微軟正黑體" runat="server" Height="35" Width="100" Font-Size="Large" Text="查無此人" Visible="true" /><br/>
+             <asp:Label ID="searchresult" Font-Bold="true" Font-Names="微軟正黑體" runat="server" Height="35" Width="100" Font-Size="Large" Text="查無此人" Visible="false" /><br/>
             <asp:Button ID="btnBoard" runat="server" Width="75" Height="75" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Text="進入" OnClick="btnboard_Click" />
             <asp:ListBox ID="ListOfBoard" runat="server" Font-Size="X-Large" AutoPostBack="false" Width="500" Rows="10" OnSelectedIndexChanged="SelectBoard">
                 <asp:ListItem Value="aaaa">aaa</asp:ListItem>
