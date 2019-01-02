@@ -283,6 +283,7 @@ namespace Project_Tpage.Class
             try
             {
                 model.BoardFollow_AllowAdd(model.user, "", e.data["BID"] as string);
+                CrossPageDAT["User"] = model.user;
             }
             catch (Exception)
             {
@@ -296,6 +297,7 @@ namespace Project_Tpage.Class
             {
                 model.user.FollowBoardQueue.RemoveAll(x => x.Split('@')[1] == (e.data["BID"] as string));
                 Model.DB.Set<User>(model.user);
+                CrossPageDAT["User"] = model.user;
             }
             catch (Exception)
             {
