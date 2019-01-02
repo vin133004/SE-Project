@@ -32,8 +32,7 @@ namespace Project_Tpage.WebPage
                 Controller.Initial(StateEnum.Login);
             if (Session["UID"] == null)
                 Response.Redirect("Login");
-            //讓Controller內的function訂閱這個頁面上的事件。
-            //Do this in each Page_Load()
+
            
             user = Controller.CrossPageDAT["User"] as Class.User;
             int style = 2;
@@ -87,7 +86,7 @@ namespace Project_Tpage.WebPage
         protected void btnPo_Click(object sender, EventArgs e)
         {
             DAT dat = new DAT();
-            dat["Master"] = Session["UID"];
+            dat["Master"] = (Controller.CrossPageDAT["User"] as Class.User).Userinfo.UID;
             // 看板名稱
             dat["BoardName"] = boardName.Text;
             // 是否公開

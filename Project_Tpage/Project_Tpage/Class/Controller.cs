@@ -572,8 +572,15 @@ namespace Project_Tpage.Class
             {
                 //嘗試發文
                 model.ReleaseArticle(article.ReleaseUser, article.OfBoard, article.Title, article.Content);
-                CrossPageDAT = model.RequestPageData(StateEnum.Board, e.data);
-                e.page.Response.Redirect("Board.aspx");
+                if (e.data.Keys.Contains("BID"))
+                {
+                    CrossPageDAT = model.RequestPageData(StateEnum.Board, e.data);
+                    e.page.Response.Redirect("Board.aspx");
+                }
+                else {
+                    CrossPageDAT = model.RequestPageData(StateEnum.Article, e.data);
+                    e.page.Response.Redirect("Article.aspx");
+                }
             }
             catch (ModelException me)
             {
@@ -617,11 +624,12 @@ namespace Project_Tpage.Class
             opt = new DAT();
             try
             {
-                model.BuyAD(model.user, (int)e.data["Money"], e.data["Image"] as Image, model.GetAD(e.data["DID"] as string).Deadline);
+                model.BuyAD(model.user, (int)e.data["Money"], e.data["Image"] as Image,
+                    new DateTime(model.GetLatestAD().Deadline.Ticks + TimeSpan.TicksPerMinute * ((int)e.data["Minute"])));
             }
-            catch(Exception)
+            catch (Exception)
             {
-                opt["Info"] = "error";
+                opt["failinfo"] = "error";
             }
         }
         public void ADState_ToHome(ViewEventArgs e, out DAT opt)

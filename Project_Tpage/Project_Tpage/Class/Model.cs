@@ -821,7 +821,44 @@ namespace Project_Tpage.Class
             return DB.Get<Advertise>(p_DID);
         }
 
+        /// <summary>
+        /// 取得截止日期最晚的廣告。
+        /// </summary>
+        /// <returns></returns>
+        public Advertise GetEarliestAD()
+        {
+            List<Advertise> ls = Enumerable.Cast<DataRow>(
+                            DB.GetSqlData(string.Format("SELECT * FROM {0}", DB.DB_AdvertiseData_TableName)).Rows)
+                            .Select(x => Advertise.Instance(x)).ToList();
+            ls.Sort(delegate (Advertise a1, Advertise a2)
+            {
+                return DateTime.Compare(a1.Deadline, a2.Deadline);
+            });
 
+            if (ls.Count >= 2)
+                return ls[1];
+            else
+                return null;
+        }
+        /// <summary>
+        /// 取得截止日期最早的廣告。
+        /// </summary>
+        /// <returns></returns>
+        public Advertise GetLatestAD()
+        {
+            List<Advertise> ls = Enumerable.Cast<DataRow>(
+                            DB.GetSqlData(string.Format("SELECT * FROM {0}", DB.DB_AdvertiseData_TableName)).Rows)
+                            .Select(x => Advertise.Instance(x)).ToList();
+            ls.Sort(delegate (Advertise a1, Advertise a2)
+            {
+                return -DateTime.Compare(a1.Deadline, a2.Deadline);
+            });
+
+            if (ls.Count >= 1)
+                return ls[0];
+            else
+                return null;
+        }
 
         /// <summary>
         /// 在切換頁面時，向Model要求新的頁面資料。
@@ -834,10 +871,11 @@ namespace Project_Tpage.Class
             DAT opt = new DAT();
             try
             {
+                opt["User"] = Controller.CrossPageDAT["User"];
                 if (ToState == StateEnum.Home)
                 {
-                    List<Advertise> temp = GetAdOfBlocks(new List<int>() { 0 });
-                    Controller.CrossPageDAT["TEMP_ShowingImage"] = temp.Count > 0 ? temp[0].Body : null;
+                    Advertise temp = GetEarliestAD();
+                    Controller.CrossPageDAT["TEMP_ShowingImage"] = temp == null ? new Bitmap(50, 50) : temp.Body;
 
                     User usr = (Controller.CrossPageDAT.Keys.Contains("User") ?
                                 Controller.CrossPageDAT["User"] : ipt["User"]) as User;

@@ -92,6 +92,7 @@ namespace Project_Tpage.WebPage
         protected void Send_Click(object sender, EventArgs e)
         {
             DAT dat = new DAT();
+            dat["BID"] = Controller.CrossPageDAT["BID"];
             dat["Title"] = Tittle.Text;
             dat["Content"] = Content.Text;
             DoCreate(new ViewEventArgs(dat, this), out optDAT);
