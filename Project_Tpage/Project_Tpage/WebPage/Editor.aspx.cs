@@ -23,6 +23,9 @@ namespace Project_Tpage.WebPage
         private Class.User user;
         protected void Page_Load(object sender, EventArgs e)
         {
+            Controller.controller.SubsribeEvent(this);
+            if (Page.IsPostBack)
+                return;
             //在登入頁面，未初始化Controller的情況，初始化Controller
             if (!Controller.IsConstrut)
                 Controller.Initial(StateEnum.Login);
@@ -30,7 +33,7 @@ namespace Project_Tpage.WebPage
                 Response.Redirect("Login");
             //讓Controller內的function訂閱這個頁面上的事件。
             //Do this in each Page_Load()
-            Controller.controller.SubsribeEvent(this);
+           
             user = Controller.CrossPageDAT["User"] as Class.User;
 
             // 判定編輯還是新文章
@@ -78,7 +81,12 @@ namespace Project_Tpage.WebPage
 
         protected void Back_Click(object sender, EventArgs e)
         {
-            ToBack(new ViewEventArgs(this), out optDAT);
+            DAT dat = new DAT();
+            if (Controller.CrossPageDAT.Keys.Contains("Article"))
+                dat["AID"] = article.AID;
+            else
+                dat["BID"] = Controller.CrossPageDAT["BID"];
+            ToBack(new ViewEventArgs(dat,this), out optDAT);
         }
 
         protected void Send_Click(object sender, EventArgs e)

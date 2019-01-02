@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using Project_Tpage.WebPage;
+using System.Data;
+using System.Drawing;
 
 namespace Project_Tpage.Class
 {
@@ -181,68 +183,224 @@ namespace Project_Tpage.Class
         //  Home State
         public void HomeState_ToBoard(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.Board, e.data);
+            opt = new DAT();
+            try
+            {
+                CrossPageDAT = model.RequestPageData(StateEnum.Board, e.data);
+                e.page.Response.Redirect("Board.aspx");
+            }
+            catch(Exception)
+            {
+
+            }
         }
         public void HomeState_ToCreateBoard(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.CreateBoard, e.data);
+            opt = new DAT();
+            try
+            {
+                CrossPageDAT = model.RequestPageData(StateEnum.CreateBoard, e.data);
+                e.page.Response.Redirect("CreateBoard.aspx");
+            }
+            catch (Exception)
+            {
+
+            }
         }
         public void HomeState_ToAD(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.AD, e.data);
+            opt = new DAT();
+            try
+            {
+                CrossPageDAT = model.RequestPageData(StateEnum.AD, e.data);
+                e.page.Response.Redirect("AD.aspx");
+            }
+            catch (Exception)
+            {
+
+            }
         }
         public void HomeState_DoSearch(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.Board, e.data);
+            opt = new DAT();
+            List<Board> all;
+            try
+            {
+                all = model.GetBoardFromName(e.data["Search"] as string);
+                if (all.Count > 0)
+                {
+                    opt["Board"] = all[0];
+                    opt["ArticleList"] = model.GetArticlesOfBoard(all[0].BID);
+                    User usr = (CrossPageDAT.Keys.Contains("User") ?
+                                CrossPageDAT["User"] : e.data["User"]) as User;
+                    opt["LikeImage"] = usr.FollowBoard.Contains(all[0].BID);
+                    CrossPageDAT = opt;
+                    e.page.Response.Redirect("Board.aspx");
+                }
+                else
+                {
+                    opt["Info"] = "error";
+                }
+            }
+            catch (Exception)
+            {
+                opt["Info"] = "error";
+            }
         }
         public void HomeState_DoCard(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.Home, e.data);
+            opt = new DAT();
+            try
+            {
+                opt["Info"] = model.user.Pickcard().MyBoard;
+            }
+            catch (ModelException error)
+            {
+                opt["Info"] = error.userMessage;
+            }
+            catch(Exception)
+            {
+                opt["Info"] = "error";
+            }
         }
         public void HomeState_ToSetBoard(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.Home, e.data);
+            opt = new DAT();
+            try
+            {
+                CrossPageDAT = model.RequestPageData(StateEnum.Setting, e.data);
+                e.page.Response.Redirect("Setting.aspx");
+            }
+            catch (Exception)
+            {
+
+            }
         }
         public void HomeState_DoYesInvite(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.Home, e.data);
+            opt = new DAT();
+            try
+            {
+                model.BoardFollow_AllowAdd(model.user, "", e.data["BID"] as string);
+            }
+            catch (Exception)
+            {
+
+            }
         }
         public void HomeState_DoNoInvite(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.Home, e.data);
+            opt = new DAT();
+            try
+            {
+                model.user.FollowBoardQueue.RemoveAll(x => x.Split('@')[1] == e.data["BID"] as string);
+            }
+            catch (Exception)
+            {
+
+            }
         }
         //  Board State
         public void BoardState_ToArticle(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.Article, e.data);
+            opt = new DAT();
+            try
+            {
+                CrossPageDAT = model.RequestPageData(StateEnum.Article, e.data);
+                e.page.Response.Redirect("Article.aspx");
+            }
+            catch (Exception)
+            {
+
+            }
         }
         public void BoardState_ToEditor(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.EditArticle, e.data);
+            opt = new DAT();
+            try
+            {
+                CrossPageDAT = model.RequestPageData(StateEnum.EditArticle, e.data);
+                e.page.Response.Redirect("Editor.aspx");
+            }
+            catch (Exception)
+            {
+
+            }
         }
         public void BoardState_ToBack(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.Home, e.data);
+            opt = new DAT();
+            try
+            {
+                CrossPageDAT = model.RequestPageData(StateEnum.Home, e.data);
+                e.page.Response.Redirect("Home.aspx");
+            }
+            catch (Exception)
+            {
+
+            }
         }
         public void BoardState_DoFollow(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.Board, e.data);
+            opt = new DAT();
+            try
+            {
+                model.BoardFollow_Follow(model.user, e.data["BID"] as string);
+            }
+            catch (Exception)
+            {
+
+            }
         }
         public void BoardState_DoInvite(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.Board, e.data);
+            opt = new DAT();
+            try
+            {
+                model.BoardFollow_Add(Model.DB.Get<User>(Model.DB.UserID_UIDconvert(e.data["People"] as string, true)), model.user.Userinfo.UID,e.data["BID"] as string);
+            }
+            catch (Exception)
+            {
+                opt["Info"] = "error";
+            }
         }
         public void BoardState_DoAdmin(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.Board, e.data);
+            opt = new DAT();
+            try
+            {
+                model.Admin_Add(Model.DB.Get<Board>(e.data["BID"] as string),Model.DB.UserID_UIDconvert(e.data["People"] as string, true));
+            }
+            catch (Exception)
+            {
+                opt["Info"] = "error";
+            }
         }
         public void BoardState_DoDelPeople(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.Board, e.data);
+            opt = new DAT();
+            try
+            {
+                model.RemoveAFollowedUser(Model.DB.Get<Board>(e.data["BID"] as string), Model.DB.Get<User>(Model.DB.UserID_UIDconvert(e.data["People"] as string, true)));
+            }
+            catch (Exception)
+            {
+                opt["Info"] = "error";
+            }
         }
         public void BoardState_DoDelBoard(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.Board, e.data);
+            opt = new DAT();
+            try
+            {
+                model.Board_Remove(e.data["BID"] as string);
+                CrossPageDAT = model.RequestPageData(StateEnum.Home, e.data);
+                e.page.Response.Redirect("Home.aspx");
+            }
+            catch(Exception)
+            {
+                opt["Info"] = "error";
+            }
         }
 
         //  Create Board State
@@ -298,7 +456,16 @@ namespace Project_Tpage.Class
         }
         public void CreateBoardState_ToHome(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.Home, e.data);
+            opt = new DAT();
+            try
+            {
+                CrossPageDAT = model.RequestPageData(StateEnum.Home, e.data);
+                e.page.Response.Redirect("Home.aspx");
+            }
+            catch (Exception)
+            {
+
+            }
         }
 
         //  Article State
@@ -307,13 +474,10 @@ namespace Project_Tpage.Class
             AMessage message = e.data["Message"] as AMessage;
             //設定錯誤資訊。
             string failinfo = "";
+            opt = new DAT();
             try
             {
-                //嘗試留言
                 model.ReleaseAMessage(message.Content, message.OfArticle);
-
-                opt = model.RequestPageData(StateEnum.Article, e.data);
-                model.State = StateEnum.Board;
             }
             catch (ModelException me)
             {
@@ -331,23 +495,70 @@ namespace Project_Tpage.Class
         }
         public void ArticleState_DoLike(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.Article, e.data);
+            Article article;
+            opt = new DAT();
+            try
+            {
+                article = Model.DB.Get<Article>(e.data["AID"] as string);
+                article.LikeCount++;
+            }
+            catch (ModelException)
+            {
+                opt["Info"] = "error";
+            }
         }
         public void ArticleState_DoDelArticle(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.Article, e.data);
+            opt = new DAT();
+            try
+            {
+                Model.DB.Remove<Article>(e.data["AID"] as string);
+                CrossPageDAT = model.RequestPageData(StateEnum.Board, e.data);
+                e.page.Response.Redirect("Board.aspx");
+            }
+            catch (ModelException)
+            {
+                opt["Info"] = "error";
+            }
         }
         public void ArticleState_ToEdit(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.Board, e.data);
+            opt = new DAT();
+            try
+            {
+                CrossPageDAT = model.RequestPageData(StateEnum.EditArticle, e.data);
+                e.page.Response.Redirect("Editor.aspx");
+            }
+            catch (Exception)
+            {
+
+            }
         }
         public void ArticleState_ToBack(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.Board, e.data);
+            opt = new DAT();
+            try
+            {
+                CrossPageDAT = model.RequestPageData(StateEnum.Board, e.data);
+                e.page.Response.Redirect("Board.aspx");
+            }
+            catch (Exception)
+            {
+
+            }
         }
         public void ArticleState_ToHome(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.Home, e.data);
+            opt = new DAT();
+            try
+            {
+                CrossPageDAT = model.RequestPageData(StateEnum.Home, e.data);
+                e.page.Response.Redirect("Home.aspx");
+            }
+            catch (Exception)
+            {
+
+            }
         }
 
         //  Editor State
@@ -356,12 +567,13 @@ namespace Project_Tpage.Class
             Article article = e.data["Article"] as Article;
             //設定錯誤資訊。
             string failinfo = "";
+            opt = new DAT();
             try
             {
                 //嘗試發文
                 model.ReleaseArticle(article.ReleaseUser, article.OfBoard, article.Title, article.Content);
-                opt = model.RequestPageData(StateEnum.Board, e.data);
-                model.State = StateEnum.Board;
+                CrossPageDAT = model.RequestPageData(StateEnum.Board, e.data);
+                e.page.Response.Redirect("Board.aspx");
             }
             catch (ModelException me)
             {
@@ -379,32 +591,72 @@ namespace Project_Tpage.Class
         }
         public void EditorState_ToBack(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.Board, e.data);
+            opt = new DAT();
+            try
+            {
+                if (e.data.Keys.Contains("Article"))
+                {
+                    CrossPageDAT = model.RequestPageData(StateEnum.Article, e.data);
+                    e.page.Response.Redirect("Article.aspx");
+                }
+                else
+                {
+                    CrossPageDAT = model.RequestPageData(StateEnum.Board, e.data);
+                    e.page.Response.Redirect("Board.aspx");
+                }
+            }
+            catch(Exception)
+            {
+                opt["Info"] = "error";
+            }
         }
 
         // AD State
         public void ADState_DoBuy(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.Home, e.data);
+            opt = new DAT();
+            try
+            {
+                model.BuyAD(model.user, (int)e.data["Money"], e.data["Image"] as Image, model.GetAD(e.data["DID"] as string).Deadline);
+            }
+            catch(Exception)
+            {
+                opt["Info"] = "error";
+            }
         }
         public void ADState_ToHome(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.Home, e.data);
+            opt = new DAT();
+            try
+            {
+                CrossPageDAT = model.RequestPageData(StateEnum.Home, e.data);
+                e.page.Response.Redirect("Home.aspx");
+            }
+            catch (Exception)
+            {
+
+            }
         }
 
         // Setting State
         public void SettingState_ToBack(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.Home, e.data);
+            opt = new DAT();
+            try
+            {
+                CrossPageDAT = model.RequestPageData(StateEnum.Home, e.data);
+                e.page.Response.Redirect("Home.aspx");
+            }
+            catch (Exception)
+            {
+
+            }
         }
         public void SettingState_DoChange(ViewEventArgs e, out DAT opt)
         {
             UserInfo uif = UserInfo.New;
             UserSetting ust = UserSetting.New;
 
-
-            uif.Password = e.data["Password"] as string;
-            uif.StudentID = e.data["StudentID"] as string;
             uif.Email = e.data["Email"] as string;
             uif.Gender = (Gender)(int)e.data["Gender"];
             uif.Realname = e.data["Realname"] as string;
@@ -417,7 +669,7 @@ namespace Project_Tpage.Class
                 User usr = CrossPageDAT["User"] as User;
                 model.SetUserSetting(uif, ust, ref usr);
                 CrossPageDAT["User"] = usr;
-
+                
                 opt.Append(model.RequestPageData(StateEnum.Home, e.data));
 
                 return;

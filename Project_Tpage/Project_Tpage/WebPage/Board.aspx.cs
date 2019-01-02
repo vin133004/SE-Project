@@ -37,6 +37,9 @@ namespace Project_Tpage.WebPage
         // 資料庫在這邊給資料。顯示於listbox
         protected void Page_Load(object sender, EventArgs e)
         {
+            Controller.controller.SubsribeEvent(this);
+            if (Page.IsPostBack)
+                return;
             //在登入頁面，未初始化Controller的情況，初始化Controller
             if (!Controller.IsConstrut)
                 Controller.Initial(StateEnum.Login);
@@ -44,7 +47,7 @@ namespace Project_Tpage.WebPage
                 Response.Redirect("Login");
             //讓Controller內的function訂閱這個頁面上的事件。
             //Do this in each Page_Load()
-            Controller.controller.SubsribeEvent(this);
+            
             
             ListOfArticle.Items.Clear();
             board = Controller.CrossPageDAT["Board"] as Class.Board;
@@ -171,6 +174,7 @@ namespace Project_Tpage.WebPage
         {
             DAT dat = new DAT();
             dat["ID"] = peopleText.Text;
+            dat["BID"] = board.BID;
             DoDelPeople(new ViewEventArgs(dat,this),out optDAT);
             // 刪除情況確認
             peopleInfo.Text = optDAT["Info"] as string;
@@ -180,6 +184,7 @@ namespace Project_Tpage.WebPage
         {
             DAT dat = new DAT();
             dat["ID"] = peopleText.Text;
+            dat["BID"] = board.BID;
             DoAdmin(new ViewEventArgs(dat, this), out optDAT);
             // 邀請狀況確認
             peopleInfo.Text = optDAT["Info"] as string;
@@ -189,6 +194,7 @@ namespace Project_Tpage.WebPage
         {
             DAT dat = new DAT();
             dat["ID"] = peopleText.Text;
+            dat["BID"] = board.BID;
             DoInvite(new ViewEventArgs(dat, this), out optDAT);
             // 邀請狀況確認
             peopleInfo.Text = optDAT["Info"] as string;

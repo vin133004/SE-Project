@@ -24,6 +24,9 @@ namespace Project_Tpage.WebPage
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            Controller.controller.SubsribeEvent(this);
+            if (Page.IsPostBack)
+                return;
             //在登入頁面，未初始化Controller的情況，初始化Controller
             if (!Controller.IsConstrut)
                 Controller.Initial(StateEnum.Login);
@@ -31,7 +34,7 @@ namespace Project_Tpage.WebPage
                 Response.Redirect("Login");
             //讓Controller內的function訂閱這個頁面上的事件。
             //Do this in each Page_Load()
-            Controller.controller.SubsribeEvent(this);
+            
            
             // 初始化需要ID、現有金額、背景配色(?)
             user = Controller.CrossPageDAT["User"] as User;

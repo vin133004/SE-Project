@@ -344,9 +344,12 @@ namespace Project_Tpage.Class
         /// <param name="_ust">使用者設定。</param>
         public void SetUserSetting(UserInfo p_uif, UserSetting p_ust, ref User usr)
         {
-            User.ValidUserInfo(p_uif);
+            User.ValidEmail(p_uif);
 
-            usr.Userinfo = p_uif;
+            usr.Userinfo.Email = p_uif.Email;
+            usr.Userinfo.Nickname = p_uif.Nickname;
+            usr.Userinfo.Realname = p_uif.Realname;
+            usr.Userinfo.Gender = p_uif.Gender;
             usr.Usersetting = p_ust;
             DB.Set<User>(usr);
         }
@@ -874,12 +877,17 @@ namespace Project_Tpage.Class
                         opt["Article"] = DB.Get<Article>((string)ipt["AID"]);
                     else
                         Controller.CrossPageDAT.Remove("Article");
+
                 }
                 else if (ToState == StateEnum.Login)
                 {
 
                 }
                 else if (ToState == StateEnum.Register)
+                {
+
+                }
+                else if (ToState == StateEnum.Setting)
                 {
 
                 }

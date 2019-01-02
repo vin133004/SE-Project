@@ -41,14 +41,17 @@ namespace Project_Tpage.WebPage
 
         //  初始化
         protected void Page_Load(object sender, EventArgs e)
-        { 
+        {
+            Controller.controller.SubsribeEvent(this);
+            if (Page.IsPostBack)
+                return;
             if (!Controller.IsConstrut)
                 Controller.Initial(StateEnum.Login);
             if (Session["UID"] == null)
                 Response.Redirect("Login");
             //讓Controller內的function訂閱這個頁面上的事件。
             //Do this in each Page_Load()
-            Controller.controller.SubsribeEvent(this);
+           
           
             user = Controller.CrossPageDAT["User"] as User;
             ADimage.ImageUrl = "TakeShowingImage.aspx";
@@ -133,7 +136,7 @@ namespace Project_Tpage.WebPage
 
                 btnSet.Style.Add("position", "absolute");
                 btnSet.Style.Add("top", "70px");
-                btnSet.Style.Add("left", "30%");
+                btnSet.Style.Add("left", "20%");
                 inviteList.Style.Add("position", "absolute");
                 inviteList.Style.Add("top", "450px");
                 inviteList.Style.Add("left", "80%");
@@ -196,7 +199,7 @@ namespace Project_Tpage.WebPage
 
                 btnSet.Style.Add("position", "absolute");
                 btnSet.Style.Add("top", "70px");
-                btnSet.Style.Add("left", "30%");
+                btnSet.Style.Add("left", "20%");
                 inviteList.Style.Add("position", "absolute");
                 inviteList.Style.Add("top", "450px");
                 inviteList.Style.Add("left", "80%");
@@ -326,6 +329,8 @@ namespace Project_Tpage.WebPage
             DAT dat = new DAT();
             dat["Search"] = searchText.Text;
             DoSearch(new ViewEventArgs(dat, this), out optDAT);
+            if (optDAT.Keys.Contains("Info"))
+                searchresult.Visible = true;
         }
 
         //  前往廣告頁面

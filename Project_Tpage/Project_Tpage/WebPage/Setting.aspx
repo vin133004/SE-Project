@@ -11,8 +11,6 @@
     <form id="form1" runat="server">
         <asp:Label ID="Accountlabel" runat="server" Width="10%" Text="帳號：" Font-Bold="true" Font-Size="X-Large" Font-Names="微軟正黑體" />
         <asp:Label ID="AccountText" runat="server" Width="10%" Text="" Font-Bold="true" Font-Size="X-Large" Font-Names="微軟正黑體" /><br />
-        <asp:Label ID="Secretlabel" runat="server" Width="10%" Text="密碼：" Font-Bold="true" Font-Size="X-Large" Font-Names="微軟正黑體" />
-        <asp:TextBox ID="SecretText" runat="server" Width="30%" Height="20px" TextMode="Password"/><br />
         <asp:Label ID="IDLabel" runat="server" Width="10%" Text="學號：" Font-Bold="true" Font-Size="X-Large" Font-Names="微軟正黑體" />
         <asp:TextBox ID="IDText" runat="server" Width="30%" Height="20px" Font-Bold="true" Font-Size="X-Large" Font-Names="微軟正黑體" /><br />
         <asp:Label ID="Maillabel" runat="server" Width="10%" Text="電子郵件：" Font-Bold="true" Font-Size="X-Large" Font-Names="微軟正黑體" />

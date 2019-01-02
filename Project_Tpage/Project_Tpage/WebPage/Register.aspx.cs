@@ -26,12 +26,15 @@ namespace Project_Tpage.WebPage
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            Controller.controller.SubsribeEvent(this);
+            if (Page.IsPostBack)
+                return;
             //不在登入頁面，Controller未初始化的情況，導向登入頁面。
             if (!Controller.IsConstrut)
                 Controller.Initial(StateEnum.Login);
             //讓Controller內的function訂閱這個頁面上的事件。
             //Do this in each Page_Load()
-            Controller.controller.SubsribeEvent(this);
+            
         }
 
         public void btn1_Click(object sender, EventArgs e)

@@ -17,6 +17,9 @@ namespace Project_Tpage.WebPage
         private Class.User user;
         protected void Page_Load(object sender, EventArgs e)
         {
+            Controller.controller.SubsribeEvent(this);
+            if (Page.IsPostBack)
+                return;
             //在登入頁面，未初始化Controller的情況，初始化Controller
             if (!Controller.IsConstrut)
                 Controller.Initial(StateEnum.Login);
@@ -25,12 +28,10 @@ namespace Project_Tpage.WebPage
 
             //讓Controller內的function訂閱這個頁面上的事件。
             //Do this in each Page_Load()
-            Controller.controller.SubsribeEvent(this);
 
             user = Controller.CrossPageDAT["User"] as Class.User;
             
             AccountText.Text = user.Userinfo.ID;
-            SecretText.Text = user.Userinfo.Password;
             IDText.Text = user.Userinfo.StudentID;
             MailText.Text = user.Userinfo.Email;
             GenderList.SelectedIndex = (user.Userinfo.Gender == Gender.Null ? 0 : (user.Userinfo.Gender==Gender.Male? 1 :(user.Userinfo.Gender == Gender.Female ? 2 : 3)));
@@ -63,8 +64,6 @@ namespace Project_Tpage.WebPage
 
             Accountlabel.ForeColor = a;
             AccountText.ForeColor = a;
-            Secretlabel.ForeColor = a;
-            SecretText.ForeColor = a;
             IDLabel.ForeColor = a;
             IDText.ForeColor = a;
             Maillabel.ForeColor = a;
@@ -84,9 +83,6 @@ namespace Project_Tpage.WebPage
             btnSend.ForeColor = a;
             lblError.ForeColor = a;
 
-            AccountText.Style.Add("background-color", border);
-            SecretText.Style.Add("background-color", border);
-            IDText.Style.Add("background-color", border);
             MailText.Style.Add("background-color", border);
             RealNameText.Style.Add("background-color", border);
             NickNameText.Style.Add("background-color", border);
@@ -102,23 +98,15 @@ namespace Project_Tpage.WebPage
 
         protected void btnSend_Click(object sender, EventArgs e)
         {
-            if (SecretText.Text == "") {
-                lblError.Text = "密碼不得為空";
-            }
-            else if (IDText.Text == "") {
-                lblError.Text = "學號不得為空";
-            }
-            else {
-                DAT dat = new DAT();
-                dat["Password"] = SecretText.Text;
-                dat["StudentID"] = IDText.Text;
-                dat["Email"] = MailText.Text;
-                dat["Gender"] = (GenderList.SelectedIndex == 0 ? Gender.Null : (GenderList.SelectedIndex == 1 ? Gender.Male : (GenderList.SelectedIndex == 2 ? Gender.Female : Gender.Thirdgender)));
-                dat["Realname"] = RealNameText.Text;
-                dat["Nickname"] = NickNameText.Text;
-                dat["Viewstyle"] = ViewStyleList.SelectedIndex;
-                DoChange(new ViewEventArgs(dat, this), out optDAT);
-            }
+            DAT dat = new DAT();
+            dat["Email"] = MailText.Text;
+            dat["Gender"] = (GenderList.SelectedIndex == 0 ? Gender.Null : (GenderList.SelectedIndex == 1 ? Gender.Male : (GenderList.SelectedIndex == 2 ? Gender.Female : Gender.Thirdgender)));
+            dat["Realname"] = RealNameText.Text;
+            dat["Nickname"] = NickNameText.Text;
+            dat["Viewstyle"] = ViewStyleList.SelectedIndex;
+            DoChange(new ViewEventArgs(dat, this), out optDAT);
+            lblError.Visible = true;
+            lblError.Text = optDAT["failinfo"] as string;
         }
     }
 }

@@ -341,6 +341,24 @@ namespace Project_Tpage.Class
                 "帳號資料不符合格式：" + error);
         }
 
+        /// <summary>
+        /// 檢查一個使用者資訊是否符合規定。
+        /// </summary>
+        /// <param name="p_uif">使用者資訊。</param>
+        public static void ValidEmail(UserInfo p_uif)
+        {
+            string error = "";
+
+            if (p_uif.Email.Split('@').Length != 2) {
+                error += "電子郵件格式錯誤。\r\n";
+                throw new ModelException(
+                ModelException.Error.InvalidUserInformation,
+                "無效的帳號資料：\r\n" + error,
+                "帳號資料不符合格式：" + error);
+            }
+        }
+
+
         public User()
         {
             Usersetting = UserSetting.New;
