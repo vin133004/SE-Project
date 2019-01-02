@@ -522,9 +522,14 @@ namespace Project_Tpage.Class
         /// </summary>
         /// <param name="master">創建者使用者識別碼。</param>
         /// <param name="name">看板名稱。</param>
-        public void Board_New(Board brd)
+        public void Board_New(Board brd,List<string> Peoples)
         {
             DB.Set<Board>(brd);
+            foreach(string p in Peoples)
+            {
+                User usr = DB.Get<User>(DB.UserID_UIDconvert(p,true));
+                BoardFollow_Add(usr, brd.PrivateMaster, brd.Name);
+            }
         }
         /// <summary>
         /// 將一個看板從資料庫中刪除。
@@ -768,13 +773,14 @@ namespace Project_Tpage.Class
         /// </summary>
         /// <param name="uname">指定的字串。</param>
         /// <returns></returns>
-        public List<User> GetUserFromName(string uname)
+        public bool GetUserFromID(string ID)
         {
-            return (from us in Enumerable.Cast<DataRow>(DB.GetSqlData(string.Format(
+            /*return (from us in Enumerable.Cast<DataRow>(DB.GetSqlData(string.Format(
                        "SELECT UID, RealName, NickName FROM {0}", DB.DB_UserData_TableName)).Rows)
                     where DB.AnlType<string>(us["RealName"]).Contains(uname) ||
                        DB.AnlType<string>(us["NickName"]).Contains(uname)
-                    select DB.Get<User>(DB.AnlType<string>(us["UID"]))).ToList();
+                    select DB.Get<User>(DB.AnlType<string>(us["UID"]))).ToList();*/
+            return DB.IsExist(DB.DB_UserData_TableName, "ID", ID);
         }
         /// <summary>
         /// 購買廣告。若購買者沒有足夠的台科幣，不會執行。

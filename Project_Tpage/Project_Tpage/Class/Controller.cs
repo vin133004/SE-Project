@@ -252,11 +252,12 @@ namespace Project_Tpage.Class
             brd.Name = e.data["BoardName"] as string;
             string s = e.data["Public"] as string;
             brd.IsPublic = s=="true"?true:false;
+            List<string> Peoples = (List<string>)e.data["PeopleList"];
 
             opt = new DAT();
             try
             {
-                model.Board_New(brd);   
+                model.Board_New(brd,Peoples);   
 
                 opt.Append(model.RequestPageData(StateEnum.Home, e.data));
                 return;
@@ -273,7 +274,27 @@ namespace Project_Tpage.Class
         }
         public void CreateBoardState_DoInvite(ViewEventArgs e, out DAT opt)
         {
-            opt = model.RequestPageData(StateEnum.CreateBoard, e.data);
+            string ID = e.data["People"] as string;
+
+            opt = new DAT();
+            try
+            {
+                if (model.GetUserFromID(ID))
+                    opt["success"] = "success";
+
+                opt.Append(model.RequestPageData(StateEnum.Home, e.data));
+                return;
+            }
+            catch (ModelException me) when (me.ErrorNumber == ModelException.Error.InvalidUserInformation)
+            {
+                opt["failinfo"] = me.userMessage;
+            }
+            catch (Exception)
+            {
+                opt["failinfo"] = "使用者不存在。";
+            }
+            opt.Append(model.RequestPageData(StateEnum.CreateBoard, e.data));
+
         }
         public void CreateBoardState_ToHome(ViewEventArgs e, out DAT opt)
         {

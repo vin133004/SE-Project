@@ -129,7 +129,7 @@ namespace Project_Tpage.WebPage
                 inviteInfo.Text = optDAT["failinfo"] as string;
             }
             // 成功資訊顯示
-            else if (optDAT.Keys.Contains("info"))
+            else if (optDAT.Keys.Contains("success"))
             {
                 inviteInfo.Visible = true;
                 inviteInfo.Text = "邀請成功";
