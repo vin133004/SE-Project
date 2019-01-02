@@ -106,7 +106,8 @@ namespace Project_Tpage.WebPage
             dat["Viewstyle"] = ViewStyleList.SelectedIndex;
             DoChange(new ViewEventArgs(dat, this), out optDAT);
             lblError.Visible = true;
-            lblError.Text = optDAT["failinfo"] as string;
+            if (optDAT.Keys.Contains("failinfo"))
+                lblError.Text = optDAT["failinfo"] as string;
         }
     }
 }

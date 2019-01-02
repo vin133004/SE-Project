@@ -45,22 +45,24 @@ namespace Project_Tpage.WebPage
             //讓Controller內的function訂閱這個頁面上的事件。
             //Do this in each Page_Load()
             Controller.controller.SubsribeEvent(this);
-            if (Page.IsPostBack)
-                return;
+            //if (Page.IsPostBack)
+              //  return;
 
             if (!Controller.IsConstrut)
                 Controller.Initial(StateEnum.Login);
             if (Session["UID"] == null)
                 Response.Redirect("Login");
-
-            user = Controller.CrossPageDAT["User"] as User;
+            if (Controller.CrossPageDAT["User"] != null)
+                user = Controller.CrossPageDAT["User"] as User;
             ADimage.ImageUrl = "TakeShowingImage.aspx";
             // 邀請加入的看板名字
             int count = 0;
             List<string> boardQueuelistName = new List<string>();
             boardQueuelistName.Clear();
-            boardQueuelistName = Controller.CrossPageDAT["FollowBoardQueueName"] as List<string>;
+            if (Controller.CrossPageDAT.Keys.Contains("FollowBoardQueueName"))
+                boardQueuelistName = Controller.CrossPageDAT["FollowBoardQueueName"] as List<string>;
 
+            inviteList.Items.Clear();
             foreach (string BID in user.FollowBoardQueue)
             {
                 inviteList.Items.Add(new ListItem(boardQueuelistName[count], BID.Split('@')[1]));
@@ -352,14 +354,16 @@ namespace Project_Tpage.WebPage
         protected void btnYes_Click(object sender, EventArgs e)
         {
             DAT dat = new DAT();
-            dat["BID"] = user.FollowBoardQueue[inviteList.SelectedIndex];
+            dat["BID"] = inviteList.SelectedValue;
             DoYesInvite(new ViewEventArgs(dat, this), out optDAT);
         }
 
         protected void btnNo_Click(object sender, EventArgs e)
         {
             DAT dat = new DAT();
-            dat["BID"] = user.FollowBoardQueue[inviteList.SelectedIndex];
+            dat = Controller.CrossPageDAT;
+
+            dat["BID"] = inviteList.SelectedItem.Value;
             DoNoInvite(new ViewEventArgs(dat, this), out optDAT);
         }
     }

@@ -126,19 +126,18 @@ namespace Project_Tpage.Class
                 CrossPageDAT["User"] = model.user;
                 
                 opt.Append(model.RequestPageData(StateEnum.Home, e.data));
-                return;
+                e.page.Session["UID"] = model.user.Userinfo.UID;
+                e.page.Response.Redirect("Home");
             }
             catch (ModelException me)
             {
-                //登入失敗則說明錯誤資訊。
-                if (me.ErrorNumber == ModelException.Error.LoginFailed)
-                    opt["failinfo"] = me.userMessage == "" ? "登入失敗" : me.userMessage;
+                opt["failinfo"] = me.userMessage == "" ? "登入失敗" : me.userMessage;
             }
             catch (Exception)
             {
                 opt["failinfo"] = "登入失敗";
             }
-            opt.Append(model.RequestPageData(StateEnum.Login, e.data));
+
         }
         public void LoginState_ToRegister(ViewEventArgs e, out DAT opt)
         {
@@ -287,7 +286,7 @@ namespace Project_Tpage.Class
             }
             catch (Exception)
             {
-
+                ;
             }
         }
         public void HomeState_DoNoInvite(ViewEventArgs e, out DAT opt)
@@ -299,7 +298,7 @@ namespace Project_Tpage.Class
             }
             catch (Exception)
             {
-
+                ;
             }
         }
         //  Board State
@@ -686,7 +685,7 @@ namespace Project_Tpage.Class
                 
                 opt.Append(model.RequestPageData(StateEnum.Home, e.data));
 
-                return;
+                e.page.Response.Redirect("Home");
             }
             catch(ModelException me)
             {
@@ -696,7 +695,6 @@ namespace Project_Tpage.Class
             {
                 opt["failinfo"] = "設定失敗。";
             }
-            opt.Append(model.RequestPageData(StateEnum.Home, e.data));
         }
 
     }

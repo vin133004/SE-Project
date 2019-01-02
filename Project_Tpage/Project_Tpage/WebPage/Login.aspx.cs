@@ -29,8 +29,7 @@ namespace Project_Tpage.WebPage
             if (!Controller.IsConstrut)
                 Controller.Initial(StateEnum.Login);
             Controller.controller.SubsribeEvent(this);
-            if (Page.IsPostBack)
-                return;
+
             //在登入頁面，未初始化Controller的情況，初始化Controller
             
 
@@ -56,13 +55,6 @@ namespace Project_Tpage.WebPage
             {
                 lblFail.Visible = true;
                 lblFail.Text = optDAT["failinfo"] as string;
-            }
-            else
-            {
-                foreach (KeyValuePair<string, object> v in optDAT)
-                    Controller.CrossPageDAT[v.Key] = v.Value;
-                Session["UID"] = ((User)Controller.CrossPageDAT["User"]).Userinfo.UID;
-                Response.Redirect("Home");
             }
         }
 
