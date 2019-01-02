@@ -532,6 +532,8 @@ namespace Project_Tpage.Class
             User master = DB.Get<User>(brd.PrivateMaster);
             master.FollowBoard.Add(brd.BID);
             DB.Set<User>(master);
+            Controller.CrossPageDAT["User"] = master;
+            user = master;
             foreach (string p in Peoples)
             {
                 User usr = DB.Get<User>(DB.UserID_UIDconvert(p, true));
@@ -871,19 +873,19 @@ namespace Project_Tpage.Class
             DAT opt = new DAT();
             try
             {
-                opt["User"] = Controller.CrossPageDAT["User"];
+                opt["User"] = user;
                 if (ToState == StateEnum.Home)
                 {
                     Advertise temp = GetEarliestAD();
                     Controller.CrossPageDAT["TEMP_ShowingImage"] = temp == null ? new Bitmap(50, 50) : temp.Body;
-
+                    opt["TEMP_ShowingImage"] = Controller.CrossPageDAT["TEMP_ShowingImage"];
                     User usr = (Controller.CrossPageDAT.Keys.Contains("User") ?
                                 Controller.CrossPageDAT["User"] : ipt["User"]) as User;
 
                     Controller.CrossPageDAT["BoardListName"] = usr.FollowBoard.Select(x => DB.Get<Board>(x).Name).ToList();
-
+                    opt["BoardListName"] = Controller.CrossPageDAT["BoardListName"];
                     Controller.CrossPageDAT["FollowBoardQueueName"] = usr.FollowBoardQueue.Select(x => DB.Get<Board>(x.Split('@')[1]).Name).ToList();
-
+                    opt["FollowBoardQueueName"] = Controller.CrossPageDAT["FollowBoardQueueName"];
                 }
                 else if (ToState == StateEnum.Board)
                 {

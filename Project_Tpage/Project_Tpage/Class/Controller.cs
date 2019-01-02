@@ -122,8 +122,9 @@ namespace Project_Tpage.Class
             try
             {
                 //嘗試登入
-                CrossPageDAT["User"] = model.Login(ID, Password);
-
+                model.user = model.Login(ID, Password);
+                CrossPageDAT["User"] = model.user;
+                
                 opt.Append(model.RequestPageData(StateEnum.Home, e.data));
                 return;
             }
@@ -235,6 +236,7 @@ namespace Project_Tpage.Class
                                 CrossPageDAT["User"] : e.data["User"]) as User;
                     opt["LikeImage"] = usr.FollowBoard.Contains(all[0].BID);
                     CrossPageDAT = opt;
+                    CrossPageDAT["User"] = model.user;
                     e.page.Response.Redirect("Board.aspx");
                 }
                 else
@@ -252,7 +254,7 @@ namespace Project_Tpage.Class
             opt = new DAT();
             try
             {
-                opt["Info"] = model.user.Pickcard().MyBoard;
+                opt["Info"] = model.user.Pickcard().Userinfo.ID;
             }
             catch (ModelException error)
             {
@@ -406,15 +408,17 @@ namespace Project_Tpage.Class
         //  Create Board State
         public void CreateBoardState_DoCreate(ViewEventArgs e, out DAT opt)
         {
-            Board brd = Board.New(e.data["Master"] as string);
-            brd.Name = e.data["BoardName"] as string;
-            string s = e.data["Public"] as string;
-            brd.IsPublic = s=="true"?true:false;
-            List<string> Peoples = (List<string>)e.data["PeopleList"];
-
             opt = new DAT();
             try
             {
+                if (e.data["BoardName"] as string == "")
+                    throw new Exception();
+                Board brd = Board.New(e.data["Master"] as string);
+                brd.Name = e.data["BoardName"] as string;
+                string s = e.data["Public"] as string;
+                brd.IsPublic = s == "true" ? true : false;
+                List<string> Peoples = (List<string>)e.data["PeopleList"];
+
                 model.Board_New(brd,Peoples);   
 
                 opt.Append(model.RequestPageData(StateEnum.Home, e.data));
@@ -439,8 +443,10 @@ namespace Project_Tpage.Class
             {
                 if (model.GetUserFromID(ID))
                     opt["success"] = "success";
+                else
+                    opt["failinfo"] = "使用者不存在";
 
-                opt.Append(model.RequestPageData(StateEnum.Home, e.data));
+                opt.Append(model.RequestPageData(StateEnum.CreateBoard, e.data));
                 return;
             }
             catch (ModelException me) when (me.ErrorNumber == ModelException.Error.InvalidUserInformation)

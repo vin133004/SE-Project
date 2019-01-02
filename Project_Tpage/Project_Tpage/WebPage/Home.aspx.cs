@@ -136,7 +136,7 @@ namespace Project_Tpage.WebPage
 
                 btnSet.Style.Add("position", "absolute");
                 btnSet.Style.Add("top", "70px");
-                btnSet.Style.Add("left", "30%");
+                btnSet.Style.Add("left", "20%");
                 inviteList.Style.Add("position", "absolute");
                 inviteList.Style.Add("top", "450px");
                 inviteList.Style.Add("left", "80%");
@@ -199,7 +199,7 @@ namespace Project_Tpage.WebPage
 
                 btnSet.Style.Add("position", "absolute");
                 btnSet.Style.Add("top", "70px");
-                btnSet.Style.Add("left", "30%");
+                btnSet.Style.Add("left", "20%");
                 inviteList.Style.Add("position", "absolute");
                 inviteList.Style.Add("top", "450px");
                 inviteList.Style.Add("left", "80%");
