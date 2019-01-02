@@ -191,7 +191,7 @@ namespace Project_Tpage.Class
             }
             catch(Exception)
             {
-
+                ;
             }
         }
         public void HomeState_ToCreateBoard(ViewEventArgs e, out DAT opt)
@@ -294,7 +294,8 @@ namespace Project_Tpage.Class
             opt = new DAT();
             try
             {
-                model.user.FollowBoardQueue.RemoveAll(x => x.Split('@')[1] == e.data["BID"] as string);
+                model.user.FollowBoardQueue.RemoveAll(x => x.Split('@')[1] == (e.data["BID"] as string));
+                Model.DB.Set<User>(model.user);
             }
             catch (Exception)
             {
@@ -321,6 +322,7 @@ namespace Project_Tpage.Class
             try
             {
                 CrossPageDAT = model.RequestPageData(StateEnum.EditArticle, e.data);
+                CrossPageDAT["BID"] = e.data["BID"];
                 e.page.Response.Redirect("Editor.aspx");
             }
             catch (Exception)
@@ -394,6 +396,9 @@ namespace Project_Tpage.Class
             opt = new DAT();
             try
             {
+                List <User> UserList= model.GetUserOfBoard(e.data["BID"] as string);
+                foreach(User u in UserList)
+                    model.RemoveAFollowedUser(Model.DB.Get<Board>(e.data["BID"] as string), u);
                 model.Board_Remove(e.data["BID"] as string);
                 CrossPageDAT = model.RequestPageData(StateEnum.Home, e.data);
                 e.page.Response.Redirect("Home.aspx");

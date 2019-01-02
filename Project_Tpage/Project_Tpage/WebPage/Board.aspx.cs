@@ -50,8 +50,10 @@ namespace Project_Tpage.WebPage
             
             
             ListOfArticle.Items.Clear();
-            board = Controller.CrossPageDAT["Board"] as Class.Board;
-            user = Controller.CrossPageDAT["User"] as User;
+            if (Controller.CrossPageDAT["Board"] != null)
+                board = Controller.CrossPageDAT["Board"] as Class.Board;
+            if (Controller.CrossPageDAT["User"] != null)
+                user = Controller.CrossPageDAT["User"] as User;
             
             Follow.ImageUrl = Controller.CrossPageDAT["LikeImage"] as string;
             Title.Text = board.Name;
@@ -166,7 +168,9 @@ namespace Project_Tpage.WebPage
         //  發新文章
         protected void btnPo_Click(object sender, EventArgs e)
         {
-            ToEditor(new ViewEventArgs(this), out optDAT);   
+            DAT dat = new DAT();
+            dat["BID"] = (Controller.CrossPageDAT["Board"] as Class.Board).BID;
+            ToEditor(new ViewEventArgs(dat,this), out optDAT);   
         }
 
         //  刪除成員(版主or管理者) Info 回傳到 peopleInfo
@@ -174,7 +178,7 @@ namespace Project_Tpage.WebPage
         {
             DAT dat = new DAT();
             dat["ID"] = peopleText.Text;
-            dat["BID"] = board.BID;
+            dat["BID"] = (Controller.CrossPageDAT["Board"] as Class.Board).BID;
             DoDelPeople(new ViewEventArgs(dat,this),out optDAT);
             // 刪除情況確認
             peopleInfo.Text = optDAT["Info"] as string;
@@ -184,7 +188,7 @@ namespace Project_Tpage.WebPage
         {
             DAT dat = new DAT();
             dat["ID"] = peopleText.Text;
-            dat["BID"] = board.BID;
+            dat["BID"] = (Controller.CrossPageDAT["Board"] as Class.Board).BID;
             DoAdmin(new ViewEventArgs(dat, this), out optDAT);
             // 邀請狀況確認
             peopleInfo.Text = optDAT["Info"] as string;
@@ -194,7 +198,7 @@ namespace Project_Tpage.WebPage
         {
             DAT dat = new DAT();
             dat["ID"] = peopleText.Text;
-            dat["BID"] = board.BID;
+            dat["BID"] = (Controller.CrossPageDAT["Board"] as Class.Board).BID;
             DoInvite(new ViewEventArgs(dat, this), out optDAT);
             // 邀請狀況確認
             peopleInfo.Text = optDAT["Info"] as string;
@@ -204,7 +208,7 @@ namespace Project_Tpage.WebPage
         protected void btnDelBoard_Click(object sender, EventArgs e)
         {
             DAT dat = new DAT();
-            dat["BID"] = board.BID;
+            dat["BID"] = (Controller.CrossPageDAT["Board"] as Class.Board).BID;
             DoDelBoard(new ViewEventArgs(dat,this), out optDAT); 
         }
 

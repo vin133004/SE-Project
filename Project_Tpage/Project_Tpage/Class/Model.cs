@@ -873,6 +873,8 @@ namespace Project_Tpage.Class
             DAT opt = new DAT();
             try
             {
+                if(user != null)
+                    user = DB.Get<User>(user.Userinfo.UID);
                 opt["User"] = user;
                 if (ToState == StateEnum.Home)
                 {
@@ -881,7 +883,8 @@ namespace Project_Tpage.Class
                     opt["TEMP_ShowingImage"] = Controller.CrossPageDAT["TEMP_ShowingImage"];
                     User usr = (Controller.CrossPageDAT.Keys.Contains("User") ?
                                 Controller.CrossPageDAT["User"] : ipt["User"]) as User;
-
+                    if(usr != null)
+                        usr = DB.Get<User>(usr.Userinfo.UID);
                     Controller.CrossPageDAT["BoardListName"] = usr.FollowBoard.Select(x => DB.Get<Board>(x).Name).ToList();
                     opt["BoardListName"] = Controller.CrossPageDAT["BoardListName"];
                     Controller.CrossPageDAT["FollowBoardQueueName"] = usr.FollowBoardQueue.Select(x => DB.Get<Board>(x.Split('@')[1]).Name).ToList();

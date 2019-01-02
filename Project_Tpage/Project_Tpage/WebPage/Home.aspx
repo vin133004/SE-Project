@@ -40,7 +40,7 @@
             <asp:Label ID="cardInfo" runat="server" Width="200" Height="50" Font-Names="微軟正黑體" Font-Size="X-Large" Text="" />
             <asp:Button ID="btnAD" runat="server"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Width="150" Height="75" BorderStyle="None" Text="購買廣告" OnClick="btnAD_Click" />           
             <asp:Label ID="blank2" runat="server" Width="10" Height="20" Text="" />
-            <asp:ListBox ID="inviteList" runat="server" Width="100" Font-Names="微軟正黑體" Font-Size="Large" AutoPostBack="false" OnSelectedIndexChanged="inviteList_SelectedIndexChanged"></asp:ListBox>
+            <asp:ListBox ID="inviteList" runat="server" Width="100" Font-Names="微軟正黑體" Font-Size="Large" OnSelectedIndexChanged="inviteList_SelectedIndexChanged"></asp:ListBox>
             <asp:Button ID="btnYes" runat="server"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Height="40" BorderStyle="None" Text="接受" OnClick="btnYes_Click"/>
             <asp:Button ID="btnNo" runat="server"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Height="40" BorderStyle="None" Text="拒絕" OnClick="btnNo_Click"/>  
         </center>

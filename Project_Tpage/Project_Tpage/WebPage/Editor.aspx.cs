@@ -34,10 +34,11 @@ namespace Project_Tpage.WebPage
             //讓Controller內的function訂閱這個頁面上的事件。
             //Do this in each Page_Load()
            
-            user = Controller.CrossPageDAT["User"] as Class.User;
+            if(Controller.CrossPageDAT["User"] != null)
+                user = Controller.CrossPageDAT["User"] as Class.User;
 
             // 判定編輯還是新文章
-            if (Controller.CrossPageDAT.Keys.Contains("Article")) {
+            if (Controller.CrossPageDAT.Keys.Contains("Article") && Controller.CrossPageDAT["Article"] != null) {
                 // 編輯文章 
                 article = Controller.CrossPageDAT["Article"] as Class.Article;
                 Tittle.Text = article.Title;
@@ -92,7 +93,10 @@ namespace Project_Tpage.WebPage
         protected void Send_Click(object sender, EventArgs e)
         {
             DAT dat = new DAT();
-            dat["BID"] = Controller.CrossPageDAT["BID"];
+            if (Controller.CrossPageDAT.Keys.Contains("Article"))
+                dat["AID"] = article.AID;
+            else
+                dat["BID"] = Controller.CrossPageDAT["BID"];
             dat["Title"] = Tittle.Text;
             dat["Content"] = Content.Text;
             DoCreate(new ViewEventArgs(dat, this), out optDAT);

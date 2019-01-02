@@ -45,8 +45,8 @@ namespace Project_Tpage.WebPage
             //讓Controller內的function訂閱這個頁面上的事件。
             //Do this in each Page_Load()
             Controller.controller.SubsribeEvent(this);
-            //if (Page.IsPostBack)
-              //  return;
+            if (Page.IsPostBack)
+                return;
 
             if (!Controller.IsConstrut)
                 Controller.Initial(StateEnum.Login);
@@ -354,8 +354,11 @@ namespace Project_Tpage.WebPage
         protected void btnYes_Click(object sender, EventArgs e)
         {
             DAT dat = new DAT();
+            dat = Controller.CrossPageDAT;
             dat["BID"] = inviteList.SelectedValue;
             DoYesInvite(new ViewEventArgs(dat, this), out optDAT);
+            Controller.model.RequestPageData(StateEnum.Home, dat);
+            Response.Redirect("Home");
         }
 
         protected void btnNo_Click(object sender, EventArgs e)
@@ -363,8 +366,10 @@ namespace Project_Tpage.WebPage
             DAT dat = new DAT();
             dat = Controller.CrossPageDAT;
 
-            dat["BID"] = inviteList.SelectedItem.Value;
+            dat["BID"] = inviteList.SelectedValue;
             DoNoInvite(new ViewEventArgs(dat, this), out optDAT);
+            Controller.model.RequestPageData(StateEnum.Home, dat);
+            Response.Redirect("Home");
         }
     }
 }
