@@ -162,7 +162,9 @@ namespace Project_Tpage.WebPage
        
         protected void follow_click(object sender, EventArgs e)
         {
-            DoFollow(new ViewEventArgs(this), out optDAT);
+            DAT dat = new DAT();
+            dat["BID"] = (Controller.CrossPageDAT["Board"] as Class.Board).BID;
+            DoFollow(new ViewEventArgs(dat,this), out optDAT);
         }
 
         //  發新文章

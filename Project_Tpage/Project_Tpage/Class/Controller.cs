@@ -124,8 +124,8 @@ namespace Project_Tpage.Class
                 //嘗試登入
                 model.user = model.Login(ID, Password);
                 CrossPageDAT["User"] = model.user;
-                
-                opt.Append(model.RequestPageData(StateEnum.Home, e.data));
+
+                CrossPageDAT = model.RequestPageData(StateEnum.Home, e.data);
                 e.page.Session["UID"] = model.user.Userinfo.UID;
                 e.page.Response.Redirect("Home");
             }
@@ -493,13 +493,14 @@ namespace Project_Tpage.Class
         //  Article State
         public void ArticleState_DoMessage(ViewEventArgs e, out DAT opt)
         {
-            AMessage message = e.data["Message"] as AMessage;
             //設定錯誤資訊。
             string failinfo = "";
             opt = new DAT();
             try
             {
-                model.ReleaseAMessage(message.Content, message.OfArticle);
+                model.ReleaseAMessage(e.data["Message"] as string, e.data["AID"] as string);
+                CrossPageDAT = model.RequestPageData(StateEnum.Article, e.data);
+                e.page.Response.Redirect("Article.aspx");
             }
             catch (ModelException me)
             {
@@ -523,6 +524,8 @@ namespace Project_Tpage.Class
             {
                 article = Model.DB.Get<Article>(e.data["AID"] as string);
                 article.LikeCount++;
+                Model.DB.Set<Article>(article);
+                opt["LikeCount"] = article.LikeCount;
             }
             catch (ModelException)
             {
@@ -586,20 +589,24 @@ namespace Project_Tpage.Class
         //  Editor State
         public void EditorState_DoCreate(ViewEventArgs e, out DAT opt)
         {
-            Article article = e.data["Article"] as Article;
             //設定錯誤資訊。
             string failinfo = "";
             opt = new DAT();
             try
             {
-                //嘗試發文
-                model.ReleaseArticle(article.ReleaseUser, article.OfBoard, article.Title, article.Content);
                 if (e.data.Keys.Contains("BID"))
                 {
+                    //嘗試發文
+                    model.ReleaseArticle(e.data["UID"] as string, e.data["BID"] as string, e.data["Title"] as string, e.data["Content"] as string);
                     CrossPageDAT = model.RequestPageData(StateEnum.Board, e.data);
                     e.page.Response.Redirect("Board.aspx");
                 }
-                else {
+                else
+                {
+                    Article article = Model.DB.Get<Article>(e.data["AID"] as string);
+                    article.Content = e.data["Content"] as string;
+                    article.Title = e.data["Title"] as string;
+                    Model.DB.Set<Article>(article);
                     CrossPageDAT = model.RequestPageData(StateEnum.Article, e.data);
                     e.page.Response.Redirect("Article.aspx");
                 }
@@ -634,20 +641,26 @@ namespace Project_Tpage.Class
                     e.page.Response.Redirect("Board.aspx");
                 }
             }
-            catch(Exception)
+            catch (Exception)
             {
                 opt["Info"] = "error";
             }
         }
-
         // AD State
         public void ADState_DoBuy(ViewEventArgs e, out DAT opt)
         {
             opt = new DAT();
             try
             {
-                model.BuyAD(model.user, (int)e.data["Money"], e.data["Image"] as Image,
-                    new DateTime(model.GetLatestAD().Deadline.Ticks + TimeSpan.TicksPerMinute * ((int)e.data["Minute"])));
+                User usr = model.user;
+                int price = (int)e.data["Money"];
+                Image context = e.data["Image"] as Image;
+                DateTime dt = new DateTime(model.GetLatestAD().Deadline.Ticks + TimeSpan.TicksPerMinute * ((int)e.data["Minute"]));
+                //DateTime dt = new DateTime(2020,01,01);
+                model.BuyAD(usr, price, context, dt);
+
+                CrossPageDAT = model.RequestPageData(StateEnum.Home, e.data);
+                e.page.Response.Redirect("Home.aspx");
             }
             catch (Exception)
             {

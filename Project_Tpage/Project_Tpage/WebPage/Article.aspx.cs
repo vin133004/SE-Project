@@ -48,14 +48,12 @@ namespace Project_Tpage.WebPage
                 Controller.Initial(StateEnum.Login);
             if (Session["UID"] == null)
                 Response.Redirect("Login");
-            //讓Controller內的function訂閱這個頁面上的事件。
-            //Do this in each Page_Load()
-           
-           
-            user = Controller.CrossPageDAT["User"] as Class.User;
-            
-            article = Controller.CrossPageDAT["Article"] as Class.Article;
-            
+ 
+            if (Controller.CrossPageDAT["User"] != null)
+                user = Controller.CrossPageDAT["User"] as Class.User;
+            if (Controller.CrossPageDAT["Article"] != null)
+                article = Controller.CrossPageDAT["Article"] as Class.Article;
+
             Content.Text = article.Content;
             Title.Text = article.Title;
             ReleaseUser.Text = Controller.CrossPageDAT["ReleaseUser"] as string;
@@ -63,13 +61,13 @@ namespace Project_Tpage.WebPage
                 + article.Date.Month.ToString() + "/"
                 + article.Date.Day.ToString();
 
-            List<string> messageAll = new List<string>();
+            List<AMessage> messageAll = new List<AMessage>();
             messageAll.Clear();
-            messageAll = Controller.CrossPageDAT["AllMessage"] as List<string>;
+            messageAll = Controller.CrossPageDAT["AllMessage"] as List<AMessage>;
             allMessage.Items.Clear();
-            foreach (string item in messageAll)
+            foreach (AMessage item in messageAll)
             {
-                allMessage.Items.Add(item);
+                allMessage.Items.Add(item.Content);
             }
 
             numLike.Text = "x" + article.LikeCount.ToString();
@@ -124,7 +122,6 @@ namespace Project_Tpage.WebPage
             btnLike.Style.Add("background-color", border);
             Message.Style.Add("background-color", border);
             btnSend.Style.Add("background-color", border);
-            lblError.Style.Add("background-color", border);
             btnBack.Style.Add("background-color", border);
             btnHome.Style.Add("background-color", border);
             btnEdit.Style.Add("background-color", border);
@@ -134,7 +131,7 @@ namespace Project_Tpage.WebPage
         protected void btnBack_Click(object sender, EventArgs e)
         {
             DAT dat = new DAT();
-            dat["BID"] = article.OfBoard;
+            dat["BID"] = (Controller.CrossPageDAT["Article"] as Class.Article).OfBoard;
             ToBack(new ViewEventArgs(dat, this), out optDAT);
         }
 
@@ -142,14 +139,15 @@ namespace Project_Tpage.WebPage
         protected void btnSend_Click(object sender, EventArgs e)
         {
             DAT dat = new DAT();
-            string message = user.Userinfo.ID + "：" + Message.Text;
+            string message = (Controller.CrossPageDAT["User"] as User).Userinfo.ID + "：" + Message.Text;
             dat["Message"] = message;
-            dat["AID"] = article.AID;
-
-            DoMessage(new ViewEventArgs(dat, this), out optDAT);
+            dat["AID"] = (Controller.CrossPageDAT["Article"] as Class.Article).AID;
+            dat["BID"] = (Controller.CrossPageDAT["Article"] as Class.Article).OfBoard;
             Message.Text = "";
+            DoMessage(new ViewEventArgs(dat, this), out optDAT);
 
-            if (optDAT.Keys.Contains("failinfo")) {
+            if (optDAT.Keys.Contains("failinfo"))
+            {
                 lblError.Visible = true;
                 lblError.Text = optDAT["failinfo"] as string;
             }
@@ -158,8 +156,14 @@ namespace Project_Tpage.WebPage
         //  傳送點讚事件
         protected void btnLike_Click(object sender, ImageClickEventArgs e)
         {
-            DoLike(new ViewEventArgs(this), out optDAT);
-            numLike.Text = "x" + optDAT["LikeCount"] as string;
+            DAT dat = new DAT();
+            dat["AID"] = (Controller.CrossPageDAT["Article"] as Class.Article).AID;
+            DoLike(new ViewEventArgs(dat, this), out optDAT);
+            if (optDAT.Keys.Contains("LikeCount"))
+            {
+                numLike.Text = "x" + optDAT["LikeCount"] as string;
+                btnLike.Enabled = false;
+            }
         }
         //  返回首頁
         protected void btnHome_Click(object sender, EventArgs e)
@@ -171,8 +175,8 @@ namespace Project_Tpage.WebPage
         protected void btnDel_Click(object sender, EventArgs e)
         {
             DAT dat = new DAT();
-            dat["AID"] = article.AID;
-            dat["BID"] = article.OfBoard;
+            dat["AID"] = (Controller.CrossPageDAT["Article"] as Class.Article).AID;
+            dat["BID"] = (Controller.CrossPageDAT["Article"] as Class.Article).OfBoard;
             DoDelArticle(new ViewEventArgs(dat, this), out optDAT);
         }
 
@@ -180,7 +184,7 @@ namespace Project_Tpage.WebPage
         protected void btnEdit_Click(object sender, EventArgs e)
         {
             DAT dat = new DAT();
-            dat["AID"] = article.AID;
+            dat["AID"] = (Controller.CrossPageDAT["Article"] as Class.Article).AID;
             ToEdit(new ViewEventArgs(dat, this), out optDAT);
         }
     }

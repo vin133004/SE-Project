@@ -879,7 +879,7 @@ namespace Project_Tpage.Class
                 if (ToState == StateEnum.Home)
                 {
                     Advertise temp = GetEarliestAD();
-                    Controller.CrossPageDAT["TEMP_ShowingImage"] = temp == null ? new Bitmap(50, 50) : temp.Body;
+                    Controller.CrossPageDAT["TEMP_ShowingImage"] = temp == null ? new Bitmap(266, 190) : temp.Body;
                     opt["TEMP_ShowingImage"] = Controller.CrossPageDAT["TEMP_ShowingImage"];
                     User usr = (Controller.CrossPageDAT.Keys.Contains("User") ?
                                 Controller.CrossPageDAT["User"] : ipt["User"]) as User;
@@ -899,6 +899,8 @@ namespace Project_Tpage.Class
 
                     User usr = (Controller.CrossPageDAT.Keys.Contains("User") ?
                                 Controller.CrossPageDAT["User"] : ipt["User"]) as User;
+                    if (usr != null)
+                        usr = DB.Get<User>(usr.Userinfo.UID);
                     opt["LikeImage"] = usr.FollowBoard.Contains(ipt["BID"] as string);
                 }
                 else if (ToState == StateEnum.Article)
@@ -910,7 +912,8 @@ namespace Project_Tpage.Class
                     opt["Article"] = atc;
                     opt["ReleaseUser"] = DB.UserID_UIDconvert(atc.ReleaseUser, false);
                     opt["AllMessage"] = GetAMessagesOfArticle(atc.AID);
-
+                    if (usr != null)
+                        usr = DB.Get<User>(usr.Userinfo.UID);
                     if (usr.Userinfo.UID.Equals(atc.ReleaseUser) ||
                         DB.Get<Board>(ipt["BID"] as string).Admin.Contains(usr.Userinfo.UID))
                         opt["Admin"] = true;
@@ -2187,8 +2190,8 @@ namespace Project_Tpage.Class
                 {
                     if (string.IsNullOrEmpty(Iden))
                         throw new Exception("1");
-                    if (IsExist(DB_UserData_TableName, "UID", Iden))
-                        throw new Exception("2");
+                    //if (IsExist(DB_UserData_TableName, "UID", Iden))
+                       // throw new Exception("2");
 
                     ExeSqlCommand(string.Format("DELETE FROM {0} WHERE UID = {1}",
                         DB_UserData_TableName, Type(Iden)));
@@ -2218,8 +2221,8 @@ namespace Project_Tpage.Class
                 {
                     if (string.IsNullOrEmpty(Iden))
                         throw new Exception("1");
-                    if (IsExist(DB_ArticleData_TableName, "AID", Iden))
-                        throw new Exception("2");
+                    //if (IsExist(DB_ArticleData_TableName, "AID", Iden))
+                        //throw new Exception("2");
 
                     ExeSqlCommand(string.Format("DELETE FROM {0} WHERE AID = {1}",
                         DB_ArticleData_TableName, Type(Iden)));
@@ -2249,8 +2252,8 @@ namespace Project_Tpage.Class
                 {
                     if (string.IsNullOrEmpty(Iden))
                         throw new Exception("1");
-                    if (IsExist(DB_AMessageData_TableName, "MID", Iden))
-                        throw new Exception("2");
+                    //if (IsExist(DB_AMessageData_TableName, "MID", Iden))
+                       // throw new Exception("2");
 
                     ExeSqlCommand(string.Format("DELETE FROM {0} WHERE MID = {1}",
                         DB_AMessageData_TableName, Type(Iden)));

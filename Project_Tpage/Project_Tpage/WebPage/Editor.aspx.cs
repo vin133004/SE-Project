@@ -31,8 +31,6 @@ namespace Project_Tpage.WebPage
                 Controller.Initial(StateEnum.Login);
             if (Session["UID"] == null)
                 Response.Redirect("Login");
-            //讓Controller內的function訂閱這個頁面上的事件。
-            //Do this in each Page_Load()
            
             if(Controller.CrossPageDAT["User"] != null)
                 user = Controller.CrossPageDAT["User"] as Class.User;
@@ -84,7 +82,7 @@ namespace Project_Tpage.WebPage
         {
             DAT dat = new DAT();
             if (Controller.CrossPageDAT.Keys.Contains("Article"))
-                dat["AID"] = article.AID;
+                dat["AID"] = (Controller.CrossPageDAT["Article"] as Class.Article).AID;
             else
                 dat["BID"] = Controller.CrossPageDAT["BID"];
             ToBack(new ViewEventArgs(dat,this), out optDAT);
@@ -94,11 +92,12 @@ namespace Project_Tpage.WebPage
         {
             DAT dat = new DAT();
             if (Controller.CrossPageDAT.Keys.Contains("Article"))
-                dat["AID"] = article.AID;
+                dat["AID"] = (Controller.CrossPageDAT["Article"] as Class.Article).AID;
             else
                 dat["BID"] = Controller.CrossPageDAT["BID"];
             dat["Title"] = Tittle.Text;
             dat["Content"] = Content.Text;
+            dat["UID"] = (Controller.CrossPageDAT["User"] as Class.User).Userinfo.UID;
             DoCreate(new ViewEventArgs(dat, this), out optDAT);
         }
     }

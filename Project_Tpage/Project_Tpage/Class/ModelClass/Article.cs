@@ -191,7 +191,7 @@ namespace Project_Tpage.Class
             {
                 MID = (string)Model.DB.AnlType<string>(dr["MID"]);
                 ReleaseUser = (string)Model.DB.AnlType<string>(dr["ReleaseUser"]);
-                Date = (DateTime)Model.DB.AnlType<DateTime>(dr["ReleaseDate"]);
+                // Date = (DateTime)Model.DB.AnlType<DateTime>(dr["ReleaseDate"]);
                 Content = (string)Model.DB.AnlType<string>(dr["Content"]);
                 LikeCount = (int)Model.DB.AnlType<int>(dr["LikeCount"]);
                 OfArticle = (string)Model.DB.AnlType<string>(dr["OfArticle"]);
