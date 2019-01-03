@@ -22,16 +22,12 @@
             <asp:Label ID="Blank1" runat="server" Height="75"  />
             <br/>
             <asp:ListBox ID="allMessage" runat="server" Height="200" Width="700" Font-Names="微軟正黑體" Font-Size="Large" >
-                <asp:ListItem>留言aaa</asp:ListItem>
-                <asp:ListItem>留言bbb</asp:ListItem>
-                <asp:ListItem>留言ccc</asp:ListItem>
-                <asp:ListItem>留言ddd</asp:ListItem>
             </asp:ListBox>
             <br />
-            <asp:Image ID="picLike" runat="server" Height="50" Width="50" ImageUrl="./pictures/Like.jpg" /> 
+            <asp:Image ID="picLike" runat="server" Height="50" Width="50" ImageUrl="./picture/Like.jpg" /> 
             <asp:Label ID="numLike" runat="server" Height="50" Width="50" Text="X 15"/>
             <asp:Label ID="Blank2" runat="server" Height="50" Width="500"  />
-            <asp:ImageButton ID="btnLike" runat="server" Height="50" Width="50" OnClick="btnLike_Click" ImageUrl="./pictures/Like.jpg" /> 
+            <asp:ImageButton ID="btnLike" runat="server" Height="50" Width="50" OnClick="btnLike_Click" ImageUrl="./picture/Like.jpg" /> 
             <br />     
             <asp:TextBox ID="Message" runat="server" Height="40" Width="600"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="Large"/>
             <asp:Button ID="btnSend" runat="server" Height="50" Width="50" Text="發送" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="Large" OnClick="btnSend_Click" />

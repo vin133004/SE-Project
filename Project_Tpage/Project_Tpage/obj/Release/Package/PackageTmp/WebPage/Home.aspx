@@ -17,18 +17,6 @@
              <asp:Label ID="searchresult" Font-Bold="true" Font-Names="微軟正黑體" runat="server" Height="35" Width="100" Font-Size="Large" Text="查無此人" Visible="false" /><br/>
             <asp:Button ID="btnBoard" runat="server" Width="75" Height="75" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Text="進入" OnClick="btnboard_Click" />
             <asp:ListBox ID="ListOfBoard" runat="server" Font-Size="X-Large" AutoPostBack="false" Width="500" Rows="10" OnSelectedIndexChanged="SelectBoard">
-                <asp:ListItem Value="aaaa">aaa</asp:ListItem>
-                <asp:ListItem >bbb</asp:ListItem>
-                <asp:ListItem>ccc</asp:ListItem>
-                <asp:ListItem>ddd</asp:ListItem>
-                <asp:ListItem>eee</asp:ListItem>
-                <asp:ListItem>fff</asp:ListItem>
-                <asp:ListItem>ggg</asp:ListItem>
-                <asp:ListItem>hhh</asp:ListItem>
-                <asp:ListItem>iii</asp:ListItem>
-                <asp:ListItem>jjj</asp:ListItem>
-                <asp:ListItem>kkk</asp:ListItem>
-                <asp:ListItem>lll</asp:ListItem>
             </asp:ListBox>
             <asp:Image ID="ADimage" runat="server" Height="270" Width="500" ImageUrl="./pictures/2p3o0003noq07q391981.jpg" />
             

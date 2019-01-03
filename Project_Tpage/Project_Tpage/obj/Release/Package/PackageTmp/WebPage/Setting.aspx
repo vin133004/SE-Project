@@ -12,7 +12,7 @@
         <asp:Label ID="Accountlabel" runat="server" Width="10%" Text="帳號：" Font-Bold="true" Font-Size="X-Large" Font-Names="微軟正黑體" />
         <asp:Label ID="AccountText" runat="server" Width="10%" Text="" Font-Bold="true" Font-Size="X-Large" Font-Names="微軟正黑體" /><br />
         <asp:Label ID="IDLabel" runat="server" Width="10%" Text="學號：" Font-Bold="true" Font-Size="X-Large" Font-Names="微軟正黑體" />
-        <asp:TextBox ID="IDText" runat="server" Width="30%" Height="20px" Font-Bold="true" Font-Size="X-Large" Font-Names="微軟正黑體" /><br />
+        <asp:Label ID="IDText" runat="server" Width="30%" Height="20px" Font-Bold="true" Font-Size="X-Large" Font-Names="微軟正黑體" /><br />
         <asp:Label ID="Maillabel" runat="server" Width="10%" Text="電子郵件：" Font-Bold="true" Font-Size="X-Large" Font-Names="微軟正黑體" />
         <asp:TextBox ID="MailText" runat="server" Width="30%" Height="20px"  Font-Bold="true" Font-Size="X-Large" Font-Names="微軟正黑體" /><br />
         <asp:Label ID="Genderlabel" runat="server" Width="10%" Text="性別：" Font-Bold="true" Font-Size="X-Large" Font-Names="微軟正黑體" />

@@ -11,21 +11,9 @@
     <form id="form1" runat="server">
         <center>
             <asp:Label ID="Title" runat="server" Width="650" Height="75" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="XX-Large" Text="看板名稱" />
-            <asp:ImageButton ID="Follow" runat="server" Height="30"  ImageUrl="./pictures/UnFollow.jpg" OnClick="follow_click" /><br/>
+            <asp:ImageButton ID="Follow" runat="server" Height="30"  ImageUrl="./picture/UnFollow.jpg" OnClick="follow_click" /><br/>
             <asp:Button ID="btnarticle" runat="server"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="XX-Large" Width="75" Height="75" BorderStyle="None" Text="進入" OnClick="btnarticle_Click"/>
             <asp:ListBox ID="ListOfArticle" runat="server" Font-Size="X-Large" AutoPostBack="false" Width="700" Rows="10"  OnSelectedIndexChanged="SelectArticle" >
-                <asp:ListItem>aaa</asp:ListItem>
-                <asp:ListItem>bbb</asp:ListItem>
-                <asp:ListItem>ccc</asp:ListItem>
-                <asp:ListItem>ddd</asp:ListItem>
-                <asp:ListItem>eee</asp:ListItem>
-                <asp:ListItem>fff</asp:ListItem>
-                <asp:ListItem>ggg</asp:ListItem>
-                <asp:ListItem>hhh</asp:ListItem>
-                <asp:ListItem>iii</asp:ListItem>
-                <asp:ListItem>jjj</asp:ListItem>
-                <asp:ListItem>kkk</asp:ListItem>
-                <asp:ListItem>lll</asp:ListItem>
             </asp:ListBox><br />
             <asp:Button ID="btnBack" runat="server"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="XX-Large" Width="350" Height="75" BorderStyle="None" Text="返回首頁" OnClick="btnBack_Click"/>
             <asp:Button ID="btnPo" runat="server"  Font-Bold="true" Font-Names="微軟正黑體" Font-Size="XX-Large" Width="350" Height="75" BorderStyle="None" Text="發文" OnClick="btnPo_Click"/>

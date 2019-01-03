@@ -219,6 +219,7 @@ namespace Project_Tpage.WebPage
         {
             DAT dat = new DAT();
             dat["AID"] = ListOfArticle.SelectedItem.Value;
+            dat["BID"] = (Controller.CrossPageDAT["Board"] as Class.Board).BID;
             ToArticle(new ViewEventArgs(dat, this), out optDAT);     
         }
     }
