@@ -54,7 +54,7 @@ namespace Project_Tpage.WebPage
                 Response.Redirect("Login");
             if (Controller.CrossPageDAT["User"] != null)
                 user = Controller.CrossPageDAT["User"] as User;
-            ADimage.ImageUrl = "TakeShowingImage.aspx";
+            //ADimage.ImageUrl = "TakeShowingImage.aspx";
             // 邀請加入的看板名字
             int count = 0;
             List<string> boardQueuelistName = new List<string>();

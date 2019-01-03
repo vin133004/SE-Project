@@ -18,7 +18,7 @@
             <asp:Button ID="btnBoard" runat="server" Width="75" Height="75" Font-Bold="true" Font-Names="微軟正黑體" Font-Size="X-Large" Text="進入" OnClick="btnboard_Click" />
             <asp:ListBox ID="ListOfBoard" runat="server" Font-Size="X-Large" AutoPostBack="false" Width="500" Rows="10" OnSelectedIndexChanged="SelectBoard">
             </asp:ListBox>
-            <asp:Image ID="ADimage" runat="server" Height="270" Width="500" ImageUrl="./pictures/2p3o0003noq07q391981.jpg" />
+            <asp:Image ID="ADimage" runat="server" Height="300" Width="500" ImageUrl="./picture/ntust.jpg" />
             
             <br />
             
